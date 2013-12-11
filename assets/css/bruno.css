@@ -1,0 +1,68 @@
+@import url(http://fonts.googleapis.com/css?family=Cousine:400,700,400italic,700italic);
+
+html {
+	background-color: #eee;
+}
+body {
+}
+.noisy {
+	background-image: url(../img/noisy-2.png);
+}
+.cover {
+	width: 10cm;
+	padding-left: 5cm;
+	padding-right: 1.5cm;
+	background-color: #111;
+	border-radius: 0.2cm;
+	min-height: 21cm;
+	position: relative;
+	font-family: Cousine, monospace;
+	font-weight: 400;
+	color: #666;
+	margin: auto;
+	-webkit-box-shadow: 5px 6px 8px -3px rgba(0,0,0,0.75);
+	-moz-box-shadow: 5px 6px 8px -3px rgba(0,0,0,0.75);
+	box-shadow: 5px 6px 8px -3px rgba(0,0,0,0.75);
+	border: 1px solid #777;
+	border-width: 0 0 1px 1px;
+}
+.cover:after {
+	display: black;
+	position: absolute;
+	height: 100%;
+	width: 7px;
+	background-color: #111;
+	content: ' ';
+	left: -5px;
+	border-radius: 2px;
+background-image: -webkit-gradient(
+	linear,
+	left top,
+	right top,
+	color-stop(0, #000),
+	color-stop(1, #222)
+);
+}
+.cover h1, .cover h2 {
+	margin-top: 2cm;
+	font-weight: 400;
+}
+
+.cover-title {
+	padding: 0% 1cm;
+	background-image: -webkit-gradient(
+		linear,
+		left top,
+		left bottom,
+		color-stop(0, #ffe),
+		color-stop(1, #cca)
+	);
+	background-color: #ffe;
+	height: 100%;
+	width: 8cm;
+	border: 1px solid #ccc;
+	border-radius: 2px;
+	margin-top: -1px;
+	position: absolute;
+}
+
