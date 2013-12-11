@@ -13,7 +13,7 @@ body {
 	padding-left: 5cm;
 	padding-right: 1.5cm;
 	background-color: #111;
-	border-radius: 0.2cm;
+	border-radius: 0.18cm;
 	min-height: 21cm;
 	position: relative;
 	font-family: Cousine, monospace;
@@ -30,10 +30,10 @@ body {
 	display: black;
 	position: absolute;
 	height: 100%;
-	width: 7px;
+	width: 6px;
 	background-color: #111;
 	content: ' ';
-	left: -5px;
+	left: -4px;
 	border-radius: 2px;
 background-image: -webkit-gradient(
 	linear,
@@ -65,4 +65,7 @@ background-image: -webkit-gradient(
 	margin-top: -1px;
 	position: absolute;
 }
+
+hr { border-width: 0; border-top:1px solid #888; height: 0; }
+q {font-style: italic; }
 
