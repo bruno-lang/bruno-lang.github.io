@@ -12,7 +12,7 @@ body {
 	width: 10cm;
 	padding-left: 5cm;
 	padding-right: 1.5cm;
-	background-color: #111;
+	background-color: #64320E;
 	border-radius: 0.18cm;
 	min-height: 21cm;
 	position: relative;
@@ -31,7 +31,7 @@ body {
 	position: absolute;
 	height: 100%;
 	width: 6px;
-	background-color: #111;
+	background-color: #64320E;
 	content: ' ';
 	left: -4px;
 	border-radius: 2px;
@@ -39,8 +39,8 @@ background-image: -webkit-gradient(
 	linear,
 	left top,
 	right top,
-	color-stop(0, #000),
-	color-stop(1, #222)
+	color-stop(0, #64320E),
+	color-stop(1, #67340F)
 );
 }
 .cover h1, .cover h2 {
