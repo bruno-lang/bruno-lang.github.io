@@ -12,7 +12,7 @@ body {
 	width: 10cm;
 	padding-left: 5cm;
 	padding-right: 1.5cm;
-	background-color: #64320E;
+	background-color: #935D3B; /* #64320E; */
 	border-radius: 0.18cm;
 	min-height: 21cm;
 	position: relative;
@@ -31,7 +31,7 @@ body {
 	position: absolute;
 	height: 100%;
 	width: 6px;
-	background-color: #64320E;
+	background-color: #935D3B;
 	content: ' ';
 	left: -4px;
 	border-radius: 2px;
@@ -39,8 +39,8 @@ background-image: -webkit-gradient(
 	linear,
 	left top,
 	right top,
-	color-stop(0, #64320E),
-	color-stop(1, #67340F)
+	color-stop(0, #935D3B),
+	color-stop(1, #9E6440)
 );
 }
 .cover h1, .cover h2 {
@@ -69,3 +69,7 @@ background-image: -webkit-gradient(
 hr { border-width: 0; border-top:1px solid #888; height: 0; }
 q {font-style: italic; }
 
+
+.site { background-color: #D9D4C1; width: 800px; margin: 0 auto; }
+.section { background-color: #935D3B; min-height: 80px; padding: 20px 60px; }
+.section .title { font-size: 72px; font-family: Cousine; padding: 0; margin: 0; color: #D9D4C1; }
