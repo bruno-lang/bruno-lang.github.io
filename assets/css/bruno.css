@@ -68,8 +68,3 @@ background-image: -webkit-gradient(
 
 hr { border-width: 0; border-top:1px solid #888; height: 0; }
 q {font-style: italic; }
-
-
-.site { background-color: #D9D4C1; width: 800px; margin: 0 auto; }
-.section { background-color: #935D3B; min-height: 80px; padding: 20px 60px; }
-.section .title { font-size: 72px; font-family: Cousine; padding: 0; margin: 0; color: #D9D4C1; }
