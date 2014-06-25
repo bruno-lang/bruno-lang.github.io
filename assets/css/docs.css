@@ -34,11 +34,14 @@ content {
 content p {
 	text-align: justify;
 }
-
+content .abstract {
+	padding: 0 3em;
+	font-weight: 300;
+}
 content pre {
 	border-radius: 2px;
 	padding: 10px;
-	background-color: #E7DBB1;
+	background-color: #E0D4B0;
 	color: black;
 }
 content pre code {
@@ -62,13 +65,14 @@ content h1, content h2, content h3, content h4 {
 content h1:first-child { position: fixed; background-color: #35112D; width: 100%; margin: 0; top: 0; padding: 0.75em 0; }
 content h1:first-child + * { margin-top: 50px; }
 
+content h3 em { font-size: 12pt; font-weight: 300; }
+
 .yellowb { background-color: #FFD36C; }
 .greenb { background-color: #A6D08E; }
 .blueb { background-color: #5B9BD4; }
 .orangeb { background-color: #C15A10; }
 .yellow, content h2 { color: #FFD36C; }
-.green { color: #A6D08E; }
+.green, content h4 { color: #A6D08E; }
 .blue { color: #5B9BD4; }
 .orange, content h3 { color: #C15A10; }
-
 

@@ -1,19 +1,20 @@
 ---
 layout: default
-title:  "A cursory view on the Language"
+title:  "bruno in a Nutshell"
 ---
 
-# A cursory view on the Language
+# **bruno** in a Nutshell
 
-### Abstract
-In a rather oversimplified digest `bruno` as a language could be described as 
+<div class='abstract'>
+In a rather oversimplified digest <code>bruno</code> as a language could be described as 
 
-> _declarative programming with data and extension functions_
+<b>declarative programming with data and extension functions</b>.
 
 While there is a strong influence of FP apparent, thinking in language paradigms
 is quite misleading as the language often has its own twist on properties without 
 being a multi-paradigm language. It is the best to look at it with a fresh and 
 open mind.
+</div>
 
 ## Design Goals
 
@@ -101,12 +102,12 @@ to a enumeration in a similar way:
 			Neptune ('1.024e+26kg, '2.4746e7m);
 		}
 
+### Literals
 
 ## Functions
-
-### Pure Functions
 Functions are functions, hence pure and statically resolved, they provide
-referential transparency. All functions are understood as _extension functions_.
+referential transparency. All functions are understood as _extension functions_
+on the type of the 1st parameter.
 
 		fn double :: Int a -> Int = a * '2
 
@@ -116,15 +117,73 @@ The `double` of instance `a` of type `Int` is `'2` times `a`, what is again an
 		fn quad :: Int a -> Int = a double double
 
 it is called as if it _extends_ the type `Int` and is a _"member function"_.
-So code reads similar to OOP but is declared similar to FP. 
+To calculate 4 times of `a` it is `double`d once and that result, again an `Int`,
+is `double`d one more time. While `a` is a value, not an object, functions are
+syntactically invoked _on_ it similar to methods on an object in OOP. This 
+notation reads more natural and often can avoid parentheses. 
 
-## Literals
+### Branches and Cases
+There is a single control flow construct directly embedded in a function 
+declaration. This implies that the construct cannot be nested; extension
+functions and the `where` clause are used to avoid nesting, as shown soon.
 
-## Specialisation and Generalisation
+		fn min :: Int a -> Int b -> Int 
+			\ a < b \= a
+			\       \= b
 
+The `min`imum of two values `a` and `b` is `a` in case `a < b` otherwise `b`.
+The cases `\ ... \` are checked in order of appearance. The last case has to
+be the universal (true'ish) condition. For enumeration alternatively all
+values can be covered. Each case is implemented by a expression.
+
+		fn show :: Bool b -> String
+			\ False \= "false"
+			\ True  \= "true"
+
+### Local Variables _(Where-Clause)_
+A function body is one expression, sometimes split into cases. As there are no
+statements local variables are declared in a function's context, the `where`
+clause:
+
+		fn calc :: Int a -> Int b -> Int
+			= minimum + x * maximum
+		where
+			Int minimum = a min b
+			Int maximum = a max b
+			Int x = minimum double - maximum
+
+The function `calc` does some calculation following an arbitrary logic that is
+unimportant here. The three variables `minimum`, `maximum` and `x` are 
+declared using the functions parameters and any of the other variables. Their
+sequence is irrelevant, as the order of necessary computation can be derived
+from the case executed and all calls are known to be referential transparent.
+
+### First Class Functions
+Functions are values as well, they can appear as parameter and return type of
+a function declaration and be assigned to variables.
+
+Show function types `(A -> B)`, 
+
+### Partial Application
+- mention tuple equivalence of parameters
+
+## Abstractions
+### Operations _(abstract over functions)_
+
+### Protocols _(abstract over sets of functions)_
+
+### Notations _(abstract over data and functions)_
+
+### Type Schemas _(Generics - abstract over types)_
+
+## Type System
+- mandatory type annotations, inference where unambiguous
+### Specialisation - Generalisation
+
+### Formats
 
 ## Modularity
 
-## Specialities 
+### Machines
 
 
