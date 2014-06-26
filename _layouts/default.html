@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Bruno - Docs</title>
 	<link href="/assets/css/docs.css" media="all" rel="stylesheet" type="text/css">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   </head>
   <body>
 	<page>
@@ -14,5 +15,14 @@
 		(c) 2014 Jan Bernitt
 		</footer>
 	</page>
+	<script>
+$("pre code").html(function(_, html) {
+   return html
+   	.replace(/(unit|dimension|data|fn|op|protocol|notation|where)/g, '<kw>$1</kw>')
+   	.replace(/("[^"]*"|'[^, \)\]]+|#[xdob][A-F0-9]+)/g, "<lit>$1</lit>")
+   	.replace(/(=)/g, "<op>$1</op>")
+   	;
+});	
+	</script>
   </body>
 </html>

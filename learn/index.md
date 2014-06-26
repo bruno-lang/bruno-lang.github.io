@@ -6,12 +6,14 @@ title:  "bruno in a Nutshell"
 # **bruno** in a Nutshell
 
 <div class='abstract'>
-At a first glance <code>bruno</code> appears like
+At a first glance <b>bruno</b> appears like
 
 <b>declarative programming with data and extension functions</b>.
 
-While there is a strong influence of FP language often has its own twist and picks from different paradigms without being a multi-paradigm language. 
-It will be the best to look at it with a fresh and open mind.
+While there is a strong influence of FP bruno often has its own twist and picks 
+from different paradigms without being a multi-paradigm language. 
+It will be the best to look at it with a fresh and open mind as the language
+also has several novel ideas.
 </div>
 
 ## Design Goals
@@ -89,7 +91,7 @@ where in case of a list `False` will also be associated with index `'0` and
 The possible `Fruits` are `Apples` and `Pears`. Compound types can be restricted 
 to a enumeration in a similar way:
 
-		data Planet :: (Mass, Radius) = { 
+		data Planet :: (Mass weight, Length radius) = { 
 			Mercury ('3.303e+23kg, '2.4397e6m),
 			Venus   ('4.869e+24kg, '6.0518e6m),
 			Earth   ('5.976e+24kg, '6.37814e6m),
@@ -101,6 +103,40 @@ to a enumeration in a similar way:
 		}
 
 ### Literals
+There are three types of value literals; the mostly used conceptual value 
+literals for simple values as scalars, characters and user defined units and 
+dimensions:
+
+		Int scalar = '42
+		Float real = '-0.42
+		Char letter = 'a'
+		Mass weight = '10kg
+
+Conceptual literals start with a `'` followed by a number or symbol and the unit
+of measure, like `kg`. `Char`acters have `'` as unit and scalars the empty string;
+(numbers without a leading `'` are a length type). When a unit of measure is
+present the type of a literal is derived form it as it has to be unambiguous in 
+any scope.
+
+Secondly binary oriented literals typically used for simple numerical values:
+
+		Colour red = #xFF0000
+		Int mask = #b10101010
+
+Binary oriented literals start with a `#` followed by the type, `x` for hexadecimal, 
+`b` for binary, but also `o` for octal and even `d` for decimal values.
+
+The third type of literals are textual oriented. Compound values are given in a 
+way humans are used to write them:
+
+		Point p = "1:2"
+		String msg = "hello world!"
+		Date 2k = "2000-00-00"
+
+The `Point` and `Date` example illustates that textual literals can be used for 
+any compound type (when defined properly, <a href="#formats">formats</a> will
+go into the details later). The type of textual literals is inferred from the 
+context, such as the variable, parameter or return type.
 
 ## Functions
 Functions are functions, hence pure and statically resolved, they provide
