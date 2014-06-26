@@ -9,7 +9,7 @@ body {
 	font-family: "Source Sans Pro", Cousine;
 	margin: 0;
 	padding: 1em 0;
-	color: #ccc;
+	color: #eee;
 }
 page {
 	border-radius: 4px;
@@ -33,11 +33,14 @@ content {
 }
 content p {
 	text-align: justify;
+	word-spacing: 0.07em
 }
 content .abstract {
 	padding: 0 3em;
 	font-weight: 300;
+	font-size: 110%;
 }
+content .abstract b, content .abstract code { font-weight: 400; }
 content pre {
 	border-radius: 2px;
 	padding: 10px;
@@ -49,7 +52,7 @@ content pre code {
 }
 
 content code {
-	color: white;
+	color: #A6D08E;
 }
 code, pre {
 	font-family: "Source Code Pro";
