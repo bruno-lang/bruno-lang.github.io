@@ -145,18 +145,22 @@ A function body is one expression, sometimes split into cases. As there are no
 statements local variables are declared in a function's context, the `where`
 clause:
 
-		fn calc :: Int a -> Int b -> Int
-			= minimum + x * maximum
-		where
-			Int minimum = a min b
-			Int maximum = a max b
-			Int x = minimum double - maximum
+		data Point :: (Int a, Int b)
+		fn distance :: Point a -> Point b -> Float
+			= (dx-square + dy-square) sqrt
+		where 
+			Int dx-square = dx * dx
+			Int dy-square = dy * dy
+			Int dx = b x - a x
+			Int dy = b y - a y
 
-The function `calc` does some calculation following an arbitrary logic that is
-unimportant here. The three variables `minimum`, `maximum` and `x` are 
-declared using the functions parameters and any of the other variables. Their
-sequence is irrelevant, as the order of necessary computation can be derived
-from the case executed and all calls are known to be referential transparent.
+The function `distance` calculates the distance between 2 points `a` and `b`.
+The four local variables `dx`, `dy`, `dx-square` and `dy-square` are 
+declared using the functions parameters and any of the other variables. Thanks
+to referential transparent order of declaration is irrelevant.
+
+### Loops
+- say something about how loop constructs are done
 
 ### First Class Functions
 Functions are values as well, they can appear as parameter and return type of
@@ -172,12 +176,13 @@ Show function types `(A -> B)`,
 
 ### Protocols _(abstract over sets of functions)_
 
-### Notations _(abstract over data and functions)_
+### Notations _(abstract over cases)_
 
 ### Type Schemas _(Generics - abstract over types)_
 
 ## Type System
 - mandatory type annotations, inference where unambiguous
+
 ### Specialisation - Generalisation
 
 ### Formats
