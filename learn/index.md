@@ -6,14 +6,12 @@ title:  "bruno in a Nutshell"
 # **bruno** in a Nutshell
 
 <div class='abstract'>
-In a rather oversimplified digest <code>bruno</code> as a language could be described as 
+At a first glance <code>bruno</code> appears like
 
 <b>declarative programming with data and extension functions</b>.
 
-While there is a strong influence of FP apparent, thinking in language paradigms
-is quite misleading as the language often has its own twist on properties without 
-being a multi-paradigm language. It is the best to look at it with a fresh and 
-open mind.
+While there is a strong influence of FP language often has its own twist and picks from different paradigms without being a multi-paradigm language. 
+It will be the best to look at it with a fresh and open mind.
 </div>
 
 ## Design Goals
