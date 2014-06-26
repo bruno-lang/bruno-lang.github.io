@@ -41,11 +41,11 @@ content .abstract {
 content pre {
 	border-radius: 2px;
 	padding: 10px;
-	background-color: #E0D4B0;
-	color: black;
+	background-color: black;
+	color: white;
 }
 content pre code {
-	color: black;
+	color: white;
 }
 
 content code {
