@@ -129,8 +129,8 @@ Binary oriented literals start with a `#` followed by the type, `x` for hexadeci
 The third type of literals are textual oriented. Compound values are given in a 
 way humans are used to write them:
 
-		Point p = "1:2"
 		String msg = "hello world!"
+		Point p = "1:2"
 		Date 2k = "2000-00-00"
 
 The `Point` and `Date` example illustates that textual literals can be used for 
@@ -139,8 +139,8 @@ go into the details later). The type of textual literals is inferred from the
 context, such as the variable, parameter or return type.
 
 ## Functions
-Functions are functions, hence pure and statically resolved, they provide
-referential transparency. All functions are understood as _extension functions_
+Functions are functions, hence pure and statically resolved and are
+referentially transparent. All functions are understood as _extension functions_
 on the type of the 1st parameter.
 
 		fn double :: Int a -> Int = a * '2
@@ -168,7 +168,7 @@ functions and the `where` clause are used to avoid nesting, as shown soon.
 The `min`imum of two values `a` and `b` is `a` in case `a < b` otherwise `b`.
 The cases `\ ... \` are checked in order of appearance. The last case has to
 be the universal (true'ish) condition. For enumeration alternatively all
-values can be covered. Each case is implemented by a expression.
+values can be covered. Each case is implemented by an expression.
 
 		fn show :: Bool b -> String
 			\ False \= "false"
@@ -189,9 +189,10 @@ clause:
 			Int dy = b y - a y
 
 The function `distance` calculates the distance between 2 points `a` and `b`.
-The four local variables `dx`, `dy`, `dx-square` and `dy-square` are 
-declared using the functions parameters and any of the other variables. Thanks
-to referential transparent order of declaration is irrelevant.
+Local variables like `dx`, `dy`, `dx-square` and `dy-square` can  be 
+declared based on the function's parameters and any of the other variables. 
+Thanks to referential transparency order of declaration is irrelevant and
+can be done for best readability. 
 
 ### Loops
 - say something about how loop constructs are done
@@ -223,6 +224,8 @@ Show function types `(A -> B)`,
 
 ## Modularity
 
+
+## Side Effects
 ### Machines
 
 
