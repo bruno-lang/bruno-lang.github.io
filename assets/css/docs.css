@@ -3,7 +3,7 @@
 @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic);
 
 html {
-	background-color: #35112D;
+	background-color: #220619;
 }
 body {
 	font-family: "Source Sans Pro", Cousine;
@@ -65,7 +65,7 @@ content h4 { font-size: 1.125em; }
 content h1, content h2, content h3, content h4 {
 	font-weight: normal; font-family: "Source Code Pro"; color: white;
 }
-content h1:first-child { position: fixed; background-color: #35112D; width: 100%; margin: 0; top: 0; padding: 0.75em 0; }
+content h1:first-child { position: fixed; background-color: #220619; width: 100%; margin: 0; top: 0; padding: 0.75em 0; }
 content h1:first-child + * { margin-top: 50px; }
 content h2 { margin-top: 2.5em; }
 content h3 em { font-size: 12pt; font-weight: 300; }
