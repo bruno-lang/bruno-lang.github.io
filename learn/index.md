@@ -91,7 +91,7 @@ where in case of a list `False` will also be associated with index `'0` and
 The possible `Fruits` are `Apples` and `Pears`. Compound types can be restricted 
 to a enumeration in a similar way:
 
-		data Planet :: (Mass weight, Length radius) = { 
+		data Planet :: (Kilogram weight, Meters radius) = { 
 			Mercury ('3.303e+23kg, '2.4397e6m),
 			Venus   ('4.869e+24kg, '6.0518e6m),
 			Earth   ('5.976e+24kg, '6.37814e6m),
@@ -101,6 +101,9 @@ to a enumeration in a similar way:
 			Uranus  ('8.686e+25kg, '2.5559e7m),
 			Neptune ('1.024e+26kg, '2.4746e7m);
 		}
+
+All the `Planet`s in our solar system are given as a set of possible values with 
+their `weight` and `radius`.
 
 ### Literals
 There are three types of value literals; the mostly used conceptual value 
@@ -131,7 +134,7 @@ way humans are used to write them:
 
 		String msg = "hello world!"
 		Point p = "1:2"
-		Date 2k = "2000-00-00"
+		Date imagine = "2971-10-11"
 
 The `Point` and `Date` example illustates that textual literals can be used for 
 any compound type (when defined properly, <a href="#formats">formats</a> will
