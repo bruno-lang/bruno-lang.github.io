@@ -18,9 +18,10 @@
 	<script>
 $("pre code").html(function(_, html) {
    return html
-   	.replace(/(unit|dimension|data|fn|op|protocol|notation|where)/g, '<kw>$1</kw>')
-   	.replace(/("[^"]*"|'[^, \)\]]+|#[xdob][A-F0-9]+)/g, "<lit>$1</lit>")
-   	.replace(/(=)/g, "<op>$1</op>")
+   	.replace(/([a-z]+\s+)([-a-zA-Z0-9]+)(\s*(\[[^\]]+\]\s*)?::)/g, "$1<def>$2</def>$3")
+   	.replace(/(unit|dimension|data|fn|op|protocol|notation|where|ratio|instances|system)/g, '<kw>$1</kw>')
+   	.replace(/("[^"]*"|'[^, \)\]\t\n\r]+|#[xdob][A-F0-9]+)/g, "<lit>$1</lit>")
+   	.replace(/(=|::|,|-&gt;)/g, "<op>$1</op>")
    	;
 });	
 	</script>

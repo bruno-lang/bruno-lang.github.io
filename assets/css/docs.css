@@ -52,7 +52,7 @@ content pre code {
 }
 
 content code {
-	color: #8ED068;
+	color: #A6D08E;
 }
 code, pre {
 	font-family: "Source Code Pro";
@@ -68,6 +68,7 @@ content h1, content h2, content h3, content h4 {
 content h1:first-child { position: fixed; background-color: #220619; width: 100%; margin: 0; top: 0; padding: 0.75em 0; }
 content h1:first-child + * { margin-top: 50px; }
 content h2 { margin-top: 2.5em; }
+content h3 { margin-top: 2em; }
 content h3 em { font-size: 12pt; font-weight: 300; }
 
 .yellowb { background-color: #FFD36C; }
@@ -79,6 +80,7 @@ content h3 em { font-size: 12pt; font-weight: 300; }
 .blue, a, a:visited { color: #5B9BD4; }
 .orange, content h3 { color: #D95C02; }
 
-code kw { color: #FFD36C; }
+code kw { color: #A6D08E; }
 code lit { color: #5B9BD4; }
 code op { color: #D95C02; }
+code def { color: #FFD36C; }

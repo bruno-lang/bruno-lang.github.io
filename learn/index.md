@@ -99,7 +99,7 @@ to a enumeration in a similar way:
 			Jupiter ('1.9e+27kg,   '7.1492e7m),
 			Saturn  ('5.688e+26kg, '6.0268e7m),
 			Uranus  ('8.686e+25kg, '2.5559e7m),
-			Neptune ('1.024e+26kg, '2.4746e7m);
+			Neptune ('1.024e+26kg, '2.4746e7m)
 		}
 
 All the `Planet`s in our solar system are given as a set of possible values with 
@@ -140,6 +140,7 @@ The `Point` and `Date` example illustates that textual literals can be used for
 any compound type (when defined properly, <a href="#formats">formats</a> will
 go into the details later). The type of textual literals is inferred from the 
 context, such as the variable, parameter or return type.
+
 
 ## Functions
 Functions are functions, hence pure and statically resolved and are
@@ -209,7 +210,9 @@ Show function types `(A -> B)`,
 ### Partial Application
 - mention tuple equivalence of parameters
 
+
 ## Abstractions
+
 ### Operations _(abstract over functions)_
 
 ### Protocols _(abstract over sets of functions)_
@@ -217,6 +220,11 @@ Show function types `(A -> B)`,
 ### Notations _(abstract over cases)_
 
 ### Type Schemas _(Generics - abstract over types)_
+
+
+## Side Effects
+
+### Machines
 
 ## Type System
 - mandatory type annotations, inference where unambiguous
@@ -227,8 +235,10 @@ Show function types `(A -> B)`,
 
 ## Modularity
 
+### Namespaces
 
-## Side Effects
-### Machines
+### Modules
+
+### Libraries
 
 
