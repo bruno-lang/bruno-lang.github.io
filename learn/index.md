@@ -16,7 +16,11 @@ It will be the best to look at it with a fresh and open mind as the language
 also has several novel ideas.
 </div>
 
-## Design Goals
+## Objectives
+- correctness
+- local reasoning
+- readability
+- the real power is not having the power
 
 ## Data
 Values are values, hence immutable.
@@ -136,7 +140,7 @@ way humans are used to write them:
 		Point p = "1:2"
 		Date imagine = "2971-10-11"
 
-The `Point` and `Date` example illustates that textual literals can be used for 
+The `Point` and `Date` example illustrates that textual literals can be used for 
 any compound type (when defined properly, <a href="#formats">formats</a> will
 go into the details later). The type of textual literals is inferred from the 
 context, such as the variable, parameter or return type.
@@ -199,13 +203,44 @@ Thanks to referential transparency order of declaration is irrelevant and
 can be done for best readability. 
 
 ### Loops
-- say something about how loop constructs are done
+The primary way to _loop_ is to use recursive functions:
+
+		fn factorial :: Int n -> Int
+			\ n == '0 \= '1
+			\         \= n * factorial (n - '1)
+
+All tail recursive functions will use tail call elimination, hence not create/use
+stack frames. Due to referential transparency and known commutativity of some
+functions (decided on AST operation) the multiplication in the above example
+could also be written vice versa `factorial (n - '1) * n` and still be executed
+without consuming stack frames as `*` is such a known operation.
+
+Another construct is planed for loops that do something several times or with
+several elements of a collection (imperative _for_ loops). The goal is to find a
+declarative way that does not require accessible (named) mutable state, as 
+counters or the current element in a _foreach_ loop.
 
 ### First Class Functions
-Functions are values as well, they can appear as parameter and return type of
-a function declaration and be assigned to variables.
+Functions are also values, they can appear as parameter and return type of a 
+function declaration and be assigned to variables (`where`-clause). Such 
+functions a _anonymous_ in the sense that their original name is unknown.
 
-Show function types `(A -> B)`, 
+A function that takes an `Int` and computes a `Bool` has a type of `(Int -> Bool)`.
+
+		fn even :: (Int n -> Bool) = n mod 2 == 0
+
+The `even` function has this type and could be passed as an argument to another
+function:
+
+		fn is :: Int n -> (Int -> Bool) f -> Bool = f n
+
+`is` might not be very useful in practice but illustrates good how functions can 
+be used as arguments:
+
+		'1 is even
+
+Function types can be seen as a way to _abstract_ over functions. This kind of
+abstraction can also be made first class as operations will soon show.
 
 ### Partial Application
 - mention tuple equivalence of parameters
@@ -225,6 +260,8 @@ Show function types `(A -> B)`,
 ## Side Effects
 
 ### Machines
+
+### Transients
 
 ## Type System
 - mandatory type annotations, inference where unambiguous

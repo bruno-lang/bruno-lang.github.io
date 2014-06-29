@@ -52,7 +52,7 @@ content pre code {
 }
 
 content code {
-	color: #A6D08E;
+	color: #FFD36C;
 }
 code, pre {
 	font-family: "Source Code Pro";
@@ -67,9 +67,9 @@ content h1, content h2, content h3, content h4 {
 }
 content h1:first-child { position: fixed; background-color: #220619; width: 100%; margin: 0; top: 0; padding: 0.75em 0; }
 content h1:first-child + * { margin-top: 50px; }
-content h2 { margin-top: 2.5em; }
+content h2 { margin-top: 3em; font-weight: bold; }
 content h3 { margin-top: 2em; }
-content h3 em { font-size: 12pt; font-weight: 300; }
+content h3 em { font-size: 12pt; font-weight: 300; font-style: normal; }
 
 .yellowb { background-color: #FFD36C; }
 .greenb { background-color: #A6D08E; }
@@ -80,7 +80,17 @@ content h3 em { font-size: 12pt; font-weight: 300; }
 .blue, a, a:visited { color: #5B9BD4; }
 .orange, content h3 { color: #D95C02; }
 
-code kw { color: #A6D08E; }
+code kw { color: #FFD36C; }
 code lit { color: #5B9BD4; }
 code op { color: #D95C02; }
-code def { color: #FFD36C; }
+code def { color: #5B9BD4; }
+code as { color: #D95C02; }
+
+toc {
+	position: fixed;
+	top: 15px;
+	margin-left: 600px;
+	z-index: 1;
+	color: #FFD36C;	
+	display: none;
+}

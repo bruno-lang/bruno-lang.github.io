@@ -4,12 +4,14 @@
     <meta charset="utf-8">
     <title>Bruno - Docs</title>
 	<link href="/assets/css/docs.css" media="all" rel="stylesheet" type="text/css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   </head>
   <body>
 	<page>
-		<header>
-		<header>
+		<toc>
+			<i class="fa fa-bars"></i> Goto...
+		</toc>			
 		<content>{{content}}</content>
 		<footer>
 		(c) 2014 Jan Bernitt
@@ -21,7 +23,8 @@ $("pre code").html(function(_, html) {
    	.replace(/([a-z]+\s+)([-a-zA-Z0-9]+)(\s*(\[[^\]]+\]\s*)?::)/g, "$1<def>$2</def>$3")
    	.replace(/(unit|dimension|data|fn|op|protocol|notation|where|ratio|instances|system)/g, '<kw>$1</kw>')
    	.replace(/("[^"]*"|'[^, \)\]\t\n\r]+|#[xdob][A-F0-9]+)/g, "<lit>$1</lit>")
-   	.replace(/(=|::|,|-&gt;)/g, "<op>$1</op>")
+   	.replace(/(=|,|-&gt;)/g, "<op>$1</op>")
+   	.replace(/(::)/g, "<as>$1</as>")
    	;
 });	
 	</script>
