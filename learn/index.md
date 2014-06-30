@@ -23,10 +23,12 @@ also has several novel ideas.
 - the real power is not having the power
 
 ## Data
-Values are values, hence immutable.
+Values are values, thus immutable. Data is only given through values.
 
 ### Simple Values
-Two types of simple values, `dimension`s and `unit`s. 
+Two types of simple values, `dimension`s and `unit`s. The distinction between 
+`dimension` and `unit` allows to model _type families_ (the type system section 
+will go into the details).
 
 		dimension Time [T] :: Int '0..
 
@@ -267,6 +269,8 @@ abstraction can also be made first class as operations will soon show.
 - mandatory type annotations, inference where unambiguous
 
 ### Specialisation - Generalisation
+
+#### Variance 
 
 ### Formats
 
