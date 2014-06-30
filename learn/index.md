@@ -147,6 +147,10 @@ any compound type (when defined properly, <a href="#formats">formats</a> will
 go into the details later). The type of textual literals is inferred from the 
 context, such as the variable, parameter or return type.
 
+### Default Values
+There is no _null_ pointer/reference/value. All values are initialised with zero 
+or the lowest possible value should they not be specified otherwise. This is 
+somewhat a non-issue as all data starts from literals.
 
 ## Functions
 Functions are functions, hence pure and statically resolved and are
@@ -162,9 +166,28 @@ The `double` of instance `a` of type `Int` is `'2` times `a`, what is again an
 
 it is called as if it _extends_ the type `Int` and is a _"member function"_.
 To calculate 4 times of `a` it is `double`d once and that result, again an `Int`,
-is `double`d one more time. While `a` is a value, not an object, functions are
-syntactically invoked _on_ it similar to methods on an object in OOP. This 
-notation reads more natural and often can avoid parentheses. 
+is `double`d one more time equal to `(a double) double`. 
+
+While `a` is a value, not an object, functions are syntactically invoked _on_ it 
+similar to methods on an object in OOP. This notation reads more natural and 
+often can avoid parentheses. 
+
+### Evaluation and Operators
+Expressions are always evaluated **left to right** where 
+operators are just short hands for function calls. 
+
+		fn plus [+] :: Int a -> Int b -> Int
+		fn mul [*] :: Int a -> Int b -> Int
+		
+The `plus` function is bound to `+` operator, the `mul` function to `*`
+(within each namespace this _alias_ has to be unambigious).
+
+		'1 + '2 * '3 == ('1 + '2) * '3
+		
+If not set in parentheses `'1 + '2 * '3` will be evaluated left to right resulting
+in `'9` not `'7`. The advantage is that correct bracketing is much easier to 
+apply and be sure of than to learn and apply any precedence specification and
+operator are relly nothing more than an symbolic alias for function names. 
 
 ### Branches and Cases
 There is a single control flow construct directly embedded in a function 
@@ -282,4 +305,5 @@ abstraction can also be made first class as operations will soon show.
 
 ### Libraries
 
+## Abstarct Synatx Tree
 
