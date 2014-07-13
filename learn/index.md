@@ -150,7 +150,8 @@ context, such as the variable, parameter or return type.
 ### Default Values
 There is no _null_ pointer/reference/value. All values are initialised with zero 
 or the lowest possible value should they not be specified otherwise. This is 
-somewhat a non-issue as all data starts from literals.
+somewhat a non-issue as all data starts from literals. One either gets a value
+as an argument or starts from a literal.
 
 ## Functions
 Functions are functions, hence pure and statically resolved and are
@@ -185,9 +186,11 @@ The `plus` function is bound to `+` operator, the `mul` function to `*`
 		'1 + '2 * '3 == ('1 + '2) * '3
 		
 If not set in parentheses `'1 + '2 * '3` will be evaluated left to right resulting
-in `'9` not `'7`. The advantage is that correct bracketing is much easier to 
-apply and be sure of than to learn and apply any precedence specification and
-operator are relly nothing more than an symbolic alias for function names. 
+in `'9` not `'7`. 
+
+> Instead of dealing with operator precedence (what is really hard and most of 
+> all ineffectual to memorise) only parentheses have to applied correctly 
+> (what is really simple). Operators are really just a name alias.
 
 ### Branches and Cases
 There is a single control flow construct directly embedded in a function 
@@ -275,7 +278,7 @@ abstraction can also be made first class as operations will soon show.
 
 ### Operations _(abstract over functions)_
 
-### Protocols _(abstract over sets of functions)_
+### Behaviours _(abstract over sets of functions)_
 
 ### Notations _(abstract over cases)_
 
@@ -305,5 +308,7 @@ abstraction can also be made first class as operations will soon show.
 
 ### Libraries
 
-## Abstarct Synatx Tree
+### Advanced Features
+
+### Abstarct Synatx Tree
 

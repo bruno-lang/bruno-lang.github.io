@@ -4,12 +4,14 @@
 
 html {
 	background-color: #220619;
+	background-color: white;
 }
 body {
-	font-family: "Source Sans Pro", Cousine;
+	font-family: Georgia, "Source Sans Pro", Cousine;
 	margin: 0;
 	padding: 1em 0;
 	color: #eee;
+	color: #333;
 }
 page {
 	border-radius: 4px;
@@ -32,7 +34,7 @@ content {
 	position: relative;
 }
 content p {
-	text-align: justify;
+	text-align: justifyy;
 	word-spacing: 0.07em
 }
 content .abstract {
@@ -45,14 +47,18 @@ content pre {
 	border-radius: 2px;
 	padding: 10px;
 	background-color: black;
+	background-color: #eee8d5;
 	color: white;
 }
 content pre code {
-	color: white;
+	color: black;
+	background-color: transparent;
 }
 
 content code {
-	color: #FFD36C;
+	color: #6c71c4;
+	color: #565A9D;
+  background-color: #fdf6e3;
 }
 code, pre {
 	font-family: "Source Code Pro";
@@ -63,11 +69,11 @@ content h2 { font-size: 1.4em; }
 content h3 { font-size: 1.25em; }
 content h4 { font-size: 1.125em; }
 content h1, content h2, content h3, content h4 {
-	font-weight: normal; font-family: "Source Code Pro"; color: white;
+	font-weight: normal; font-family: "Source Code Pro"; color: white; color: black;
 }
-content h1:first-child { position: fixed; background-color: #220619; width: 100%; margin: 0; top: 0; padding: 0.75em 0; }
+content h1:first-child { position: fixed; background-color: white; width: 100%; margin: 0; top: 0; padding: 0.75em 0; }
 content h1:first-child + * { margin-top: 50px; }
-content h2 { margin-top: 3em; font-weight: bold; }
+content h2 { margin-top: 3em; font-weight: bold; font-weight: normal; }
 content h3 { margin-top: 2em; }
 content h3 em { font-size: 12pt; font-weight: 300; font-style: normal; }
 
@@ -75,16 +81,17 @@ content h3 em { font-size: 12pt; font-weight: 300; font-style: normal; }
 .greenb { background-color: #A6D08E; }
 .blueb { background-color: #5B9BD4; }
 .orangeb { background-color: #C15A10; }
-.yellow, content h2 { color: #FFD36C; }
-.green, content h4 { color: #8ED068; }
+.yellow, contentt h2 { color: #FFD36C; }
+.green, contentt h4 { color: #8ED068; }
 .blue, a, a:visited { color: #5B9BD4; }
-.orange, content h3 { color: #D95C02; }
+.orange, contentt h3 { color: #D95C02; }
 
-code kw { color: #FFD36C; }
-code lit { color: #5B9BD4; }
-code op { color: #D95C02; }
-code def { color: #5B9BD4; }
-code as { color: #D95C02; }
+code kw { color: #859900; }
+code lit { color: #2aa198; }
+code op { color: #dc322f; }
+code def { color: #268bd2; }
+code as { color: #dc322f; }
+code uom { color: #b58900; }
 
 toc {
 	position: fixed;
