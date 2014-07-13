@@ -298,6 +298,8 @@ abstraction can also be made first class as operations will soon show.
 
 #### Variance 
 
+### Shapes
+
 ### Formats
 
 ## Modularity
@@ -308,7 +310,7 @@ abstraction can also be made first class as operations will soon show.
 
 ### Libraries
 
-### Advanced Features
+## Advanced Features
 
 ### Abstarct Synatx Tree
 

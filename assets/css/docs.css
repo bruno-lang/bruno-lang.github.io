@@ -3,16 +3,18 @@
 @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic);
 
 html {
-	background-color: #220619;
 	background-color: white;
 }
 body {
-	font-family: Georgia, "Source Sans Pro", Cousine;
+	font-family: Georgia, "Source Sans Pro";
 	margin: 0;
 	padding: 1em 0;
-	color: #eee;
 	color: #333;
 }
+code, pre {
+	font-family: "Source Code Pro";
+}
+
 page {
 	border-radius: 4px;
 	display: block;
@@ -34,7 +36,6 @@ content {
 	position: relative;
 }
 content p {
-	text-align: justifyy;
 	word-spacing: 0.07em
 }
 content .abstract {
@@ -46,7 +47,6 @@ content .abstract b, content .abstract code { font-weight: 400; }
 content pre {
 	border-radius: 2px;
 	padding: 10px;
-	background-color: black;
 	background-color: #eee8d5;
 	color: white;
 }
@@ -56,35 +56,28 @@ content pre code {
 }
 
 content code {
-	color: #6c71c4;
 	color: #565A9D;
   background-color: #fdf6e3;
 }
-code, pre {
-	font-family: "Source Code Pro";
+
+content blockquote {
+	color: #073642;
+	text-align: justify;
+	font-family: "Source Sans Pro";
 }
 
-content h1 { font-size: 1.5em; }
-content h2 { font-size: 1.4em; }
-content h3 { font-size: 1.25em; }
-content h4 { font-size: 1.125em; }
 content h1, content h2, content h3, content h4 {
 	font-weight: normal; font-family: "Source Code Pro"; color: white; color: black;
 }
+content h2 { font-size: 1.4em; }
+content h3 { font-size: 1.25em; }
+content h4 { font-size: 1.125em; }
+content h1 { font-size: 1.5em; font-family: Cousine; }
 content h1:first-child { position: fixed; background-color: white; width: 100%; margin: 0; top: 0; padding: 0.75em 0; }
 content h1:first-child + * { margin-top: 50px; }
-content h2 { margin-top: 3em; font-weight: bold; font-weight: normal; }
+content h2 { margin-top: 3em; font-weight: bold; }
 content h3 { margin-top: 2em; }
 content h3 em { font-size: 12pt; font-weight: 300; font-style: normal; }
-
-.yellowb { background-color: #FFD36C; }
-.greenb { background-color: #A6D08E; }
-.blueb { background-color: #5B9BD4; }
-.orangeb { background-color: #C15A10; }
-.yellow, contentt h2 { color: #FFD36C; }
-.green, contentt h4 { color: #8ED068; }
-.blue, a, a:visited { color: #5B9BD4; }
-.orange, contentt h3 { color: #D95C02; }
 
 code kw { color: #859900; }
 code lit { color: #2aa198; }
