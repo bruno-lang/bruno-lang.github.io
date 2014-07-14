@@ -133,7 +133,10 @@ Secondly binary oriented literals typically used for simple numerical values:
 		Int mask = #b10101010
 
 Binary oriented literals start with a `#` followed by the type, `x` for hexadecimal, 
-`b` for binary, but also `o` for octal and even `d` for decimal values.
+`b` for binary, but also `o` for octal and even `d` for decimal values, what is also
+the default and can be left out.
+
+		Int ten = #10
 
 The third type of literals are textual oriented. Compound values are given in a 
 way humans are used to write them:
