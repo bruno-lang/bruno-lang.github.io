@@ -53,7 +53,7 @@ A minute `'1min` is `'60sec`, a second `'1sec` is e.g. `'1000ms`. Hence literals
 use a `'` prefix and are typed through their unit of measure.
 
 ### Compound Values
-Compound values aka records, structs or tuples are declared as a `data` type.
+Compound values a.k.a. records, structs or tuples are declared as a `data` type.
 
 		data Rect :: (Length width, Length height)
 
@@ -90,12 +90,12 @@ possible values to model enumerations. Classic enumerations are 0-tuples:
 
 `Bool`eans are derived from unit `()`, allowing for two values: `False` and `True`
 where in case of a list `False` will also be associated with index `'0` and
-`True` with index `'1`. Dimensions based on unit can also ommit the `()` as in:
+`True` with index `'1`. Dimensions based on unit can also omit the `()` as in:
 
 		dimension Fruits :: = { Apples, Pears }
 
-The possible `Fruits` are `Apples` and `Pears`. Compound types can be restricted 
-to a enumeration in a similar way:
+The possible `Fruits` are `Apples` and `Pears`, this time with _set_ semantics. 
+Compound types can be restricted to a enumeration in a similar way:
 
 		data Planet :: (Kilogram weight, Meters radius) = { 
 			Mercury ('3.303e+23kg, '2.4397e6m),
@@ -108,8 +108,8 @@ to a enumeration in a similar way:
 			Neptune ('1.024e+26kg, '2.4746e7m)
 		}
 
-All the `Planet`s in our solar system are given as a set of possible values with 
-their `weight` and `radius`.
+All the `Planet`s in our solar system are given as a _set_ of possible values 
+with their `weight` and `radius`.
 
 ### Literals
 There are three types of value literals; the mostly used conceptual value 
@@ -146,7 +146,7 @@ way humans are used to write them:
 		Date imagine = "2971-10-11"
 
 The `Point` and `Date` example illustrates that textual literals can be used for 
-any compound type (when defined properly, <a href="#formats">formats</a> will
+any compound type (when defined appropriate, <a href="#formats">formats</a> will
 go into the details later). The type of textual literals is inferred from the 
 context, such as the variable, parameter or return type.
 
@@ -184,7 +184,7 @@ operators are just short hands for function calls.
 		fn mul [*] :: Int a -> Int b -> Int
 		
 The `plus` function is bound to `+` operator, the `mul` function to `*`
-(within each namespace this _alias_ has to be unambigious).
+(within each namespace this _alias_ has to be unambiguous).
 
 		'1 + '2 * '3 == ('1 + '2) * '3
 		
@@ -258,7 +258,7 @@ functions a _anonymous_ in the sense that their original name is unknown.
 
 A function that takes an `Int` and computes a `Bool` has a type of `(Int -> Bool)`.
 
-		fn even :: (Int n -> Bool) = n mod '2 == 0
+		fn even :: (Int n -> Bool) = n mod '2 == '0
 
 The `even` function has this type and could be passed as an argument to another
 function:
