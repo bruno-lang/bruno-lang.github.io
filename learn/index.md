@@ -150,7 +150,7 @@ any compound type (when defined properly, <a href="#formats">formats</a> will
 go into the details later). The type of textual literals is inferred from the 
 context, such as the variable, parameter or return type.
 
-### Default Values
+### Initial Values _(Default Values)_
 There is no _null_ pointer/reference/value. All values are initialised with zero 
 or the lowest possible value should they not be specified otherwise. This is 
 somewhat a non-issue as all data starts from literals. One either gets a value
@@ -258,14 +258,14 @@ functions a _anonymous_ in the sense that their original name is unknown.
 
 A function that takes an `Int` and computes a `Bool` has a type of `(Int -> Bool)`.
 
-		fn even :: (Int n -> Bool) = n mod 2 == 0
+		fn even :: (Int n -> Bool) = n mod '2 == 0
 
 The `even` function has this type and could be passed as an argument to another
 function:
 
 		fn is :: Int n -> (Int -> Bool) f -> Bool = f n
 
-`is` might not be very useful in practice but illustrates good how functions can 
+`is` might not be very useful in practice but illustrates well how functions can 
 be used as arguments:
 
 		'1 is even
