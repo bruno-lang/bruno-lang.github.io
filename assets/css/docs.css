@@ -61,9 +61,10 @@ content code {
 }
 
 content blockquote {
-	color: #073642;
+	color: #b58900;
 	text-align: justify;
-	font-family: "Source Sans Pro";
+	font-style: italic;
+	margin: 1.5em 4em;
 }
 
 content h1, content h2, content h3, content h4 {
@@ -77,7 +78,7 @@ content h1:first-child { position: fixed; background-color: white; width: 100%; 
 content h1:first-child + * { margin-top: 50px; }
 content h2 { margin-top: 3em; font-weight: bold; }
 content h3 { margin-top: 2em; }
-content h3 em { font-size: 12pt; font-weight: 300; font-style: normal; }
+content h4 em, content h3 em, content h2 em { font-size: 80%; font-weight: 300; font-style: normal; }
 
 code kw { color: #859900; }
 code lit { color: #2aa198; }

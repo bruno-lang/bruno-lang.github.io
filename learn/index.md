@@ -111,6 +111,12 @@ Compound types can be restricted to a enumeration in a similar way:
 All the `Planet`s in our solar system are given as a _set_ of possible values 
 with their `weight` and `radius`.
 
+### Constants
+
+#### Atoms _("untyped" constants)_
+Atoms are dimensionless values, zero-tuples. Different constants are defined by
+`` ` `` followed by any sequence of characters except whitespace.
+
 ### Literals
 There are three types of value literals; the mostly used conceptual value 
 literals for simple values as scalars, characters and user defined units and 
@@ -156,10 +162,15 @@ or the lowest possible value should they not be specified otherwise. This is
 somewhat a non-issue as all data starts from literals. One either gets a value
 as an argument or starts from a literal.
 
+When a value is in fact unknown depending on runtime conditions this is made
+explicit by using the optional type variant build into the language:
+
+		Point? maybe-a-point = "1:2-4:5" point-of-intersection-with "3:2-6:2"
+
+
 ## Functions
-Functions are functions, hence pure and statically resolved and are
-referentially transparent. All functions are understood as _extension functions_
-on the type of the 1st parameter.
+Functions are functions, thus pure, statically resolved and referentially transparent. 
+All functions are understood as _extension functions_ on the type of the 1st parameter.
 
 		fn double :: Int a -> Int = a * '2
 
@@ -240,13 +251,13 @@ The primary way to _loop_ is to use recursive functions:
 			\ n == '0 \= '1
 			\         \= n * factorial (n - '1)
 
-All tail recursive functions will use tail call elimination, hence not create/use
-stack frames. Due to referential transparency and known commutativity of some
-functions (decided on AST operation) the multiplication in the above example
-could also be written vice versa `factorial (n - '1) * n` and still be executed
-without consuming stack frames as `*` is such a known operation.
+All tail recursive functions will use tail call elimination, thus not create/use
+stack frames. Due to referential transparency and _annotated_ commutativity of 
+appropriate functions the multiplication in the above example could also be 
+written vice versa `factorial (n - '1) * n` and still be executed without 
+consuming stack frames as `*` is such an _annotated_ operation.
 
-Another construct is planed for loops that do something several times or with
+Another construct is planed for loops that _do_ something several times or with
 several elements of a collection (imperative _for_ loops). The goal is to find a
 declarative way that does not require accessible (named) mutable state, as 
 counters or the current element in a _foreach_ loop.
@@ -288,16 +299,24 @@ abstraction can also be made first class as operations will soon show.
 ### Type Schemas _(Generics - abstract over types)_
 
 
-## Side Effects
-
-### Machines
+## Effects _(a.k.a. Side Effects)_
 
 ### Transients
 
-## Type System
-- mandatory type annotations, inference where unambiguous
+### Streams
 
-### Specialisation - Generalisation
+### Machines _(Processes)_
+
+### Channels _(Message Passing)_
+
+
+## Types _(Type System)_
+(list sorts of types here)
+
+### Specialisation <-> Generalisation
+
+### Type Inference
+- mandatory type annotations, inference where unambiguous
 
 #### Variance 
 
@@ -305,15 +324,17 @@ abstraction can also be made first class as operations will soon show.
 
 ### Formats
 
-## Modularity
+## Modules
 
 ### Namespaces
 
-### Modules
-
 ### Libraries
 
-## Advanced Features
+## Advanced Language Features
 
 ### Abstarct Synatx Tree
+
+### Procedures _(Hygienic Macros)_
+
+### Eager Expressions _(Compile-Time Evaluation)_
 
