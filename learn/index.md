@@ -114,8 +114,16 @@ with their `weight` and `radius`.
 ### Constants
 
 #### Atoms _("untyped" constants)_
-Atoms are dimensionless values, zero-tuples. Different constants are defined by
-`` ` `` followed by any sequence of characters except whitespace.
+Atoms are dimensionless values, conceptually zero-tuples of type `Atom`. Different 
+constants are defined by `` ` `` followed by any sequence of characters except 
+whitespace.
+
+		`a `atom `+ `/ `->
+		
+All of the above are valid atoms. Any two atoms are equal if their sequence of 
+characters is. Besides being equal with another atom or not atoms do not have a 
+value. They are therefore mostly used as keys. As such they are important for the 
+declarations of ASTs.
 
 ### Literals
 There are three types of value literals; the mostly used conceptual value 
@@ -330,11 +338,14 @@ abstraction can also be made first class as operations will soon show.
 
 ### Libraries
 
-## Advanced Language Features
+## Advanced Concepts
 
 ### Abstarct Synatx Tree
 
+#### Tagged Forms
+
 ### Procedures _(Hygienic Macros)_
 
-### Eager Expressions _(Compile-Time Evaluation)_
+#### Call-Site Inlining
 
+### Eager Expressions _(Compile-Time Evaluation)_
