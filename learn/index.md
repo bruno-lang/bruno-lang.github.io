@@ -113,18 +113,6 @@ with their `weight` and `radius`.
 
 ### Constants
 
-#### Atoms _("untyped" constants)_
-Atoms are dimensionless values, conceptually zero-tuples of type `Atom`. Different 
-constants are defined by `` ` `` followed by any sequence of characters except 
-whitespace.
-
-		`a `atom `+ `/ `->
-		
-All of the above are valid atoms. Any two atoms are equal if their sequence of 
-characters is. Besides being equal with another atom or not atoms do not have a 
-value. They are therefore mostly used as keys. As such they are important for the 
-declarations of ASTs.
-
 ### Literals
 There are three types of value literals; the mostly used conceptual value 
 literals for simple values as scalars, characters and user defined units and 
@@ -163,6 +151,19 @@ The `Point` and `Date` example illustrates that textual literals can be used for
 any compound type (when defined appropriate, <a href="#formats">formats</a> will
 go into the details later). The type of textual literals is inferred from the 
 context, such as the variable, parameter or return type.
+
+#### Atoms _("untyped" constant literals)_
+Atoms are dimensionless values, conceptually zero-tuples of type `Atom`. Different 
+constants are defined by `` ` `` followed by any sequence of characters except 
+whitespace.
+
+		`a `atom `+ `/ `->
+		
+All of the above are valid atoms. Any two atoms are equal if their sequence of 
+characters is. Besides being equal with another atom or not atoms do not have a 
+value. They are therefore mostly used as keys. As such they are important for the 
+declarations of ASTs.
+
 
 ### Initial Values _(Default Values)_
 There is no _null_ pointer/reference/value. All values are initialised with zero 
