@@ -86,6 +86,7 @@ code op { color: #dc322f; }
 code def { color: #268bd2; }
 code as { color: #dc322f; }
 code uom { color: #b58900; }
+code atom { color: #d33682; }
 
 toc {
 	position: fixed;
