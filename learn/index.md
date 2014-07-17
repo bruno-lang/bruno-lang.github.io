@@ -338,7 +338,7 @@ abstraction can also be made first class as operations will soon show.
 
 ### Libraries
 
-## Advanced Concepts
+## Advanced Techniques
 
 ### Abstarct Synatx Tree
 
