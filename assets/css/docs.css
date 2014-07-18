@@ -38,12 +38,6 @@ content {
 content p {
 	word-spacing: 0.07em
 }
-content .abstract {
-	padding: 0 3em;
-	font-weight: 300;
-	font-size: 110%;
-}
-content .abstract b, content .abstract code { font-weight: 400; }
 content pre {
 	border-radius: 2px;
 	padding: 10px;
@@ -52,19 +46,26 @@ content pre {
 }
 content pre code {
 	color: black;
-	background-color: transparent;
 }
 
-content code {
+content p code {
 	color: #565A9D;
   background-color: #fdf6e3;
+	white-space: nowrap;
+	padding: 0 3px;
 }
 
 content blockquote {
 	color: #6c71c4;
-	text-align: justify;
 	font-style: italic;
 	margin: 1.5em 4em;
+}
+content blockquote em {
+	font-weight: 700;
+}
+
+content h1 + blockquote, content h1 + blockquote + blockquote {
+	text-align: center;
 }
 
 content h1, content h2, content h3, content h4 {
@@ -94,5 +95,30 @@ toc {
 	margin-left: 600px;
 	z-index: 1;
 	color: #FFD36C;	
+	display: none;
+}
+
+.sidenote {
+	position: absolute;
+	right: -220px;
+	width: 200px;
+	margin: 0;
+	padding: 0;
+	font-family: "Source Sans Pro";
+	font-size: small;
+	text-align: justify;
+}
+.sidenote li {
+	list-style: none;
+	margin-top: -2em;
+}
+.sidenote li > p {
+	margin: 0;
+}
+.sidenote sup {
+	font-family: Georgia;
+	font-weight: bold;
+}
+.sidenote .reversefootnote {
 	display: none;
 }

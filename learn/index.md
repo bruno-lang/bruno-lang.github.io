@@ -5,16 +5,13 @@ title:  "bruno in a Nutshell"
 
 # **bruno** in a Nutshell
 
-<div class='abstract'>
-At a first glance <b>bruno</b> appears like
+> *bruno* is a novel likewise classic programming system that, in simplified terms,
+> could illogical be described as _declarative programming with data, 
+> extension functions and concurrent processes._
+> Even though there is a strong influence of FP bruno mostly has its own twist and 
+> borrows from different paradigms without being a multi-paradigm language. 
+> Look at it with a fresh and open mind as the language also has several novel ideas.
 
-<b>declarative programming with data and extension functions</b>.
-
-While there is a strong influence of FP bruno often has its own twist and picks 
-from different paradigms without being a multi-paradigm language. 
-It will be the best to look at it with a fresh and open mind as the language
-also has several novel ideas.
-</div>
 
 ## Objectives
 - correctness
@@ -23,7 +20,7 @@ also has several novel ideas.
 - the real power is not having the power
 
 ## Data
-Values are values, thus immutable. Data is only given through values.
+Values are values, thus immutable. All data is represented as values.
 
 ### Simple Values
 Two types of simple values, `dimension`s and `unit`s. The distinction between 
@@ -33,8 +30,8 @@ will go into the details).
 		dimension Time [T] :: Int '0..
 
 `Time` is a specialisation of a integral number `>= 0` measured in `T`. While the
-dimension `Time` describes a kind of value it is no meaningful value in itself.
-Therefore some `unit`s are introduced:
+dimension `Time` describes a kind of value _time_ as such has no meaningful value 
+itself. Therefore some `unit`s are introduced:
 
 		unit Minutes [min] :: Time
 		unit Seconds [sec] :: Time
@@ -53,7 +50,7 @@ A minute `'1min` is `'60sec`, a second `'1sec` is e.g. `'1000ms`. Hence literals
 use a `'` prefix and are typed through their unit of measure.
 
 ### Compound Values
-Compound values a.k.a. records, structs or tuples are declared as a `data` type.
+Compound values a.k.a. records, structs or tuples are declared as a `data` types.
 
 		data Rect :: (Length width, Length height)
 
@@ -80,7 +77,7 @@ A `Team` is a _set_ of `Member`s. Maps are nothing else than sets of tuples:
 
 		data Dict :: {(Word, Translation)}
 
-A `Dict` is a set of `(Word, Translation)` tuples.
+A `Dict` is a set of `(Word, Translation)` twin-tuples (pairs).
 
 ### Enumerations
 Both simple and compound value types can be initialised with a list or set of
@@ -145,7 +142,7 @@ way humans are used to write them:
 
 		String msg = "hello world!"
 		Point p = "1:2"
-		Date imagine = "2971-10-11"
+		Date imagine = "1971-10-11"
 
 The `Point` and `Date` example illustrates that textual literals can be used for 
 any compound type (when defined appropriate, <a href="#formats">formats</a> will
@@ -171,14 +168,19 @@ or the lowest possible value should they not be specified otherwise. This is
 somewhat a non-issue as all data starts from literals. One either gets a value
 as an argument or starts from a literal.
 
-When a value is in fact unknown depending on runtime conditions this is made
-explicit by using the optional type variant build into the language:
+When a value is in fact _unknown_ depending on runtime conditions this is made
+explicit by using the optional type _variant_ `?` build into the language:
 
-		Point? maybe-a-point = "1:2-4:5" point-of-intersection-with "3:2-6:2"
+		Line a = "1:2-4:5"
+		Line b = "3:2-6:2"
+		Point? maybe-point = a point-of-intersection-with b
 
+A `Point?` is either a `Point` or _nothing_.
 
 ## Functions
-Functions are functions, thus pure, statically resolved and referentially transparent. 
+[^1]: Strictly speaking, there are _types_ that have effects and functions upon those consequently have as well - but as this is explicitly in the types the compiler can and does tell them apart and applies different rules to them.
+
+Functions are functions, thus pure, statically resolved and referentially transparent[^1]. 
 All functions are understood as _extension functions_ on the type of the 1st parameter.
 
 		fn double :: Int a -> Int = a * '2
@@ -204,16 +206,16 @@ operators are just short hands for function calls.
 		fn mul [*] :: Int a -> Int b -> Int
 		
 The `plus` function is bound to `+` operator, the `mul` function to `*`
-(within each namespace this _alias_ has to be unambiguous).
+(within each namespace this operator _alias_ has to be unambiguous).
 
 		'1 + '2 * '3 == ('1 + '2) * '3
 		
 If not set in parentheses `'1 + '2 * '3` will be evaluated left to right resulting
-in `'9` not `'7`. 
+in `'9`, not `'7`.
 
-> Instead of dealing with operator precedence (what is really hard and most of 
-> all ineffectual to memorise) only parentheses have to applied correctly 
-> (what is really simple). Operators are really just a name alias.
+>  Instead of dealing with operator precedence (what is really hard and most of 
+> all ineffectual to memorise) only parentheses have to be applied correctly 
+> (what is easy to apply and check and memorise). So operators are really just a name alias.
 
 ### Branches and Cases
 There is a single control flow construct directly embedded in a function 
@@ -226,12 +228,14 @@ functions and the `where` clause are used to avoid nesting, as shown soon.
 
 The `min`imum of two values `a` and `b` is `a` in case `a < b` otherwise `b`.
 The cases `\ ... \` are checked in order of appearance. The last case has to
-be the universal (true'ish) condition. For enumeration alternatively all
-values can be covered. Each case is implemented by an expression.
+be the universal (true'ish) condition. For enumerations alternatively all
+values can be covered. 
 
 		fn show :: Bool b -> String
 			\ False \= "false"
 			\ True  \= "true"
+
+Each case is implemented by an expression (the language has literally no statements).
 
 ### Local Variables _(Where-Clause)_
 A function body is one expression, sometimes split into cases. As there are no
@@ -251,7 +255,8 @@ The function `distance` calculates the distance between 2 points `a` and `b`.
 Local variables like `dx`, `dy`, `dx-square` and `dy-square` can  be 
 declared based on the function's parameters and any of the other variables. 
 Thanks to referential transparency order of declaration is irrelevant and
-can be done for best readability. 
+can be chosen for best readability. Also the necessity of computation (order or
+at all) of local variables is no longer a programmer's burden.
 
 ### Loops
 The primary way to _loop_ is to use recursive functions:
