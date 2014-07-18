@@ -157,7 +157,7 @@ Atoms are dimensionless values, conceptually zero-tuples of type `Atom`. Differe
 constants are defined by `` ` `` followed by any sequence of characters except 
 whitespace.
 
-		[`a `atom `+ `/ `->]
+		[`a `atom `+ `/ `-> ]
 		
 The above is a list of valid atoms. Any two atoms are equal if their sequence
 of characters are. Atoms do not have a value besides being equal with another atom or 
