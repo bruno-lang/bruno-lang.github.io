@@ -1,15 +1,16 @@
-@import url(http://fonts.googleapis.com/css?family=Cousine:400,700,400italic,700italic);
 @import url(http://fonts.googleapis.com/css?family=Source+Code+Pro:300,400,600,700);
 @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic);
+@import url(http://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic,700italic);
 
 html {
 	background-color: white;
 }
 body {
-	font-family: Georgia, "Source Sans Pro";
+	font-family: "PT Serif", "Libre Baskerville", serif;
 	margin: 0;
 	padding: 1em 0;
 	color: #333;
+	font-size: 16px;
 }
 code, pre {
 	font-family: "Source Code Pro";
@@ -36,8 +37,15 @@ content {
 	position: relative;
 }
 content p {
-	word-spacing: 0.07em
+	line-height: 1.4em; 
 }
+content sup {
+	line-height: 1em;
+}
+content sup a {
+	text-decoration: none;
+	color: blue;
+} 
 content pre {
 	border-radius: 2px;
 	padding: 10px;
@@ -61,11 +69,13 @@ content blockquote {
 	margin: 1.5em 4em;
 }
 content blockquote em {
-	font-weight: 700;
+	font-weight: bold;
 }
 
 content h1 + blockquote, content h1 + blockquote + blockquote {
 	text-align: center;
+	color: #073642;
+	font-size: 14px;
 }
 
 content h1, content h2, content h3, content h4 {
@@ -74,8 +84,9 @@ content h1, content h2, content h3, content h4 {
 content h2 { font-size: 1.4em; }
 content h3 { font-size: 1.25em; }
 content h4 { font-size: 1.125em; }
-content h1 { font-size: 1.5em; font-family: Cousine; }
-content h1:first-child { position: fixed; background-color: white; width: 100%; margin: 0; top: 0; padding: 0.75em 0; }
+content h1 { font-size: 1.6em; font-weight: normal; font-family: "PT Serif", serif; }
+content h1 em { font-style: normal; font-weight: bold; }
+content h1:first-child { position: fixed; background-color: white; width: 100%; margin: 0; top: 0; padding: 0.5em 0; }
 content h1:first-child + * { margin-top: 50px; }
 content h2 { margin-top: 3em; font-weight: bold; }
 content h3 { margin-top: 2em; }
@@ -116,9 +127,10 @@ toc {
 	margin: 0;
 }
 .sidenote sup {
-	font-family: Georgia;
+	font-family: "PT Serif", serif;
 	font-weight: bold;
 }
 .sidenote .reversefootnote {
 	display: none;
 }
+

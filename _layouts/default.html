@@ -34,11 +34,13 @@ $("content pre code").html(highlight);
 
 $("content p code").html(highlight);
 
-$(".footnotes li").each(function(n, e) { $("#"+e.id.replace("fn", "fnref\\")).before($("<ol class='sidenote'></ol>").html(e)); });
-$(".sidenote li p").each(function(n, e) { 
-	var id = $(this).parent().attr("id");
-	$(this).prepend("<sup>"+id.substring(id.indexOf(":")+1)+" </sup>"); 
-});
+if ($(window).width() > $("page content").get(0).offsetWidth + (2*220)) { 
+	$(".footnotes li").each(function(n, e) { $("#"+e.id.replace("fn", "fnref\\")).before($("<ol class='sidenote'></ol>").html(e)); });
+	$(".sidenote li p").each(function(n, e) { 
+		var id = $(this).parent().attr("id");
+		$(this).prepend("<sup>"+id.substring(id.indexOf(":")+1)+" </sup>"); 
+	});
+}
 	</script>
   </body>
 </html>

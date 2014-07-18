@@ -3,7 +3,7 @@ layout: default
 title:  "bruno in a Nutshell"
 ---
 
-# **bruno** in a Nutshell
+# _bruno_ in a Nutshell
 
 > *bruno* is a novel likewise classic programming system that, in simplified terms,
 > could illogical be described as _declarative programming with data, 
