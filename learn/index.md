@@ -157,11 +157,11 @@ Atoms are dimensionless values, conceptually zero-tuples of type `Atom`. Differe
 constants are defined by `` ` `` followed by any sequence of characters except 
 whitespace.
 
-		`a `atom `+ `/ `->
+		[`a `atom `+ `/ `->]
 		
-All of the above are valid atoms. Any two atoms are equal if their sequence of 
-characters is. Besides being equal with another atom or not atoms do not have a 
-value. They are therefore mostly used as keys. As such they are important for the 
+The above is a list of valid atoms. Any two atoms are equal if their sequence
+of characters are. Atoms do not have a value besides being equal with another atom or 
+not. They are therefore mostly used as keys. As such they are important for the 
 declarations of ASTs.
 
 
