@@ -5,12 +5,12 @@ title:  "bruno in a Nutshell"
 
 # _bruno_ in a Nutshell
 
-> *bruno* is a novel likewise classic programming system that, in simplified terms,
-> could illogical be described as _declarative programming with data, 
-> extension functions and concurrent processes._
+> bruno is a novel likewise classic programming system that, in simplified terms,
+> could illogical be condensed to _declarative programming with data and extension 
+> functions, concurrent processes and message passing._
 > Even though there is a strong influence of FP bruno mostly has its own twist and 
 > borrows from different paradigms without being a multi-paradigm language. 
-> Look at it with a fresh and open mind as the language also has several novel ideas.
+> Look at it with a fresh and open mind as the language has several novel ideas.
 
 
 ## Objectives

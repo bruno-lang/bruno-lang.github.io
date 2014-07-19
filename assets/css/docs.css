@@ -58,13 +58,16 @@ content pre code {
 
 content p code {
 	color: #565A9D;
-  background-color: #fdf6e3;
 	white-space: nowrap;
 	padding: 0 3px;
 }
 
+content a[href^="#"] {
+	color: #268bd2;
+	text-decoration: none;
+}
+
 content blockquote {
-	color: #6c71c4;
 	font-style: italic;
 	margin: 1.5em 4em;
 }
@@ -72,22 +75,32 @@ content blockquote em {
 	font-weight: bold;
 }
 
+/* abstract */
 content h1 + blockquote, content h1 + blockquote + blockquote {
-	text-align: center;
-	color: #073642;
+	text-align: justify;
+	color: black;
 	font-size: 14px;
+	font-style: normal;
+}
+content h1 + blockquote em {
+	font-weight: normal;
 }
 
-content h1, content h2, content h3, content h4 {
-	font-weight: normal; font-family: "Source Code Pro"; color: white; color: black;
+content h3, content h4 {
+	font-weight: normal; font-family: "Source Code Pro"; color: black;
 }
-content h2 { font-size: 1.4em; }
+content h1 { font-size: 1.75em; font-weight: normal; }
+content h2 { font-size: 1.5em; }
 content h3 { font-size: 1.25em; }
 content h4 { font-size: 1.125em; }
-content h1 { font-size: 1.6em; font-weight: normal; font-family: "PT Serif", serif; }
 content h1 em { font-style: normal; font-weight: bold; }
-content h1:first-child { position: fixed; background-color: white; width: 100%; margin: 0; top: 0; padding: 0.5em 0; }
-content h1:first-child + * { margin-top: 50px; }
+content h1:first-child { position: fixed; width: 100%; margin: 0; top: 0; padding: 0.5em 0 1.5em 0; 
+
+	background: linear-gradient(to bottom, rgba(255,255,255,1),  rgba(255,255,255,0.1));
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,1)),to(rgba(255,255,255,0.1)), color-stop(.6,rgba(255,255,255,0.8)));
+	background-image: -moz-linear-gradient(rgba(255,255,255,1) 60%, rgba(255,255,255,0.1) 100%);
+}
+content h1:first-child + * { margin-top: 60px; }
 content h2 { margin-top: 3em; font-weight: bold; }
 content h3 { margin-top: 2em; }
 content h4 em, content h3 em, content h2 em { font-size: 80%; font-weight: 300; font-style: normal; }
