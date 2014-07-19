@@ -5,7 +5,7 @@ title:  "bruno in a Nutshell"
 
 # _bruno_ in a Nutshell
 
-> bruno is a novel likewise classic programming system that, in simplified terms,
+> bruno is a novel likewise classic programming system that, in simplified terms it
 > could illogical be condensed to _declarative programming with data and extension 
 > functions, concurrent processes and message passing._
 > Even though there is a strong influence of FP bruno mostly has its own twist and 
@@ -215,7 +215,7 @@ in `'9`, not `'7`.
 
 >  Instead of dealing with operator precedence (what is really hard and most of 
 > all ineffectual to memorise) only parentheses have to be applied correctly 
-> (what is easy to apply and check and memorise). So operators are really just a name alias.
+> (what is easy to apply, check and memorise). So operators are really just a name alias.
 
 ### Branches and Cases
 There is a single control flow construct directly embedded in a function 

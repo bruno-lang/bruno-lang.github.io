@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic,700italic);
+@import url(http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic);
 
 html {
 	background-color: #c3ccd1;
@@ -16,7 +16,7 @@ body {
 	border-radius: 0.18cm;
 	min-height: 21cm;
 	position: relative;
-	font-family: "PT Serif", serif;
+	font-family: Lora, serif;
 	font-weight: 400;
 	color: #fcd937;
 	margin: auto;
@@ -28,8 +28,8 @@ body {
 	text-align: center;
 }
 
-.cover h2 {	font-weight: 400; margin-top: -1.5em; }
-.cover h1 { font-weight: bold; font-size: 128px; margin: 1cm auto 0 auto; padding-top: 3cm; }
+.cover h2 {	font-weight: normal; margin-top: -1.5em; letter-spacing: -0.03em; font-size: 1.44em; }
+.cover h1 { font-weight: normal; font-size: 128px; margin: 1cm auto 0 auto; padding-top: 3cm; letter-spacing: -0.03em; }
 
 hr { border-width: 0; border-top:1px solid #888; height: 0; }
-q {font-style: normal; font-family: "PT Serif", serif; }
+q {font-style: normal; font-family: Lora, serif; }
