@@ -21,9 +21,9 @@ page {
 	border-radius: 4px;
 	display: block;
 	margin: 0 auto;
-	width: 640px;
-	padding-right: 245px;
-	padding-left: 150px;
+	width: 600px;
+	padding-right: 230px;
+	padding-left: 140px;
 	padding-top: 2em;
 	background-color: white;
 }
@@ -42,7 +42,7 @@ content {
 	position: relative;
 }
 content p {
-	line-height: 1.4em; 
+	line-height: 1.4; 
 }
 content sup {
 	line-height: 1em;
@@ -87,6 +87,7 @@ content h1 + blockquote, content h1 + blockquote + blockquote {
 	color: black;
 	font-size: 14px;
 	font-style: normal;
+	margin: 0;
 }
 content h1 + blockquote em {
 	font-weight: normal;
@@ -95,18 +96,19 @@ content h1 + blockquote em {
 content h3, content h4 {
 	font-weight: normal; font-family: "Source Code Pro"; color: black;
 }
-content h1 { font-size: 1.75em; font-weight: normal; }
+content h1 { font-size: 2.4em; font-weight: normal; }
 content h2 { font-size: 1.5em; }
 content h3 { font-size: 1.25em; }
 content h4 { font-size: 1.125em; }
 content h1 em { font-style: normal; font-weight: bold; }
-content h1:first-child { position: fixed; width: 640px; margin: 0; top: 0; padding: 1.5em 0; 
+content h1:first-child { position: fixed; width: 600px; margin: 0; top: 0; padding: 0; 
   letter-spacing: -0.03em;
   background: linear-gradient(to bottom, rgba(255,255,255,1),  rgba(255,255,255,0));
 	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,1)),to(rgba(255,255,255,0)), color-stop(.8,rgba(255,255,255,0.8)));
 	background-image: -moz-linear-gradient(rgba(255,255,255,1) 60%, rgba(255,255,255,0) 100%);
+	line-height: 4;
 }
-content h1:first-child + * { padding-top: 50px; }
+content h1:first-child + * { padding-top: 100px; }
 content h2 { margin-top: 3em; font-weight: bold; letter-spacing: -0.03em; }
 content h3 { margin-top: 2em; }
 content h4 em, content h3 em, content h2 em { font-size: 80%; font-weight: 300; font-style: normal; }
@@ -121,14 +123,14 @@ code atom { color: #d33682; }
 
 toc {
 	position: fixed;
-	top: 15px;
-	margin-left: 660px;
+	top: 0;
+	margin-left: 630px;
 	z-index: 1;
 	font-size: 11px;
 }
-toc button { width: 200px; background-color: white; border: 0; cursor: pointer; }
-toc.toc-down button i.fa-chevron-down:before {
-	content: "\f077";
+toc a.toc-toggle { width: 32px; line-height: 32px; border: 0; cursor: pointer; font-family: Lora; display: inline-block; font-size: 28px; font-weight: normal; display: absolute; margin-left: 210px; margin-top: 10px; }
+toc.toc-down .toc-toggle i.fa-bars:before {
+	color: white;
 }
 
 toc ol {
@@ -147,17 +149,18 @@ toc ol li a {
 	font-weight: 400;
 }
 toc li.toc-H2 a { font-weight: 600; }
-toc li.toc-H3 { padding-left: 1em; }
-toc li.toc-H4 { padding-left: 2em; }
+toc li.toc-H2 { padding-top: 0.7em; }
+toc li.toc-H3 { padding-left: 0em; }
+toc li.toc-H4 { padding-left: 1em; }
 toc li em, toc li.toc-H1 { display: none; }
 
 .sidenote {
 	position: absolute;
-	right: -240px;
-	width: 240px;
+	right: -220px;
+	width: 210px;
 	margin: 0;
 	font-family: "Source Sans Pro";
-	font-size: small;
+	font-size: 0.76em;
 	text-align: justify;
 	z-index: 2;
 	padding: 0;
