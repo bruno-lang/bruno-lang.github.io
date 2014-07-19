@@ -1,14 +1,15 @@
 @import url(http://fonts.googleapis.com/css?family=Source+Code+Pro:300,400,600,700);
-@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic);
+@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic,700italic);
 @import url(http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic);
 
 html {
-	background-color: white;
+  background-color: #c3ccd1;
+	background-image: url(../img/noisy-2.png);
 }
 body {
 	font-family: Lora, serif;
 	margin: 0;
-	padding: 1em 0;
+	padding: 0 0 2em 0;
 	color: #333;
 	font-size: 16px;
 }
@@ -20,7 +21,11 @@ page {
 	border-radius: 4px;
 	display: block;
 	margin: 0 auto;
-	width: 40em;
+	width: 640px;
+	padding-right: 245px;
+	padding-left: 150px;
+	padding-top: 2em;
+	background-color: white;
 }
 
 footer {
@@ -95,13 +100,14 @@ content h2 { font-size: 1.5em; }
 content h3 { font-size: 1.25em; }
 content h4 { font-size: 1.125em; }
 content h1 em { font-style: normal; font-weight: bold; }
-content h1:first-child { position: fixed; width: 100%; margin: 0; top: 0; padding: 0.5em 0 1.5em 0; 
-	background: linear-gradient(to bottom, rgba(255,255,255,1),  rgba(255,255,255,0));
-	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,1)),to(rgba(255,255,255,0)), color-stop(.6,rgba(255,255,255,0.8)));
+content h1:first-child { position: fixed; width: 640px; margin: 0; top: 0; padding: 1.5em 0; 
+  letter-spacing: -0.03em;
+  background: linear-gradient(to bottom, rgba(255,255,255,1),  rgba(255,255,255,0));
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,1)),to(rgba(255,255,255,0)), color-stop(.8,rgba(255,255,255,0.8)));
 	background-image: -moz-linear-gradient(rgba(255,255,255,1) 60%, rgba(255,255,255,0) 100%);
 }
-content h1:first-child + * { margin-top: 70px; }
-content h2 { margin-top: 3em; font-weight: bold; }
+content h1:first-child + * { padding-top: 50px; }
+content h2 { margin-top: 3em; font-weight: bold; letter-spacing: -0.03em; }
 content h3 { margin-top: 2em; }
 content h4 em, content h3 em, content h2 em { font-size: 80%; font-weight: 300; font-style: normal; }
 
@@ -116,25 +122,51 @@ code atom { color: #d33682; }
 toc {
 	position: fixed;
 	top: 15px;
-	margin-left: 600px;
+	margin-left: 660px;
 	z-index: 1;
-	color: #FFD36C;	
-	display: none;
+	font-size: 11px;
 }
+toc button { width: 200px; background-color: white; border: 0; cursor: pointer; }
+toc.toc-down button i.fa-chevron-down:before {
+	content: "\f077";
+}
+
+toc ol {
+	margin: 0; padding: 0; display: none;
+}
+toc.toc-down ol {
+	display: inherit;
+}
+toc ol li {
+	list-style: none;
+}
+toc ol li a {
+	color: blue;
+	text-decoration: none;
+	font-family: "Source Sans Pro";
+	font-weight: 400;
+}
+toc li.toc-H2 a { font-weight: 600; }
+toc li.toc-H3 { padding-left: 1em; }
+toc li.toc-H4 { padding-left: 2em; }
+toc li em, toc li.toc-H1 { display: none; }
 
 .sidenote {
 	position: absolute;
-	right: -220px;
-	width: 200px;
+	right: -240px;
+	width: 240px;
 	margin: 0;
-	padding: 0;
 	font-family: "Source Sans Pro";
 	font-size: small;
 	text-align: justify;
+	z-index: 2;
+	padding: 0;
 }
 .sidenote li {
+	background-color: white;
+	padding: 20px;
 	list-style: none;
-	margin-top: -2em;
+	margin-top: -42px;
 }
 .sidenote li > p {
 	margin: 0;

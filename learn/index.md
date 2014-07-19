@@ -5,7 +5,7 @@ title:  "bruno in a Nutshell"
 
 # _bruno_ in a Nutshell
 
-> bruno is a novel likewise classic programming system that, in simplified terms it
+> bruno is a novel likewise classic programming system; in simplified terms it
 > could illogical be condensed to _declarative programming with data and extension 
 > functions, concurrent processes and message passing._
 > Even though there is a strong influence of FP bruno mostly has its own twist and 
@@ -327,7 +327,7 @@ abstraction can also be made first class as operations will soon show.
 ## Types _(Type System)_
 (list sorts of types here)
 
-### Specialisation <-> Generalisation
+### Specialisation -- Generalisation
 
 ### Type Inference
 - mandatory type annotations, inference where unambiguous
@@ -338,7 +338,7 @@ abstraction can also be made first class as operations will soon show.
 
 ### Formats
 
-## Modules
+## Modules _(Artefacts)_
 
 ### Namespaces
 
