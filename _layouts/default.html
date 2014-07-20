@@ -24,7 +24,7 @@
 function highlight(_, html) {
    return html
 	.replace(/([a-z]+\s+)([-a-zA-Z0-9]+)(\s*(\[[^\]]+\]\s*)?::)/g, "$1<def>$2</def>$3")
-	.replace(/(unit|dimension|data|fn|op|protocol|notation|where|ratio|instances|system|machine|behaviour|val)/g, '<kw>$1</kw>')
+	.replace(/(unit|dimension|data|fn|op|protocol|notation|where|ratio|instances|system|machine|behaviour|val|proc)(\s|$)/g, '<kw>$1</kw>$2')
 	.replace(/("[^"]*"|'[^,. \)\]\t\n\r]+(\.[^,. \)\]\t\n\r]+)?|#[xdob]?[A-F0-9]+|`[^\s]+)/g, "<lit>$1</lit>")
 	.replace(/(`[^\s]+)/g, "<atom>$1</atom>")
 	.replace(/(\?[a-z0-9]+)/g, "<var>$1</var>")

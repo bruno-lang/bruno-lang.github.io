@@ -416,7 +416,21 @@ as the the operation `` `add `` bound to the variables `?a` and `?b`.
 
 #### Tagged Forms
 
-### Procedures _(Hygienic Macros)_
+### Procedures _("Hygienic Macros", Compile Time Expansion)_
+Procedures are compile-time inlined _functions_, hence do not create stack 
+frames and are therefore limited to non-recursive implementations. Otherwise a
+ procedure `proc` is similar to a function:
+
+		proc assoc [=>] :: K key -> V value -> (K, V) 
+			= (key, value)
+
+Any type `K` has a procedure `assoc` (or `=>`) that, given a `value` produces 
+the pair `(K, V)`. When called, for example to add an entry to a map
+
+		{ 'a' => '1, 'b' => '7 }
+
+the compiler will expand the implementation of the procedure's AST with the 
+actual arguments for each usage.
 
 #### Call-Site Inlining
 
