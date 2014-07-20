@@ -19,27 +19,27 @@ Basic correctness is still too challenging with both classic and modern programm
 systems while software attempts to solve problems of continually increasing size
 accompanied by an equally increase of complexity to control. It is my believe 
 that a programming system must enable **operative modularisation** and 
-**local reasoning** to let programmers succeed to divide and conquer large 
+**local reasoning** to let programmers succeed to divide and conquer large(r)
 software systems. 
 
 To ease reasoning the possibilities must be restrictable to be effectively simplified.
 Through expressing what is impossible the programmer limits what needs to be
 considered and understood. Impossibility allows to imply logical consequences and 
-thereby opens possibilities of simplification and optimisation[^0]. 
+thereby opens possibilities of simplification and optimisation[^why-restrictions]. 
 
-[^0]: An illustrating example of such a possibility is how pure functions allow
+[^why-restrictions]: An illustrating example of such a possibility is how pure functions allow
       to derive, reorder or memorise execution or fuse or inline expressions at 
-      compile time.
+      compile-time.
 
-When composing systems out of restricted specific constructs rather than 
-unrestricted generic ones application-, compiler- and VM-programmers share a 
+When composing systems out of restricted specific constructs (rather than 
+unrestricted generic ones) application-, compiler- and VM-programmers share a 
 more meaningful common language that communicates its possibilities and impossibilities
-along the tool chain. On the contrary the concreteness of the concepts must still
+along the tool chain. On the contrary the concreteness of the constructs must still
 maintain the ability to abstract ideas effectively and to specify low level 
 implementation details.
 
 On these grounds it is an overall theme in the bruno programming system to not 
-_extend_ but further restrict the more general to the more specific. 
+_extend_ but further and further restrict the more general to the more specific. 
 
 ## Data
 Values are values, thus immutable. All data is represented as values.
@@ -114,7 +114,7 @@ where in case of a list `False` will also be associated with index `'0` and
 		dimension Fruits :: = { Apples, Pears }
 
 The possible `Fruits` are `Apples` and `Pears`, this time with _set_ semantics. 
-Compound types can be restricted to a enumeration in a similar way:
+Compound types can be restricted to an enumeration in a similar way:
 
 		data Planet :: (Kilogram weight, Meters radius) = { 
 			Mercury ('3.303e+23kg, '2.4397e6m),
@@ -178,6 +178,8 @@ any compound type (when defined appropriate, <a href="#formats">formats</a> will
 go into the details later). The type of textual literals is inferred from the 
 context, such as the variable, parameter or return type.
 
+TODO set/list literals
+
 #### Atoms _("untyped" constant literals)_
 Atoms are dimensionless values, conceptually zero-tuples of type `Atom`. Different 
 constants are defined by `` ` `` followed by any sequence of characters except 
@@ -204,24 +206,25 @@ explicit by using the optional type _variant_ `?` build into the language:
 		Line b = "3:2-6:2"
 		Point? maybe-point = a point-of-intersection-with b
 
-A `Point?` is either a `Point` or _nothing_.
+A _optional_ `Point?` is either a `Point` or _nothing_.
 
 ## Functions
-[^1]: Strictly speaking, there are _types_ that have effects and functions upon 
+[^purity]: Strictly speaking, there are _types_ that have effects and functions upon 
       those consequently have as well - but as this is explicitly in the types 
       the compiler can and does tell them apart and applies different rules to them.
 
-Functions are functions, thus pure, statically resolved and referentially transparent[^1]. 
-All functions are understood as _extension functions_ on the type of the 1st parameter.
+Functions are functions, thus pure, statically resolved and referentially transparent[^purity]. 
+All functions are understood as _extension functions_ on the type of the 1st 
+parameter (here `a`).
 
 		fn double :: Int a -> Int = a * '2
 
-The `double` of instance `a` of type `Int` is `'2` times `a`, what is again an 
-`Int`. Now when using `double`
+The `double` of the _instance_ `a` of type `Int` is `'2` times `a`, what is again 
+an `Int`. Now when using `double`
 
 		fn quad :: Int a -> Int = a double double
 
-it is called as if it _extends_ the type `Int` and is a _"member function"_.
+it is called as if it _extends_ the type `Int` as a _"member function"_.
 To calculate 4 times of `a` it is `double`d once and that result, again an `Int`,
 is `double`d one more time equal to `(a double) double`. 
 
@@ -242,15 +245,16 @@ The `plus` function is bound to `+` operator, the `mul` function to `*`
 		'1 + '2 * '3 == ('1 + '2) * '3
 		
 If not set in parentheses `'1 + '2 * '3` will be evaluated left to right resulting
-in `'9`, not `'7`.
+in `'9`, not `'7`.[^operator-alias]
 
->  Instead of dealing with operator precedence (what is hard and most of 
-> all ineffectual to memorise) only parentheses have to be applied correctly 
-> (what is easy to apply, check and memorise). So operators are a name alias.
+[^operator-alias]: Instead of dealing with operator precedence (what is hard and 
+     most of all ineffectual to memorise) only parentheses have to be applied correctly 
+    (what is easy to apply, check and memorise). What might be mathematically 
+    unpleasant does significantly simply reasoning for the programmer.
 
 ### Branches and Cases
 There is a single control flow construct directly embedded in a function 
-declaration. This implies that the construct cannot be nested; extension
+declaration. This implies that the construct cannot be nested. Extension
 functions and the `where` clause are used to avoid nesting, as shown soon.
 
 		fn min :: Int a -> Int b -> Int 
@@ -287,7 +291,7 @@ Local variables like `dx`, `dy`, `dx-square` and `dy-square` can  be
 declared based on the function's parameters and any of the other variables. 
 Thanks to referential transparency order of declaration is irrelevant and
 can be chosen for best readability. Also the necessity of computation (order or
-at all) of local variables is no longer a programmer's burden.
+at all) of local variables is not the programmer's burden.
 
 ### Loops
 The primary way to _loop_ is to use recursive functions:
@@ -310,7 +314,7 @@ counters or the current element in a _foreach_ loop.
 ### First Class Functions
 Functions are also values, they can appear as parameter and return type of a 
 function declaration and be assigned to variables (`where`-clause). Such 
-functions a _anonymous_ in the sense that their original name is unknown.
+functions are _anonymous_ in the sense that their original name is _lost_.
 
 A function that takes an `Int` and computes a `Bool` has a type of `(Int -> Bool)`.
 
@@ -322,15 +326,28 @@ function:
 		fn is :: Int n -> (Int -> Bool) f -> Bool = f n
 
 `is` might not be very useful in practice but illustrates well how functions can 
-be used as arguments:
+be used as arguments, like in the following expression:
 
 		'1 is even
 
 Function types can be seen as a way to _abstract_ over functions. This kind of
-abstraction can also be made first class as operations will soon show.
+abstraction can also be made first class as operations will shortly show.
 
 ### Partial Application
-- mention tuple equivalence of parameters
+Another situation that results in function types is partial application of
+arguments of a function. Any number of arguments can be left out, each not 
+applied one is indicated by the underscore `_` _wildcard_.
+
+		(Int b -> Int) plus1 = '1 + _
+
+[^plus]: given `fn plus [+] ::` `Int a -> Int b -> Int`
+
+Instead of passing an actual argument to `+` the function is partially applied
+resulting in a function `plus1`[^plus] that takes (or _on_) the left out 
+argument `b` which itself than results in a value of type `Int`. 
+
+### Unified Arity
+(tuple equivalence of parameters)
 
 
 ## Abstractions
@@ -378,6 +395,24 @@ abstraction can also be made first class as operations will soon show.
 ## Advanced Techniques
 
 ### Abstarct Synatx Tree
+So far everything has been described in terms of the surface syntax. This syntax 
+builds upon the logical constructs of the language and allows to encode them
+more readable and concise. The language is however defined in terms of its 
+abstract syntax tree[^why-ast], a general `data`-structure. As such the AST is 
+vice versa expressed in the surface syntax in the form of usual expressions.
+Tagged forms are used to keep type safety as we will shortly see.
+
+[^why-ast]: The AST and why it is the model of the language deserves an article on its own. Digest: It enables better and easier tooling and allows the surface syntax to focus on expressing the usual well as the _unusual_ doesn't need to be possible to express as one always can escape to the AST. 
+
+To encode any expression directly as an AST elment the AST expression is _tagged_ 
+with the atom `` `ast ``. The `plus` function could be implemented as:
+
+		fn plus [+] :: Int a -> Int b -> Int 
+			= (`ast (`add ?a ?b))
+
+The `` `ast `` tag instructs the compiler to treat the 2nd element of the outer
+form as an AST element. Here this is again a tagged form implementing addition 
+as the the operation `` `add `` bound to the variables `?a` and `?b`.
 
 #### Tagged Forms
 

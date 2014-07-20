@@ -70,7 +70,6 @@ content p code {
 }
 
 content a[href^="#"] {
-	color: #268bd2;
 	text-decoration: none;
 }
 
@@ -122,6 +121,7 @@ code def { color: #268bd2; }
 code as { color: #dc322f; }
 code uom { color: #b58900; }
 code atom { color: #d33682; }
+code var { font-style: normal; color: #cb4b16; }
 
 toc {
 	position: fixed;
