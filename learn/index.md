@@ -7,17 +7,39 @@ title:  "bruno in a Nutshell"
 
 > bruno is a novel likewise classic programming system; in simplified terms it
 > could illogical be condensed to _declarative programming with data and extension 
-> functions, concurrent processes and message passing._
-> Even though there is a strong influence of FP bruno mostly has its own twist and 
-> borrows from different paradigms without being a multi-paradigm language. 
+> functions along with concurrent processes and message passing._
+> Even though there is a strong influence of functional programming bruno mostly 
+> has its own twist and borrows from different paradigms without being a 
+> multi-paradigm language. 
 > Look at it with a fresh and open mind as the language has several novel ideas.
 
 
-## Objectives
-- correctness
-- local reasoning
-- readability
-- the real power is not having the power
+## Objectives _(Preamble)_
+Basic correctness is still too challenging with both classic and modern programming
+systems while software attempts to solve problems of continually increasing size
+accompanied by an equally increase of complexity to control. It is my believe 
+that a programming system must enable **operative modularisation** and 
+**local reasoning** to let programmers succeed to divide and conquer large 
+software systems. 
+
+To ease reasoning the possibilities must be restrictable to be effectively simplified.
+Through expressing what is impossible the programmer limits what needs to be
+considered and understood. Impossibility allows to imply logical consequences and 
+thereby opens possibilities of simplification and optimisation[^0]. 
+
+[^0]: An illustrating example of such a possibility is how pure functions allow
+      to derive, reorder or memorise execution or fuse or inline expressions at 
+      compile time.
+
+When composing systems out of restricted specific constructs rather than 
+unrestricted generic ones application-, compiler- and VM-programmers share a 
+more meaningful common language that communicates its possibilities and impossibilities
+along the tool chain. On the contrary the concreteness of the concepts must still
+maintain the ability to abstract ideas effectively and to specify low level 
+implementation details.
+
+On these grounds it is an overall theme in the bruno programming system to not 
+_extend_ but further restrict the more general to the more specific. 
 
 ## Data
 Values are values, thus immutable. All data is represented as values.
@@ -109,6 +131,13 @@ All the `Planet`s in our solar system are given as a _set_ of possible values
 with their `weight` and `radius`.
 
 ### Constants
+A constant is a named `val`ue.
+
+		val Pi :: Float = '3.14159265359
+
+`Pi` is a scalar number of type `Float` having the value `'3.14159265359`. Of 
+course constants can be of any type initialised with any statically resolvable
+expression using functions and any type of literals.
 
 ### Literals
 There are three types of value literals; the mostly used conceptual value 
@@ -168,7 +197,7 @@ or the lowest possible value should they not be specified otherwise. This is
 somewhat a non-issue as all data starts from literals. One either gets a value
 as an argument or starts from a literal.
 
-When a value is in fact _unknown_ depending on runtime conditions this is made
+When a value is _unknown_ depending on runtime conditions this is made
 explicit by using the optional type _variant_ `?` build into the language:
 
 		Line a = "1:2-4:5"
@@ -178,7 +207,9 @@ explicit by using the optional type _variant_ `?` build into the language:
 A `Point?` is either a `Point` or _nothing_.
 
 ## Functions
-[^1]: Strictly speaking, there are _types_ that have effects and functions upon those consequently have as well - but as this is explicitly in the types the compiler can and does tell them apart and applies different rules to them.
+[^1]: Strictly speaking, there are _types_ that have effects and functions upon 
+      those consequently have as well - but as this is explicitly in the types 
+      the compiler can and does tell them apart and applies different rules to them.
 
 Functions are functions, thus pure, statically resolved and referentially transparent[^1]. 
 All functions are understood as _extension functions_ on the type of the 1st parameter.
@@ -200,7 +231,7 @@ often can avoid parentheses.
 
 ### Evaluation and Operators
 Expressions are always evaluated **left to right** where 
-operators are just short hands for function calls. 
+operators are short hands for function calls. 
 
 		fn plus [+] :: Int a -> Int b -> Int
 		fn mul [*] :: Int a -> Int b -> Int
@@ -213,9 +244,9 @@ The `plus` function is bound to `+` operator, the `mul` function to `*`
 If not set in parentheses `'1 + '2 * '3` will be evaluated left to right resulting
 in `'9`, not `'7`.
 
->  Instead of dealing with operator precedence (what is really hard and most of 
+>  Instead of dealing with operator precedence (what is hard and most of 
 > all ineffectual to memorise) only parentheses have to be applied correctly 
-> (what is easy to apply, check and memorise). So operators are really just a name alias.
+> (what is easy to apply, check and memorise). So operators are a name alias.
 
 ### Branches and Cases
 There is a single control flow construct directly embedded in a function 

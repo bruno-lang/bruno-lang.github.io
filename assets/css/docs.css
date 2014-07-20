@@ -56,6 +56,8 @@ content pre {
 	padding: 10px;
 	background-color: #eee8d5;
 	color: white;
+	tab-size: 4;
+	-moz-tab-size: 4;
 }
 content pre code {
 	color: black;
@@ -96,7 +98,7 @@ content h1 + blockquote em {
 content h3, content h4 {
 	font-weight: normal; font-family: "Source Code Pro"; color: black;
 }
-content h1 { font-size: 2.4em; font-weight: normal; }
+content h1 { font-size: 2.4em; font-weight: normal; color: #69402e; }
 content h2 { font-size: 1.5em; }
 content h3 { font-size: 1.25em; }
 content h4 { font-size: 1.125em; }

@@ -24,7 +24,7 @@
 function highlight(_, html) {
    return html
 	.replace(/([a-z]+\s+)([-a-zA-Z0-9]+)(\s*(\[[^\]]+\]\s*)?::)/g, "$1<def>$2</def>$3")
-	.replace(/(unit|dimension|data|fn|op|protocol|notation|where|ratio|instances|system|machine|behaviour)/g, '<kw>$1</kw>')
+	.replace(/(unit|dimension|data|fn|op|protocol|notation|where|ratio|instances|system|machine|behaviour|val)/g, '<kw>$1</kw>')
 	.replace(/("[^"]*"|'[^,. \)\]\t\n\r]+(\.[^,. \)\]\t\n\r]+)?|#[xdob]?[A-F0-9]+|`[^\s]+)/g, "<lit>$1</lit>")
 	.replace(/(`[^\s]+)/g, "<atom>$1</atom>")
 	.replace(/<lit>('[0-9.e+-]+)([a-zA-Z]+)<\/lit>/g, "<lit>$1<uom>$2</uom></lit>")
@@ -47,11 +47,11 @@ $("toc a.toc-toggle").click(function() {
 	$("toc").toggleClass("toc-down");
 });
 
-if ($(window).width() > $("page content").get(0).offsetWidth + 220 + 150) { 
+if ($(window).width() > $("page content").get(0).offsetWidth + 210 + 140) { 
 	$(".footnotes li").each(function(n, e) { $("#"+e.id.replace("fn", "fnref\\")).before($("<ol class='sidenote'></ol>").html(e)); });
 	$(".sidenote li p").each(function(n, e) { 
-		var id = $(this).parent().attr("id");
-		$(this).prepend("<sup>"+id.substring(id.indexOf(":")+1)+" </sup>"); 
+		var text = $("a[href='#"+$(this).parent().attr("id")+"']").first().text();
+		$(this).prepend("<sup>"+text+" </sup>"); 
 	});
 }
 	</script>
