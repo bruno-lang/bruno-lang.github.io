@@ -19,11 +19,11 @@ Basic correctness is still too challenging with both classic and modern programm
 systems while software attempts to solve problems of continually increasing size
 accompanied by an equally increase of complexity to control. It is my believe 
 that a programming system must enable **operative modularisation** and 
-**local reasoning** to let programmers succeed to divide and conquer large(r)
+**local reasoning** to let programmers succeed in dividing and conquering large(r)
 software systems. 
 
 To ease reasoning the possibilities must be restrictable to be effectively simplified.
-Through expressing what is impossible the programmer limits what needs to be
+By expressing what is impossible the programmer limits what needs to be
 considered and understood. Impossibility allows to imply logical consequences and 
 thereby opens possibilities of simplification and optimisation[^why-restrictions]. 
 
@@ -34,7 +34,7 @@ thereby opens possibilities of simplification and optimisation[^why-restrictions
 When composing systems out of restricted specific constructs (rather than 
 unrestricted generic ones) application-, compiler- and VM-programmers share a 
 more meaningful common language that communicates its possibilities and impossibilities
-along the tool chain. On the contrary the concreteness of the constructs must still
+along the stages. On the contrary the concreteness of the constructs must still
 maintain the ability to abstract ideas effectively and to specify low level 
 implementation details.
 
@@ -408,11 +408,18 @@ To encode any expression directly as an AST elment the AST expression is _tagged
 with the atom `` `ast ``. The `plus` function could be implemented as:
 
 		fn plus [+] :: Int a -> Int b -> Int 
-			= (`ast (`add ?a ?b))
+			= (`ast (`+ ?a ?b))
 
 The `` `ast `` tag instructs the compiler to treat the 2nd element of the outer
 form as an AST element. Here this is again a tagged form implementing addition 
-as the the operation `` `add `` bound to the variables `?a` and `?b`.
+as the operation `` `+ `` bound to the variables `?a` and `?b`. 
+
+The tagged form notations gives AST implementations a list like appearance 
+that also comes with a lot of the flexibility of a lisp like language. The most 
+important one might be that it allows to implement almost everything in the 
+language itself. Only the transformation to actual machine code or another 
+intermediate representation has to deal with _"native"_ (foreign language) code.
+This allows to share bruno code very target plattform and VM independent.
 
 #### Tagged Forms
 
