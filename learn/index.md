@@ -18,8 +18,8 @@ title:  "bruno in a Nutshell"
 Basic correctness is still too challenging with both classic and modern programming
 systems while software attempts to solve problems of continually increasing size
 accompanied by an equally increase of complexity to control. It is my believe 
-that a programming system must enable **operative modularisation** and 
-**local reasoning** to let programmers succeed in dividing and conquering large(r)
+that a programming system must enable *operative modularisation* and 
+*local reasoning* to let programmers succeed in dividing and conquering large(r)
 software systems. 
 
 To ease reasoning the possibilities must be restrictable to be effectively simplified.
@@ -27,7 +27,7 @@ By expressing what is impossible the programmer limits what needs to be
 considered and understood. Impossibility allows to imply logical consequences and 
 thereby opens possibilities of simplification and optimisation[^why-restrictions]. 
 
-[^why-restrictions]: An illustrating example of such a possibility is how pure functions allow
+[^why-restrictions]: An illustrating example of such a possibility is how pure functions (the impossibility of site-effects) allow
       to derive, reorder or memorise execution or fuse or inline expressions at 
       compile-time.
 
