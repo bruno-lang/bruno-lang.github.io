@@ -27,9 +27,10 @@ By expressing what is impossible the programmer limits what needs to be
 considered and understood. Impossibility allows to imply logical consequences and 
 thereby opens possibilities of simplification and optimisation[^why-restrictions]. 
 
-[^why-restrictions]: An illustrating example of such a possibility is how pure functions (the impossibility of site-effects) allow
+[^why-restrictions]: E.g. pure functions (the impossibility of site-effects) allow
       to derive, reorder or memorise execution or fuse or inline expressions at 
-      compile-time.
+      compile-time; immutable value (impossibility of mutation) allows to share
+      data without the need to copy it.
 
 When composing systems out of restricted specific constructs (rather than 
 unrestricted generic ones) application-, compiler- and VM-programmers share a 
@@ -188,9 +189,9 @@ whitespace.
 		[`a `atom `+ `/ `-> ]
 		
 The above is a list of valid atoms. Any two atoms are equal if their sequence
-of characters are. Atoms do not have a value besides being equal with another atom or 
-not. They are therefore mostly used as keys. As such they are important for the 
-declarations of ASTs.
+of characters are. Atoms do not have a value besides being equal to another atom 
+or not. They are therefore mostly used as keys. As such they are important for 
+the declarations of ASTs.
 
 
 ### Initial Values _(Default Values)_
@@ -338,12 +339,12 @@ Another situation that results in function types is partial application of
 arguments of a function. Any number of arguments can be left out, each not 
 applied one is indicated by the underscore `_` _wildcard_.
 
-		(Int b -> Int) plus1 = '1 + _
+		(Int b -> Int) inc = '1 + _
 
 [^plus]: given `fn plus [+] ::` `Int a -> Int b -> Int`
 
 Instead of passing an actual argument to `+` the function is partially applied
-resulting in a function `plus1`[^plus] that takes (or _on_) the left out 
+resulting in a function `inc`[^plus] that takes (or _on_) the left out 
 argument `b` which itself than results in a value of type `Int`. 
 
 ### Unified Arity
@@ -402,7 +403,7 @@ abstract syntax tree[^why-ast], a general `data`-structure. As such the AST is
 vice versa expressed in the surface syntax in the form of usual expressions.
 Tagged forms are used to keep type safety as we will shortly see.
 
-[^why-ast]: The AST and why it is the model of the language deserves an article on its own. Digest: It enables better and easier tooling and allows the surface syntax to focus on expressing the usual well as the _unusual_ doesn't need to be possible to express as one always can escape to the AST. 
+[^why-ast]: The AST and why it is the _model_ of the language deserves an article on its own. Digest: It enables better and easier tooling and allows the surface syntax to focus on expressing the usual well as the _unusual_ doesn't need to be possible to express as one always can escape to the AST. 
 
 To encode any expression directly as an AST elment the AST expression is _tagged_ 
 with the atom `` `ast ``. The `plus` function could be implemented as:
@@ -421,9 +422,35 @@ language itself. Only the transformation to actual machine code or another
 intermediate representation has to deal with _"native"_ (foreign language) code.
 This allows to share bruno code very target plattform and VM independent.
 
-#### Tagged Forms
 
-### Procedures _("Hygienic Macros", Compile Time Expansion)_
+#### Tagged Forms _(Runtime Type Annotations)_
+By convention any expression from with an [atom](#atoms) as its first tuple 
+element is understood as tagged form. The atom _tag_ is similar to an explicit
+type _annotation_ for that form: 
+
+		(`date '2014 '06 '01)
+
+The form is tagged as a `` `date ``, followed by a date value. The tag controls
+what types are expected or assumed for the following elements. The binding
+between tag and type is done itself as a tagged form in the namespace.
+
+		(`use `date Date)
+
+A form _annotated_ with `` `date `` is of type `Date`, that e.g. could be:
+
+		data Date :: (Year y, Month m, Day d)
+		
+Given the declarations above the compiler is aware of the types in the expression
+form ``(`date '2014 '06 '01)`` and treats/checks `'2014` as a `Year`, `'06` as 
+the `Month` and so forth.
+
+The technique of tagged forms is used to type generic data structures like the 
+AST. As all created tagged forms will be type checked it is
+valid to expect any tagged form value encountered to be well-typed according to 
+the bound type.
+				
+
+### Procedures _("Hygienic Macros", Compile-Time Expansion)_
 Procedures are compile-time inlined _functions_, hence do not create stack 
 frames and are therefore limited to non-recursive implementations. Otherwise a
  procedure `proc` is similar to a function:
@@ -440,5 +467,23 @@ the compiler will expand the implementation of the procedure's AST with the
 actual arguments for each usage.
 
 #### Call-Site Inlining
+Any function call to a non-recursive function can be inlined at the call-site
+using the _inlining_ prefix `~` in front of the called function's name:
+
+		fn start-equally :: E.. one -> E.. other -> Bool
+			= one ~first == other ~first
+
+To receive the `first` element of each of the lists `one` and `other` the call
+is inlined using `~`. Instead of a function call the body of `first` is expanded
+into the AST of the body of `start-equally`. This is in particular useful when
+a function is called in a _loop_. 
+
+Usually inlining trades better performance for larger artefact code size as code 
+is not _reused_ but _copied_. In cases of short functions inlining might even 
+result in smaller artefacts. However compile-time inlining always contains the
+risk of different callers of the same function run different versions of it.
+On the other hand inlining also can remove a runtime dependency as all uses are
+inlined.
+
 
 ### Eager Expressions _(Compile-Time Evaluation)_
