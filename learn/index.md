@@ -403,7 +403,7 @@ abstract syntax tree[^why-ast], a general `data`-structure. As such the AST is
 vice versa expressed in the surface syntax in the form of usual expressions.
 Tagged forms are used to keep type safety as we will shortly see.
 
-[^why-ast]: The AST and why it is the _model_ of the language deserves an article on its own. Digest: It enables better and easier tooling and allows the surface syntax to focus on expressing the usual well as the _unusual_ doesn't need to be possible to express as one always can escape to the AST. 
+[^why-ast]: The AST and why it is the _model_ of the language deserves an article on its own. Digest: It enables better tooling and allows the surface syntax to focus on expressing the usual well as the _unusual_ doesn't need to be possible to express as one always can escape to the AST. 
 
 To encode any expression directly as an AST elment the AST expression is _tagged_ 
 with the atom `` `ast ``. The `plus` function could be implemented as:
@@ -415,7 +415,7 @@ The `` `ast `` tag instructs the compiler to treat the 2nd element of the outer
 form as an AST element. Here this is again a tagged form implementing addition 
 as the operation `` `+ `` bound to the variables `?a` and `?b`. 
 
-The tagged form notations gives AST implementations a list like appearance 
+The tagged form notations gives AST implementations a lisp like appearance 
 that also comes with a lot of the flexibility of a lisp like language. The most 
 important one might be that it allows to implement almost everything in the 
 language itself. Only the transformation to actual machine code or another 
@@ -425,14 +425,14 @@ This allows to share bruno code very target plattform and VM independent.
 
 #### Tagged Forms _(Runtime Type Annotations)_
 By convention any expression from with an [atom](#atoms) as its first tuple 
-element is understood as tagged form. The atom _tag_ is similar to an explicit
-type _annotation_ for that form: 
+element is understood as (type) tagged form. The atom _tag_ is similar to an 
+explicit type _annotation_ for that form: 
 
 		(`date '2014 '06 '01)
 
-The form is tagged as a `` `date ``, followed by a date value. The tag controls
-what types are expected or assumed for the following elements. The binding
-between tag and type is done itself as a tagged form in the namespace.
+The form is tagged as a `` `date ``, followed by a date value in three components. 
+The tag hints what types are expected/checked for the following elements. The 
+binding between tag and type is done itself as a tagged form in the namespace.
 
 		(`use `date Date)
 
@@ -453,7 +453,7 @@ the bound type.
 ### Procedures _("Hygienic Macros", Compile-Time Expansion)_
 Procedures are compile-time inlined _functions_, hence do not create stack 
 frames and are therefore limited to non-recursive implementations. Otherwise a
- procedure `proc` is similar to a function:
+ procedure `proc` is similar to a function `fn`:
 
 		proc assoc [=>] :: K key -> V value -> (K, V) 
 			= (key, value)
@@ -461,7 +461,7 @@ frames and are therefore limited to non-recursive implementations. Otherwise a
 Any type `K` has a procedure `assoc` (or `=>`) that, given a `value` produces 
 the pair `(K, V)`. When called, for example to add an entry to a map
 
-		{ 'a' => '1, 'b' => '7 }
+		{ 'p' => '3, 'i' => '.17 }
 
 the compiler will expand the implementation of the procedure's AST with the 
 actual arguments for each usage.
@@ -470,18 +470,18 @@ actual arguments for each usage.
 Any function call to a non-recursive function can be inlined at the call-site
 using the _inlining_ prefix `~` in front of the called function's name:
 
-		fn start-equally :: E.. one -> E.. other -> Bool
+		fn starts-equally :: E.. one -> E.. other -> Bool
 			= one ~first == other ~first
 
 To receive the `first` element of each of the lists `one` and `other` the call
 is inlined using `~`. Instead of a function call the body of `first` is expanded
-into the AST of the body of `start-equally`. This is in particular useful when
+into the AST of the body of `starts-equally`. This is in particular useful when
 a function is called in a _loop_. 
 
 Usually inlining trades better performance for larger artefact code size as code 
-is not _reused_ but _copied_. In cases of short functions inlining might even 
-result in smaller artefacts. However compile-time inlining always contains the
-risk of different callers of the same function run different versions of it.
+is not _reused_ but _duplicated_. In cases of short functions inlining might even 
+result in smaller artefacts. Still compile-time inlining always contains the
+risk that different callers of the same function run different versions of it.
 On the other hand inlining also can remove a runtime dependency as all uses are
 inlined.
 
