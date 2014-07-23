@@ -97,7 +97,7 @@ content h1 + blockquote em {
 content h3, content h4 {
 	font-weight: normal; font-family: "Source Code Pro"; color: black;
 }
-content h1 { font-size: 2.4em; font-weight: normal; color: #69402e; counter-reset: h2;}
+content h1 { font-size: 2.4em; font-weight: normal; color: #69402e; counter-reset: h2 -1;}
 content h2 { font-size: 1.5em; }
 content h3 { font-size: 1.25em; }
 content h4 { font-size: 1.125em; }
@@ -114,7 +114,16 @@ content h2 { margin-top: 3em; font-weight: bold; letter-spacing: -0.03em; }
 content h3 { margin-top: 2em; }
 content h4 em, content h3 em, content h2 em { font-size: 80%; font-weight: 300; font-style: normal; }
 
-content h2:before { counter-increment: h2; content: counter(h2, decimal) '. '; }
+content h2:before { 
+  counter-increment: h2; 
+  content: counter(h2, decimal); 
+  color: #aaa;
+  font-size: 48px;
+	margin-right: -60px;
+	margin-top: -1em;
+	position: absolute;
+	right: 0;
+}
 
 code kw { color: #859900; }
 code lit { color: #2aa198; }
@@ -124,6 +133,7 @@ code as { color: #dc322f; }
 code uom { color: #b58900; }
 code atom { color: #d33682; }
 code var { font-style: normal; color: #cb4b16; }
+code key { color: #d33682; }
 
 toc {
 	position: fixed;
@@ -131,14 +141,16 @@ toc {
 	margin-left: 630px;
 	z-index: 1;
 	font-size: 11px;
+	counter-reset: tocH2 -1;
 }
-toc a.toc-toggle { width: 32px; line-height: 32px; border: 0; cursor: pointer; font-family: Lora; display: inline-block; font-size: 28px; font-weight: normal; display: absolute; margin-left: 210px; margin-top: 10px; }
+toc a.toc-toggle { width: 32px; line-height: 32px; border: 0; cursor: pointer; font-family: Lora; display: inline-block; font-size: 28px; font-weight: normal; position: absolute; margin-left: 210px; margin-top: 10px; }
 toc.toc-down .toc-toggle i.fa-bars:before {
 	color: white;
 }
 
 toc ol {
-	margin: 0; padding: 0; display: none;
+	background-color: white;
+	margin: 1em 0 0 0; padding: 0; display: none;
 }
 toc.toc-down ol {
 	display: inherit;
@@ -157,6 +169,14 @@ toc li.toc-H2 { padding-top: 0.7em; }
 toc li.toc-H3 { padding-left: 0em; }
 toc li.toc-H4 { padding-left: 1em; }
 toc li em, toc li.toc-H1 { display: none; }
+
+toc li.toc-H2:before { 
+  counter-increment: tocH2; 
+  content: counter(tocH2, decimal);
+	font-family: "Source Sans Pro";
+	font-weight: 600;
+	margin-right: 0.7em;
+}
 
 .sidenote {
 	position: absolute;

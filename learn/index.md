@@ -16,11 +16,11 @@ title:  "bruno in a Nutshell"
 
 ## Objectives _(Preamble)_
 Basic correctness is still too challenging with both classic and modern programming
-systems while software attempts to solve problems of continually increasing size
-accompanied by an equally increase of complexity to control. It is my believe 
-that a programming system must enable *operative modularisation* and 
-*local reasoning* to let programmers succeed in dividing and conquering large(r)
-software systems. 
+systems while software simultaneously attempts to solve problems of continually 
+increasing size accompanied by an equally increase of complexity to control. 
+It is my believe that a programming system must enable *operative modularisation* 
+and *local reasoning* to let programmers succeed in dividing and conquering 
+large(r) software systems. 
 
 To ease reasoning the possibilities must be restrictable to be effectively simplified.
 By expressing what is impossible the programmer limits what needs to be
@@ -29,7 +29,7 @@ thereby opens possibilities of simplification and optimisation[^why-restrictions
 
 [^why-restrictions]: E.g. pure functions (the impossibility of site-effects) allow
       to derive, reorder or memorise execution or fuse or inline expressions at 
-      compile-time; immutable value (impossibility of mutation) allows to share
+      compile-time; immutable values (impossibility of mutation) allows to share
       data without the need to copy it.
 
 When composing systems out of restricted specific constructs (rather than 
@@ -179,7 +179,22 @@ any compound type (when defined appropriate, <a href="#formats">formats</a> will
 go into the details later). The type of textual literals is inferred from the 
 context, such as the variable, parameter or return type.
 
-TODO set/list literals
+#### Collection Literals
+In accordance with collection types there are three sorts of collection literals:
+
+		Int[] array = [ '1, '2, '3, '5 ]
+		[Int] list = [ '1, '2, '3, '5 ]
+		{Int} set = { '1, '2, '3, '5 }
+
+Whether a sequence literal `[ ... ]` becomes an `array` or a `list` depends on 
+the type is it assigned to. Sets use curly braces `{ ... }`. As the type of 
+_map_ literals of a _map_ can be created similarly as sets of pairs:
+
+		{(Int, Char)} map = { '1 => 'a', '2 => 'b' }
+
+A set literal is used to simulate a _map_ through a set of pairs. Each pair
+is the result of the _associate_ `=>` procedure available for any value type. 
+It is not a special map syntax but a usual procedure call resulting in a pair.
 
 #### Atoms _("untyped" constant literals)_
 Atoms are dimensionless values, conceptually zero-tuples of type `Atom`. Different 
@@ -487,3 +502,10 @@ inlined.
 
 
 ### Eager Expressions _(Compile-Time Evaluation)_
+
+
+### Keys _(Typed "Pointers")_
+
+		[^a ^Key ^+ ^1 ^[other] ]
+
+

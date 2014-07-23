@@ -27,6 +27,7 @@ function highlight(_, html) {
 	.replace(/(unit|dimension|data|fn|op|protocol|notation|where|ratio|instances|system|machine|behaviour|val|proc)(\s|$)/g, '<kw>$1</kw>$2')
 	.replace(/("[^"]*"|'[^,. \)\]\t\n\r]+(\.[^,. \)\]\t\n\r]+)?|#[xdob]?[A-F0-9]+|`[^\s]+)/g, "<lit>$1</lit>")
 	.replace(/(`[^\s]+)/g, "<atom>$1</atom>")
+	.replace(/(\^[^\s,]+)/g, "<key>$1</key>")
 	.replace(/(\?[a-z0-9]+)/g, "<var>$1</var>")
 	.replace(/(\~)([a-z]|$)/g, "<op>$1</op>$2")
 	.replace(/<lit>('[0-9.e+-]+)([a-zA-Z]+)<\/lit>/g, "<lit>$1<uom>$2</uom></lit>")
@@ -56,6 +57,16 @@ if ($(window).width() > $("page content").get(0).offsetWidth + 210 + 140) {
 		$(this).prepend("<sup>"+text+" </sup>"); 
 	});
 }
+/* adding extra anchors from headings */
+$(":header").each(function(i,e) { 
+	var names = $(e).text().replace(/([^\(]+)(\([^\)]+\))?/g, "$1").replace(/[-–]/g, ",").toLowerCase().split(/\s*(?:,|and)\s*/g);
+	names.forEach(function(entry) {
+		var anchor = entry.trim().replace(/\s+/g, "-");
+		if (!document.getElementById(anchor)) {
+			$(e).before("<a id='"+anchor+"'></a>");
+		}
+	});
+ });
 	</script>
   </body>
 </html>
