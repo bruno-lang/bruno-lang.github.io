@@ -502,10 +502,52 @@ inlined.
 
 
 ### Eager Expressions _(Compile-Time Evaluation)_
+Statically computable expressions can be evaluated at compile-time. Instead of
+normal grouping parentheses the expression is embedded into an evaluation
+group `(:= ` _expr_ `)`. For example `Pi` can be calculated through an algorithm:
 
+		val Pi :: Float = (:= '0.000001 pi-gauss-legendre)
+
+The constant `Pi` of type `Float` is computed by the `pi-gauss-legendre` method
+using a precision of `'0.000001`. The evaluation of the _eager expression_ 
+`(:= ... )` happens at compile-time, the result is inserted as a constant similar
+to a declaration like (maybe more or less digits):
+
+		val Pi :: Float = '3.14159265358979323846
+
+Eager expressions can be used for all pure function computations based on
+any form of literal(s). In other words, it works as long as no abstractions
+or effects are involved.
 
 ### Keys _(Typed "Pointers")_
+A _key_ is a constant that does not have a (relevant) type on its own but 
+_points_ to a value of a specific type. All keys however are of type `Key`, that
+type itself is of less importance.
+
+		val ^points-to-Int :: &Int
+
+Key constant start with a `^` followed by any sequence of characters except 
+whitespace and `,`. The type `&Int` is a _pointer_ to `Int`. One can think of
+the `&` symbolising a keyhole and `^xyz` as the the key(beard) that gives access.
+
+Like atoms keys are used as part of more _dynamic_ concepts. For example think
+of a _multityped map_ or _object_ in e.g the javascript sense as a behaviour like:
+
+		op get :: O obj -> &T key -> T?
+
+		op put :: O obj -> &T key -> T value -> O
+
+The `obj` is a _map_ where the type of the value is associated with the key used
+to look it up. When supplying a `key` of type `&T` one can expect to get a 
+value of type `T?` (that is `T` or _nothing_). Conversely a value of type `T`
+can only be associated with a key of matching type `&T` in order to transit from 
+the origin `obj`ect `O` to a new `O` object as a result.
+
+Keys use a more flexible naming schema to provide a wide range of possible names 
+without "polluting" the single overall namespace. 
 
 		[^a ^Key ^+ ^1 ^[other] ]
 
-
+The list shows kins of different valid _keys_. In contrast to atoms keys are
+declared as `val` constants. Two keys are consequently equal if they point to 
+the same constant.
