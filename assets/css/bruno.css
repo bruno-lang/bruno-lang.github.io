@@ -26,6 +26,9 @@ body {
 	border: 1px solid #777;
 	border-width: 0 0 1px 1px;
 	text-align: center;
+	display: block;
+	text-decoration: none;
+	border-width: 0;
 }
 
 .cover h2 {	font-weight: normal; margin-top: -1.5em; letter-spacing: -0.03em; font-size: 1.44em; }

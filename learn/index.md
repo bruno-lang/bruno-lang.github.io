@@ -5,16 +5,16 @@ title:  "bruno in a Nutshell"
 
 # _bruno_ in a Nutshell
 
-> bruno is a novel likewise classic programming system; in simplified terms it
-> could illogical be condensed to _declarative programming with data and extension 
-> functions along with concurrent processes and message passing._
-> Even though there is a strong influence of functional programming bruno mostly 
-> has its own twist and borrows from different paradigms without being a 
-> multi-paradigm language. 
-> Look at it with a fresh and open mind as the language has several novel ideas.
+bruno is a novel likewise classic programming system; in simplified terms it
+could illogical be condensed to _declarative programming with data and extension 
+functions along with concurrent processes and message passing._
+Even though there is a strong influence of functional programming bruno mostly 
+has its own twist and borrows from different paradigms without being a 
+multi-paradigm language. 
+Look at it with a fresh and open mind as the language has several novel ideas.
 
 
-## Objectives _(Preamble)_
+## Objectives _(Prologue)_
 Basic correctness is still too challenging with both classic and modern programming
 systems while software simultaneously attempts to solve problems of continually 
 increasing size accompanied by an equally increase of complexity to control. 
@@ -459,11 +459,13 @@ list `['3, '1]`.
 
 ### Formats
 
+
 ## Modules _(Artefacts)_
 
 ### Namespaces
 
 ### Libraries
+
 
 ## Advanced Techniques
 
@@ -608,3 +610,8 @@ without "polluting" the single overall identifier namespace.
 The list shows kins of different valid _keys_. In contrast to atoms keys are
 declared as `val` constants. Two keys are consequently equal if they point to 
 the same constant.
+
+
+## A System of Systems
+
+## Epilogue
