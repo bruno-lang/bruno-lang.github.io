@@ -36,8 +36,8 @@ When composing systems out of restricted specific constructs (rather than
 unrestricted generic ones) application-, compiler- and VM-programmers share a 
 more meaningful common language that communicates its possibilities and impossibilities
 along the stages. On the contrary the concreteness of the constructs must still
-maintain the ability to abstract ideas effectively and to specify low level 
-implementation details.
+maintain the ability to abstract ideas effectively and allow controling low 
+level implementation details.
 
 On these grounds it is an overall theme in the bruno programming system to not 
 _extend_ but further and further restrict the more general to the more specific. 
@@ -72,26 +72,50 @@ and `sec`s. Units of the same dimension can be related using a `unit system` and
 A minute `'1min` is `'60sec`, a second `'1sec` is e.g. `'1000ms`. Hence literals
 use a `'` prefix and are typed through their unit of measure.
 
+The presence of a unit system makes it unnecessary for the programmer to declare
+or apply conversion between units of the same system.
+
+		Milliseconds two-minutes = '2min + '50sec
+
+The duration of `'2min` and `'50sec`, values of type `Minutes` and `Seconds` can 
+directly be used where e.g. `Milliseconds` are needed as the ratio between these 
+is known.
+
 ### Compound Values
-Compound values a.k.a. records, structs or tuples are declared as a `data` types.
+Compound values (often loosely equated with records, structs or tuples) are 
+declared as a `data` types.
 
 		data Rect :: (Length width, Length height)
 
 A `Rect` is a tuple with two `Length` fields, `width` and `height`. While all 
-types are named they can be used as tuples. A `Rect` is also a tuple of type 
-`(Length, Length)`.
+types are named they can be used as tuples (structurally typed). A `Rect` is 
+also a tuple of type `(Length, Length)`.
 
 Finally there are collection types for arrays/vectors with fixed length:
 
 		data Code :: Char[8]
 		data RGB :: Colour[3]
 
-A `Code` is sequence of `8` `Char`acters. A `RGB` colour one of `3` `Colour`s.
-Whereas:
+A `Code` is sequence of `8` `Char`acters. A `RGB` colour one of `3` `Colour`s,
+where the length is part of the array's type. This length can also be within a
+range.
+
+		data UTF8CodePoint :: Byte[1-4]
+
+A UTF8 code point is `1-4` `Byte`s. Length or range furthermore allow the use of
+a wildcard `*` to indicate _any unknown_ length.
+
+		data Nonempty :: Int[1-*]
+
+An array is `Nonempty` when it has at least `1` up to any `*` number of elements. [^no-dependent-typing]
+In contrast to the fix length of arrays we can declare:
 
 		data Sentence :: [Word]
 
-a `Sentence` is a _list_ of `Word`s of variable length. Furthermore sets are
+[^no-dependent-typing]: Note that the language is not dependently typed. Its 
+    concept of (type) shapes is related but less open.
+
+A `Sentence` is a _list_ of `Word`s of variable length. Furthermore sets are
 supported with special syntax.
 
 		data Team :: {Member}
@@ -187,8 +211,8 @@ In accordance with collection types there are three sorts of collection literals
 		{Int} set = { '1, '2, '3, '5 }
 
 Whether a sequence literal `[ ... ]` becomes an `array` or a `list` depends on 
-the type is it assigned to. Sets use curly braces `{ ... }`. As the type of 
-_map_ literals of a _map_ can be created similarly as sets of pairs:
+the type is it assigned to. Sets use curly braces `{ ... }`. Like the _map_ type
+is a set of pairs the _map_ literals are created as sets of pairs:
 
 		{(Int, Char)} map = { '1 => 'a', '2 => 'b' }
 
@@ -205,15 +229,15 @@ whitespace.
 		
 The above is a list of valid atoms. Any two atoms are equal if their sequence
 of characters are. Atoms do not have a value besides being equal to another atom 
-or not. They are therefore mostly used as keys. As such they are important for 
-the declarations of ASTs.
+or not. They are therefore mostly used as keys or _tags_.
+ As such they are important for the declarations of the language's AST.
 
 
 ### Initial Values _(Default Values)_
-There is no _null_ pointer/reference/value. All values are initialised with zero 
-or the lowest possible value should they not be specified otherwise. This is 
-somewhat a non-issue as all data starts from literals. One either gets a value
-as an argument or starts from a literal.
+There is no _null_ pointer/reference/value. All simple values are initialised 
+with zero or the lowest possible value should they not be specified otherwise. 
+This is somewhat a non-issue as all data starts from literals. 
+One either gets a value as an argument or starts from a literal.
 
 When a value is _unknown_ depending on runtime conditions this is made
 explicit by using the optional type _variant_ `?` build into the language:
@@ -236,16 +260,16 @@ parameter (here `a`).
 		fn double :: Int a -> Int = a * '2
 
 The `double` of the _instance_ `a` of type `Int` is `'2` times `a`, what is again 
-an `Int`. Now when using `double`
+an `Int`. Now when using `double` to compute the `quad`
 
 		fn quad :: Int a -> Int = a double double
 
-it is called as if it _extends_ the type `Int` as a _"member function"_.
+`double` is called as if it _extends_ the type `Int` as a _"member function"_.
 To calculate 4 times of `a` it is `double`d once and that result, again an `Int`,
 is `double`d one more time equal to `(a double) double`. 
 
 While `a` is a value, not an object, functions are syntactically invoked _on_ it 
-similar to methods on an object in OOP. This notation reads more natural and 
+(similar to methods on an object in OOP). This notation reads more natural and 
 often can avoid parentheses. 
 
 ### Evaluation and Operators
@@ -270,7 +294,7 @@ in `'9`, not `'7`.[^operator-alias]
 
 ### Branches and Cases
 There is a single control flow construct directly embedded in a function 
-declaration. This implies that the construct cannot be nested. Extension
+declaration syntax. This implies that the construct cannot be nested. Extension
 functions and the `where` clause are used to avoid nesting, as shown soon.
 
 		fn min :: Int a -> Int b -> Int 
@@ -531,7 +555,7 @@ whitespace and `,`. The type `&Int` is a _pointer_ to `Int`. One can think of
 the `&` symbolising a keyhole and `^xyz` as the the key(beard) that gives access.
 
 Like atoms keys are used as part of more _dynamic_ concepts. For example think
-of a _multityped map_ or _object_ in e.g the javascript sense as a behaviour like:
+of a _multityped map_ or _object_ (in e.g a javascript sense) as a behaviour like:
 
 		op get :: O obj -> &T key -> T?
 
@@ -544,7 +568,7 @@ can only be associated with a key of matching type `&T` in order to transit from
 the origin `obj`ect `O` to a new `O` object as a result.
 
 Keys use a more flexible naming schema to provide a wide range of possible names 
-without "polluting" the single overall namespace. 
+without "polluting" the single overall identifier namespace. 
 
 		[^a ^Key ^+ ^1 ^[other] ]
 

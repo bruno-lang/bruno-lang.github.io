@@ -51,7 +51,7 @@ $("toc a.toc-toggle").click(function() {
 	$("toc").toggleClass("toc-down");
 });
 
-if ($(window).width() > $("page content").get(0).offsetWidth + 210 + 140) { 
+if ($(window).width() > $("page content").get(0).offsetWidth + 230 + 140) { 
 	$(".footnotes li").each(function(n, e) { $("#"+e.id.replace("fn", "fnref\\")).before($("<ol class='sidenote'></ol>").html(e)); });
 	$(".sidenote li p").each(function(n, e) { 
 		var text = $("a[href='#"+$(this).parent().attr("id")+"']").first().text();

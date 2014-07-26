@@ -21,8 +21,8 @@ page {
 	border-radius: 4px;
 	display: block;
 	margin: 0 auto;
-	width: 600px;
-	padding-right: 230px;
+	width: 580px;
+	padding-right: 250px;
 	padding-left: 140px;
 	padding-top: 2em;
 	background-color: white;
@@ -84,9 +84,6 @@ content blockquote em {
 
 /* abstract */
 content h1 + blockquote, content h1 + blockquote + blockquote {
-	text-align: justify;
-	color: black;
-	font-size: 14px;
 	font-style: normal;
 	margin: 0;
 }
@@ -138,12 +135,12 @@ code key { color: #d33682; }
 toc {
 	position: fixed;
 	top: 0;
-	margin-left: 630px;
+	margin-left: 610px;
 	z-index: 1;
 	font-size: 11px;
 	counter-reset: tocH2 -1;
 }
-toc a.toc-toggle { width: 32px; line-height: 32px; border: 0; cursor: pointer; font-family: Lora; display: inline-block; font-size: 28px; font-weight: normal; position: absolute; margin-left: 210px; margin-top: 10px; }
+toc a.toc-toggle { width: 32px; line-height: 32px; border: 0; cursor: pointer; font-family: Lora; display: inline-block; font-size: 28px; font-weight: normal; position: absolute; margin-left: 230px; margin-top: 10px; }
 toc.toc-down .toc-toggle i.fa-bars:before {
 	color: white;
 }
@@ -180,8 +177,8 @@ toc li.toc-H2:before {
 
 .sidenote {
 	position: absolute;
-	right: -220px;
-	width: 210px;
+	right: -240px;
+	width: 230px;
 	margin: 0;
 	font-family: "Source Sans Pro";
 	font-size: 0.76em;
