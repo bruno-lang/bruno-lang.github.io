@@ -387,8 +387,41 @@ resulting in a function `inc`[^plus] that takes (or _on_) the left out
 argument `b` which itself than results in a value of type `Int`. 
 
 ### Unified Arity
-(tuple equivalence of parameters)
+Short retrospect: any simple value is identical to the 1-tuple of that simple 
+value. For example a value of type `Int` is identical to the type `(Int)`.
+Similarly a `[Int]` is `([Int])` or a `{Int}` is also `({Int})`.
 
+A function on the other hand can have any number of parameters. However, another
+way to look at it is to say that all functions just have one parameter being a
+n-tuple of the multiple elements. 
+
+		fn multi :: Int a -> Int b -> Int c -> Int
+		fn unified :: (Int, Int, Int) tuple -> Int 
+
+Both `multi` and `unified` compute an `Int` from three inputs of type `Int`.
+They have a functionally identical signature. This does not mean that everything
+is normalised to one (multiple simple parameters) or the other (one tuple 
+parameter) but that an variable amount of parameters can be expressed through
+its tuple equivalent. 
+
+		fn each :: T value -> [(T -> Int)] fs -> [Int]
+
+`each` is a function that given a `value` of any type bound to a type variable 
+`T` (type variables will be explained shortly) takes as list of functions `fs` 
+that operate on the same type `T` to compute a list of the function results 
+that is returned. The type variable `T` here could be substituted to any type. 
+When using a pair of `(Int, Int)` any function with 2 `Int` parameters or 1 
+pair of `(Int, Int)` is possible to use in list of `fs`.
+For example `plus` is such a function:
+
+		fn plus [+] :: Int a -> Int b -> Int
+
+Now `each` can be used like
+
+		('1, '2) each [+, -]
+
+The tuple of `('1, '2)` is applied to the functions `+` and `-` resulting in a 
+list `['3, '1]`.
 
 ## Abstractions
 
