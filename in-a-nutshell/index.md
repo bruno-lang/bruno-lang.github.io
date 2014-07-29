@@ -5,21 +5,21 @@ title:  "bruno in a Nutshell"
 
 # _bruno_ in a Nutshell
 
-bruno is a novel likewise classic programming system; in simplified terms it
+bruno is a novel likewise classic [programming system](/glossary/#programming-system); in simplified terms it
 could illogical be condensed to _declarative programming with data and extension 
 functions along with concurrent processes and message passing._
 Even though there is a strong influence of functional programming bruno mostly 
 has its own twist and borrows from different paradigms without being a 
-multi-paradigm language. 
-Look at it with a fresh and open mind as the language has several novel ideas.
+multi-paradigm system. 
+Look at it with a fresh and open mind as the system has several novel ideas.
 
 
 ## Objectives _(Prologue)_
 Basic correctness is still too challenging with both classic and modern programming
 systems while software simultaneously attempts to solve problems of continually 
 increasing size accompanied by an equally increase of complexity to control. 
-It is my believe that a programming system must enable *operative modularisation* 
-and *local reasoning* to let programmers succeed in dividing and conquering 
+It is my believe that a programming system must enable [*operative modularisation*](/glossary/#operative-modularisation)
+and [*local reasoning*](/glossary/#local-reasoning) to let programmers succeed in dividing and conquering 
 large(r) software systems. 
 
 To ease reasoning the possibilities must be restrictable to be effectively simplified.
@@ -112,7 +112,7 @@ In contrast to the fix length of arrays we can declare:
 
 		data Sentence :: [Word]
 
-[^no-dependent-typing]: Note that the language is not dependently typed. Its 
+[^no-dependent-typing]: Note that the [formalism](/glossary/#formalism) is not dependently typed. Its 
     concept of (type) shapes is related but less open.
 
 A `Sentence` is a _list_ of `Word`s of variable length. Furthermore sets are
@@ -240,7 +240,7 @@ This is somewhat a non-issue as all data starts from literals.
 One either gets a value as an argument or starts from a literal.
 
 When a value is _unknown_ depending on runtime conditions this is made
-explicit by using the optional type _variant_ `?` build into the language:
+explicit by using the optional type _variant_ `?` build into the formalism:
 
 		Line a = "1:2-4:5"
 		Line b = "3:2-6:2"
@@ -310,7 +310,7 @@ values can be covered.
 			\ False \= "false"
 			\ True  \= "true"
 
-Each case is implemented by an expression (the language has literally no statements).
+Each case is implemented by an expression (the formalism has literally no statements).
 
 ### Local Variables _(Where-Clause)_
 A function body is one expression, sometimes split into cases. As there are no
@@ -615,3 +615,4 @@ the same constant.
 ## A System of Systems
 
 ## Epilogue
+- formalism vs language
