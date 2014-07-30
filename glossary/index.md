@@ -20,7 +20,7 @@ vice versa to fit the language.
 
 In the bruno programming system the [formalism](#formalism) has been designed
 so that its properties allow to develop software in a particular way. This 
-applies from program design up to deployment, mainteinance, testing. The
+applies from program design up to deployment, maintenance, testing. The
 concerns span...
 
 ### Local Reasoning
@@ -28,9 +28,11 @@ _Local reasoning_ should be understood as a form of
 [formal](http://en.wikibooks.org/wiki/Effective_Reasoning/Informal_and_Formal_Reasoning) 
 or [deductive reasoning](http://en.wikipedia.org/wiki/Deductive_reasoning) 
 that can be applied in a local context. Everything that has to be reasoned 
-about is direcly present. All consequences of any deduction will directly 
+about is directly present. All consequences of any deduction will directly 
 only affect the local context itself.
 Correct reasoning becomes possible without taking the _outside world_ into 
-account.
+account. The process of reasoning is simplified by reducing the number of 
+significant aspects and the impossibility of missing aspects that are 
+unrepresented in the local context.
 
 ### Operative Modularisation
