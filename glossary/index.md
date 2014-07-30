@@ -68,6 +68,7 @@ as the it is e.g. impossible to add methods outside the code unit that
 contains the class. Class based inheritence is also not an operative 
 modularisation concept as the extending reference to the extended class
 can only be defined by the extending class and therefore within the 
-defining module. In fact almost all programming system, be it OOP or FP
-systems lack concepts of operative modularisation what is reflected by
-the complications they have to solve the [expression problem](http://en.wikipedia.org/wiki/Expression_problem). 
+defining module. In fact almost all programming system - be it OOP or FP
+systems - lack concepts of operative modularisation what is reflected by
+the complications they undergo to solve the 
+[expression problem](http://en.wikipedia.org/wiki/Expression_problem). 
