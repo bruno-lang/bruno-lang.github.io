@@ -33,7 +33,7 @@ present or affected.
 Thereby correct and complete reasoning becomes possible without taking the
 _outside world_ into account. This doesn't imply that the local context is
 not conneced to the outside world but that it is sufficient to consider 
-the outside worlds only through the connection ends visible in the local 
+the outside world only through the connection ends visible in the local 
 context.
 
 The process of reasoning is simplified by making all aspects of a context 
@@ -61,5 +61,13 @@ It becomes operative when any additon (intended to be possible) that
 could be made within a module can likewise be done on the outside. 
 
 In other words: Program semantics and the expressivness of the 
-language are independent of the way a program is split into modules. 
+language are independent of the way a program is split into code units. 
 
+To give an example: Classes are not an operative modularisation concept 
+as the it is e.g. impossible to add methods outside the code unit that
+contains the class. Class based inheritence is also not an operative 
+modularisation concept as the extending reference to the extended class
+can only be defined by the extending class and therefore within the 
+defining module. In fact almost all programming system, be it OOP or FP
+systems lack concepts of operative modularisation what is reflected by
+the complications they have to solve the [expression problem](http://en.wikipedia.org/wiki/Expression_problem). 
