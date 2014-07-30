@@ -57,7 +57,7 @@ effectivly extend the concepts of an extended module without the need
 to re-build (compile) it. 
 The more concepts are extendable by pure addition done external to the 
 extended module the more modular is such a modularisation. 
-It becomes operative when any additon (intended to be possible) that  
+It becomes operative when any additon (intended to be possible) that
 could be made within a module can likewise be done on the outside. 
 
 In other words: Program semantics and the expressivness of the 
