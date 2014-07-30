@@ -55,5 +55,6 @@ independently. Expandability has to be given in such a way that extending
 modules can effectivly extend the concepts of an extended module without
 the need of re-building it. The more concepts are extendable by pure 
 addition external to the extended module the more modular is such a
-modularisation. It becomes operative when any additon that could be
-made within a module can likewise be done on the outside.
+modularisation. It becomes operative when any additon (intended to be 
+possible) that  could be made within a module can likewise be done on 
+the outside.
