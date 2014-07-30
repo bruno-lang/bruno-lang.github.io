@@ -23,4 +23,13 @@ so that its properties allow to develop software in a particular way. This
 applies from program design up to deployment, mainteinance, testing. The
 concerns span...
 
+### Local Reasoning
+_Local reasoning_ should be understood as a form of 
+[formal](http://en.wikibooks.org/wiki/Effective_Reasoning/Informal_and_Formal_Reasoning) 
+or [deductive reasoning](http://en.wikipedia.org/wiki/Deductive_reasoning) 
+that can be applied in a local context. That is to say that everything that 
+has to be reasoned about locally/direcly present as well as all consequences 
+of a deduction than will only affect the local context itself.
+Correct reasoning is possible without taking the _outside world_ into account.
+
 ### Operative Modularisation
