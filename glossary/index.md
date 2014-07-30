@@ -31,7 +31,10 @@ that is possible to do in a narrow local context.
 This implies that everything that has to be considered is directly (locally) 
 present or affected.
 Thereby correct and complete reasoning becomes possible without taking the
-_outside world_ into account. 
+_outside world_ into account. This doesn't imply that the local context is
+not conneced to the outside world but that it is sufficient to consider 
+the outside worlds only through the connection ends visible in the local 
+context.
 The process of reasoning is simplified by making all aspects of a context 
 explicit and in its effects locally confined. This often also leads to a 
 reduction of the sheer number of significant aspects in consideration.
