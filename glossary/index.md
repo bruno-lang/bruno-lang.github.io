@@ -27,12 +27,13 @@ concerns span...
 _Local reasoning_ should be understood as a form of 
 [formal](http://en.wikibooks.org/wiki/Effective_Reasoning/Informal_and_Formal_Reasoning) 
 or [deductive reasoning](http://en.wikipedia.org/wiki/Deductive_reasoning) 
-that can be applied in a local context. Everything that has to be reasoned 
-about is directly present. All consequences of any deduction will directly 
-only affect the local context itself.
-Correct reasoning becomes possible without taking the _outside world_ into 
-account. The process of reasoning is simplified by reducing the number of 
-significant aspects and the impossibility of missing aspects that are 
-unrepresented in the local context.
+that is possible to do in a narrow local context. 
+This implies that everything that has to be considered is directly (locally) 
+present/affected. It means all consequences (effects) are direct as well.
+Thereby correct and complete reasoning becomes possible without taking the
+_outside world_ into account. 
+The process of reasoning is simplified by reducing the number of significant 
+aspects and the impossibility of _external_ aspects, that are not represented 
+in the local context.
 
 ### Operative Modularisation
