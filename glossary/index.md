@@ -29,11 +29,11 @@ _Local reasoning_ should be understood as a form of
 or [deductive reasoning](http://en.wikipedia.org/wiki/Deductive_reasoning) 
 that is possible to do in a narrow local context. 
 This implies that everything that has to be considered is directly (locally) 
-present/affected. It means all consequences (effects) are direct as well.
+present or affected.
 Thereby correct and complete reasoning becomes possible without taking the
 _outside world_ into account. 
-The process of reasoning is simplified by reducing the number of significant 
-aspects and the impossibility of _external_ aspects, that are not represented 
-in the local context.
+The process of reasoning is simplified by making all aspects of a context 
+explicit and in its effects locally confined. This often also leads to a 
+reduction of the sheer number of significant aspects in consideration.
 
 ### Operative Modularisation
