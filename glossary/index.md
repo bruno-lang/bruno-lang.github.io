@@ -8,14 +8,19 @@ title:  "Glossary"
 
 ### Programming System
 In contrast to the term _programming language_ that emphasises the language as
-the essential aspect the (almost antique) point of view of a _programming system_ 
-emphasises the idea that the programming experience does not just depend upon
-and is influence by the language but by the whole system in which a language 
-is used beside the other tools to make software and the process and values that 
-go hand and hand with these.
+the essential aspect of programming the (almost antique) point of view of a 
+_programming system_ emphasises an integrated understanding of the overall 
+process of making software that depends on and is influence by many aspects 
+one of which is the language. 
 
 In a programming system other aspects of the overall programming activity 
 influence the design of the language in such a way that it supports these 
-aspects well. The language is designed with a system in mind in which it is used.
+aspects well. The language is designed with a system in mind and the system
+vice versa to fit the language.
+
+In the bruno programming system the [formalism](#formalism) has been designed
+so that its properties allow to develop software in a particular way. This 
+applies from program design up to deployment, mainteinance, testing. The
+concerns span...
 
 ### Operative Modularisation
