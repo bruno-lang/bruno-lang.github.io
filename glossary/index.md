@@ -18,10 +18,21 @@ influence the design of the language in such a way that it supports these
 aspects well. The language is designed with a system in mind and the system
 vice versa to fit the language.
 
-In the bruno programming system the [formalism](#formalism) has been designed
+In the bruno programming system the [formalism](#programming-formalism) has been designed
 so that its properties allow to develop software in a particular way. This 
 applies from program design up to deployment, maintenance, testing. The
 concerns span...
+
+
+### Programming Formalism
+When the field of computing science formed there were two schools of toughts 
+when it comes to way we express programms. One understood a program as 
+instructions that ideally would be expressed in natural language, hence they
+called it a _programming language_. The other understood a program as a 
+more formal, almost mathematical expression of what is computed. As there 
+doesn't seam to be a term for this school of thought the term 
+_programming formalism_ is proposed to be used for [programming systems](#programming-system) 
+that embody this mathemtical understanding.
 
 ### Local Reasoning
 _Local reasoning_ should be understood as a form of 
@@ -45,6 +56,7 @@ As such local reasoning is related to the idea of
 that allows to deduce the absence of side effects on the outside world.
 Whatever happens within the rederential transparent component can be 
 simplified to the resulting value it produces.
+
 
 ### Operative Modularisation
 All programming systems provide a concept of modularisation of some kind.
