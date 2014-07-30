@@ -35,8 +35,25 @@ _outside world_ into account. This doesn't imply that the local context is
 not conneced to the outside world but that it is sufficient to consider 
 the outside worlds only through the connection ends visible in the local 
 context.
+
 The process of reasoning is simplified by making all aspects of a context 
 explicit and in its effects locally confined. This often also leads to a 
 reduction of the sheer number of significant aspects in consideration.
 
 ### Operative Modularisation
+All programming systems provide a concept of modularisation of some kind.
+These are by far not equally powerful. The only common understanding of
+_modularisation_ or _modular software_ is such that software can be 
+devided into modules and re-combined from such into another program.
+As this is basically true for all programming systems it is of little 
+significance as a property of a system. It does not express the degree
+of independence of the program modules.
+
+The term _operative modularisation_ in contrast explicitly demands a
+degree of module independence to the extend that modules can be _operated_
+independently. Expandability has to given in such a way that extending
+modules can effectivly extend the concepts of an extended module without
+the need of re-building it. The more concepts are extendable by pure 
+addition external to the extended module the more modular is such a
+modularisation. It becomes operative when any additon that could be
+made within a module can likewise be done on the outside.
