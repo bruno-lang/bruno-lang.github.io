@@ -50,8 +50,8 @@ significance as a property of a system. It does not express the degree
 of independence of the program modules.
 
 The term _operative modularisation_ in contrast explicitly demands a
-degree of module independence to the extend that modules can be _operated_
-independently. Expandability has to given in such a way that extending
+degree of module independence to the extent that modules can be _operated_
+independently. Expandability has to be given in such a way that extending
 modules can effectivly extend the concepts of an extended module without
 the need of re-building it. The more concepts are extendable by pure 
 addition external to the extended module the more modular is such a
