@@ -50,11 +50,16 @@ significance as a property of a system. It does not express the degree
 of independence of the program modules.
 
 The term _operative modularisation_ in contrast explicitly demands a
-degree of module independence to the extent that modules can be _operated_
-independently. Expandability has to be given in such a way that extending
-modules can effectivly extend the concepts of an extended module without
-the need of re-building it. The more concepts are extendable by pure 
-addition external to the extended module the more modular is such a
-modularisation. It becomes operative when any additon (intended to be 
-possible) that  could be made within a module can likewise be done on 
-the outside.
+degree of modularisation independence to the extent that a program is 
+_operational_ independent of its module structure. 
+Expandability has to be given in such a way that extending modules can 
+effectivly extend the concepts of an extended module without the need 
+to re-build (compile) it. 
+The more concepts are extendable by pure addition done external to the 
+extended module the more modular is such a modularisation. 
+It becomes operative when any additon (intended to be possible) that  
+could be made within a module can likewise be done on the outside. 
+
+In other words: Program semantics and the expressivness of the 
+language are independent of the way a program is split into modules. 
+
