@@ -28,8 +28,8 @@ _Local reasoning_ should be understood as a form of
 [formal](http://en.wikibooks.org/wiki/Effective_Reasoning/Informal_and_Formal_Reasoning) 
 or [deductive reasoning](http://en.wikipedia.org/wiki/Deductive_reasoning) 
 that is possible to do in a narrow local context. 
-This implies that everything that has to be considered is directly (locally) 
-present or affected.
+This implies that everything that has to be considered is directly 
+(locally) represented.
 Thereby correct and complete reasoning becomes possible without taking the
 _outside world_ into account. This doesn't imply that the local context is
 not conneced to the outside world but that it is sufficient to consider 
@@ -38,7 +38,13 @@ context.
 
 The process of reasoning is simplified by making all aspects of a context 
 explicit and in its effects locally confined. This often also leads to a 
-reduction of the sheer number of significant aspects in consideration.
+reduction of the sheer number of significant aspects to reason about.
+
+As such local reasoning is related to the idea of 
+[referential transparency](http://en.wikipedia.org/wiki/Referential_transparency_(computer_science))
+that allows to deduce the absence of side effects on the outside world.
+Whatever happens within the rederential transparent component can be 
+simplified to the resulting value it produces.
 
 ### Operative Modularisation
 All programming systems provide a concept of modularisation of some kind.
@@ -64,11 +70,12 @@ In other words: Program semantics and the expressivness of the
 language are independent of the way a program is split into code units. 
 
 To give an example: Classes are not an operative modularisation concept 
-as the it is e.g. impossible to add methods outside the code unit that
-contains the class. Class based inheritence is also not an operative 
-modularisation concept as the extending reference to the extended class
-can only be defined by the extending class and therefore within the 
-defining module. In fact almost all programming system - be it OOP or FP
-systems - lack concepts of operative modularisation what is reflected by
-the complications they undergo to solve the 
+as the it is among other things impossible to add methods outside the 
+code unit that contains the class. 
+Class based inheritence is also not an operative modularisation concept 
+as the extending reference to the extended class can only be defined by 
+the extending class and therefore within the defining module. 
+In fact almost all programming systems - be it OOP or FP systems - 
+lack concepts of operative modularisation what is reflected by the 
+complications they undergo to solve the 
 [expression problem](http://en.wikipedia.org/wiki/Expression_problem). 
