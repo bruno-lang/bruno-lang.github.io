@@ -15,8 +15,8 @@ one of which is the language.
 
 In a programming system other aspects of the overall programming activity 
 influence the design of the language in such a way that it supports these 
-aspects well. The language is designed with a system in mind and the system
-vice versa to fit the language.
+aspects well in the intended way. The language is designed with a system 
+in mind and the system vice versa to fit the language.
 
 The considerations of a programming system are diverse but typically include
 all statges of software production process. For example how software can be 
@@ -29,9 +29,9 @@ write a particular program. While related to the idea of
 [domain specific languages](http://en.wikipedia.org/wiki/Domain-specific_language)
 this understanding is more focused on the generality and simplicity of the
 core languge (such as Lisps) to be able to use it to build a problem specific
-solution including its _language_ that should be understood as the set of
-_primitives_ and their semantics everything else is build upon. The syntax
-often is a subset of the originating languge (esepcially for Lisps).
+solution including its _language_ (the set of _primitives_ and their 
+semantics) the program than will build upon. Its syntax often is a subset 
+of the originating language (esepcially for Lisps).
 
 ### Programming Formalism
 When the field of computing science formed there were two schools of toughts 
@@ -40,7 +40,8 @@ instructions that ideally would be expressed in natural language, hence they
 called it a _programming language_. The other understood a program as a 
 more formal, almost mathematical expression of what is computed. As there 
 doesn't seam to be a term for this school of thought the term 
-_programming formalism_ is proposed to be used for [programming systems](#programming-system) 
+_programming formalism_ is proposed to be used for 
+[programming systems](#programming-system) 
 that embody this mathemtical understanding.
 
 ### Local Reasoning
