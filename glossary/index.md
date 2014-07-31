@@ -18,11 +18,20 @@ influence the design of the language in such a way that it supports these
 aspects well. The language is designed with a system in mind and the system
 vice versa to fit the language.
 
-In the bruno programming system the [formalism](#programming-formalism) has been designed
-so that its properties allow to develop software in a particular way. This 
-applies from program design up to deployment, maintenance, testing. The
-concerns span...
+The considerations of a programming system are diverse but typically include
+all statges of software production process. For example how software can be 
+designed, reasoned about, modularised, edited, analysed, tested, deployed or 
+maintained.
 
+A second understadning of a programming system is focused on the capabilities 
+of a language to be used as a basis to build a language that is than used to 
+write a particular program. While related to the idea of 
+[domain specific languages](http://en.wikipedia.org/wiki/Domain-specific_language)
+this understanding is more focused on the generality and simplicity of the
+core languge (such as Lisps) to be able to use it to build a problem specific
+solution including its _language_ that should be understood as the set of
+_primitives_ and their semantics everything else is build upon. The syntax
+often is a subset of the originating languge (esepcially for Lisps).
 
 ### Programming Formalism
 When the field of computing science formed there were two schools of toughts 
