@@ -1,6 +1,6 @@
 ---
 layout: default
-title:  "bruno in a Nutshell"
+title:  "in a Nutshell"
 ---
 
 # _bruno_ in a Nutshell
@@ -418,10 +418,10 @@ For example `plus` is such a function:
 
 Now `each` can be used like
 
-		('1, '2) each [+, -]
+		'1 each ['2 + _, '2 - _]
 
-The tuple of `('1, '2)` is applied to the functions `+` and `-` resulting in a 
-list `['3, '1]`.
+Both partially applied functions are called with `'1` resulting in the list 
+`['3, '1]`.
 
 ## Abstractions
 
@@ -535,7 +535,7 @@ frames and are therefore limited to non-recursive implementations. Otherwise a
 Any type `K` has a procedure `assoc` (or `=>`) that, given a `value` produces 
 the pair `(K, V)`. When called, for example to add an entry to a map
 
-		{ 'p' => '3, 'i' => '.17 }
+		{ 'p' => '3, 'i' => '0.17 }
 
 the compiler will expand the implementation of the procedure's AST with the 
 actual arguments for each usage.
@@ -553,7 +553,7 @@ into the AST of the body of `starts-equally`. This is in particular useful when
 a function is called in a _loop_. 
 
 Usually inlining trades better performance for larger artefact code size as code 
-is not _reused_ but _duplicated_. In cases of short functions inlining might even 
+is not _shared_ but _duplicated_. In cases of short functions inlining might even 
 result in smaller artefacts. Still compile-time inlining always contains the
 risk that different callers of the same function run different versions of it.
 On the other hand inlining also can remove a runtime dependency as all uses are
@@ -578,16 +578,16 @@ Eager expressions can be used for all pure function computations based on
 any form of literal(s). In other words, it works as long as no abstractions
 or effects are involved.
 
-### Keys _(Typed "Pointers")_
+### Keys _(Typed "References")_
 A _key_ is a constant that does not have a (relevant) type on its own but 
-_points_ to a value of a specific type. All keys however are of type `Key`, that
+_refers_ to a value of a specific type. All keys however are of type `Key`, that
 type itself is of less importance.
 
-		val ^points-to-Int :: &Int
+		val @refers-to-Int :: &Int
 
-Key constant start with a `^` followed by any sequence of characters except 
-whitespace and `,`. The type `&Int` is a _pointer_ to `Int`. One can think of
-the `&` symbolising a keyhole and `^xyz` as the the key(beard) that gives access.
+Key constants start with a `@` followed by any sequence of characters except 
+whitespace and `,`. The type `&Int` is a _reference_ to `Int`. One can think of
+the `&` symbolising a keyhole and `@xyz` as the the key(beard) that gives access.
 
 Like atoms keys are used as part of more _dynamic_ concepts. For example think
 of a _multityped map_ or _object_ (in e.g a javascript sense) as a behaviour like:
@@ -605,14 +605,14 @@ the origin `obj`ect `O` to a new `O` object as a result.
 Keys use a more flexible naming schema to provide a wide range of possible names 
 without "polluting" the single overall identifier namespace. 
 
-		[^a ^Key ^+ ^1 ^[other] ]
+		[@a @Key @+ @1 @[other] ]
 
 The list shows kins of different valid _keys_. In contrast to atoms keys are
-declared as `val` constants. Two keys are consequently equal if they point to 
+declared as `val` constants. Two keys are consequently equal if they refer to 
 the same constant.
 
 
 ## A System of Systems
 
 ## Epilogue
-- formalism vs language
+

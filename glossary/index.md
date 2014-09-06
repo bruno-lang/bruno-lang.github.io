@@ -15,16 +15,16 @@ one of which is the language.
 
 In a programming system other aspects of the overall programming activity 
 influence the design of the language in such a way that it supports these 
-aspects well in the intended way. The language is designed with a system 
-in mind and the system vice versa to fit the language.
+aspects well in the intended way of working. The language is designed with the 
+system in mind and vice versa the system to fit the language.
 
 The considerations of a programming system are diverse but typically include
 all stages of software production process. For example how software can be 
 designed, reasoned about, modularised, edited, analysed, tested, deployed or 
 maintained.
 
-A second understanding of a programming system is focused on the capabilities 
-of a language to be used as a basis to build a language that is than used to 
+Another understanding of a programming system is focused on the capabilities 
+of a language to be used as a basis to build a customised language used to 
 write a particular program. While related to the idea of 
 [domain specific languages](http://en.wikipedia.org/wiki/Domain-specific_language)
 this understanding is more focused on the generality and simplicity of the
@@ -88,12 +88,12 @@ In other words: Program semantics and the expressiveness of the
 language are independent of the way a program is split into code units. 
 
 To give an example: Classes are not an operative modularisation concept 
-as the it is among other things impossible to add methods outside the 
+as it is -- among other things -- impossible to add methods outside the 
 code unit that contains the class. 
 Class based inheritance is also not an operative modularisation concept 
-as the extending reference to the extended class can only be defined by 
-the extending class and therefore within the defining module. 
-In fact almost all programming systems - be it OOP or FP systems - 
-lack concepts of operative modularisation what is reflected by the 
+as the reference to the extended class can only be defined by the extending 
+class and therefore within the defining module. 
+In fact almost all programming systems - be it OOP or FP systems - have none or
+just one concepts of operative modularisation what is e.g. reflected by the 
 complications they undergo to solve the 
 [expression problem](http://en.wikipedia.org/wiki/Expression_problem). 
