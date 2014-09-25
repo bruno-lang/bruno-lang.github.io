@@ -36,7 +36,7 @@ When composing systems out of restricted specific constructs (rather than
 unrestricted generic ones) application-, compiler- and VM-programmers share a 
 more meaningful common language that communicates its possibilities and impossibilities
 along the stages. On the contrary the concreteness of the constructs must still
-maintain the ability to abstract ideas effectively and allow controling low 
+maintain the ability to abstract ideas effectively and allow controlling low 
 level implementation details.
 
 On these grounds it is an overall theme in the bruno programming system to not 
@@ -163,6 +163,8 @@ A constant is a named `val`ue.
 `Pi` is a scalar number of type `Float` having the value `'3.14159265359`. Of 
 course constants can be of any type initialised with any statically resolvable
 expression using functions and any type of literals.
+
+% add example of val using an enum as array dimension
 
 ### Literals
 There are three types of value literals; the mostly used conceptual value 
@@ -370,15 +372,16 @@ be used as arguments, like in the following expression:
 
 		'1 is even
 
-Function types can be seen as a way to _abstract_ over functions. This kind of
-abstraction can also be made first class as operations will shortly show.
+Function types can be seen as a way to _abstract_ over a functions and see it as
+a member of a _function familiy_. This kind of abstraction can also be made 
+first class as operations will shortly show.
 
 ### Partial Application
 Another situation that results in function types is partial application of
 arguments of a function. Any number of arguments can be left out, each not 
 applied one is indicated by the underscore `_` _wildcard_.
 
-		(Int b -> Int) inc = '1 + _
+		(Int -> Int) inc = '1 + _
 
 [^plus]: given `fn plus [+] ::` `Int a -> Int b -> Int`
 
@@ -387,13 +390,13 @@ resulting in a function `inc`[^plus] that takes (or _on_) the left out
 argument `b` which itself than results in a value of type `Int`. 
 
 ### Unified Arity
-Short retrospect: any simple value is identical to the 1-tuple of that simple 
-value. For example a value of type `Int` is identical to the type `(Int)`.
+Any simple value is identical to the 1-tuple of that simple value. 
+For example a value of type `Int` is identical to the type `(Int)`.
 Similarly a `[Int]` is `([Int])` or a `{Int}` is also `({Int})`.
 
 A function on the other hand can have any number of parameters. However, another
-way to look at it is to say that all functions just have one parameter being a
-n-tuple of the multiple elements. 
+way to look at it is to assume that all functions just have one parameter being 
+a n-tuple of the multiple elements. 
 
 		fn multi :: Int a -> Int b -> Int c -> Int
 		fn unified :: (Int, Int, Int) tuple -> Int 
@@ -431,16 +434,16 @@ Both partially applied functions are called with `'1` resulting in the list
 
 ### Notations _(abstract over cases)_
 
-### Type Schemas _(Generics - abstract over types)_
+### Type Schemas _(abstract over types)_
 
 
 ## Effects _(a.k.a. Side Effects)_
 
 ### Transients
 
-### Streams
+### Streams _(IO)_
 
-### Machines _(Processes)_
+### Processes
 
 ### Channels _(Message Passing)_
 
@@ -479,7 +482,7 @@ Tagged forms are used to keep type safety as we will shortly see.
 
 [^why-ast]: The AST and why it is the _model_ of the language deserves an article on its own. Digest: It enables better tooling and allows the surface syntax to focus on expressing the usual well as the _unusual_ doesn't need to be possible to express as one always can escape to the AST. 
 
-To encode any expression directly as an AST elment the AST expression is _tagged_ 
+To encode any expression directly as an AST element the AST expression is _tagged_ 
 with the atom `` `ast ``. The `plus` function could be implemented as:
 
 		fn plus [+] :: Int a -> Int b -> Int 
@@ -494,7 +497,7 @@ that also comes with a lot of the flexibility of a lisp like language. The most
 important one might be that it allows to implement almost everything in the 
 language itself. Only the transformation to actual machine code or another 
 intermediate representation has to deal with _"native"_ (foreign language) code.
-This allows to share bruno code very target plattform and VM independent.
+This allows to share bruno code very target platform and VM independent.
 
 
 #### Tagged Forms _(Runtime Type Annotations)_
@@ -578,36 +581,37 @@ Eager expressions can be used for all pure function computations based on
 any form of literal(s). In other words, it works as long as no abstractions
 or effects are involved.
 
+
 ### Keys _(Typed "References")_
 A _key_ is a constant that does not have a (relevant) type on its own but 
 _refers_ to a value of a specific type. All keys however are of type `Key`, that
 type itself is of less importance.
 
-		val @refers-to-Int :: &Int
+		val @refers-to-Int :: Int
 
 Key constants start with a `@` followed by any sequence of characters except 
-whitespace and `,`. The type `&Int` is a _reference_ to `Int`. One can think of
-the `&` symbolising a keyhole and `@xyz` as the the key(beard) that gives access.
+whitespace and `,`. Yet to avoid confusion with the reference type itself a key
+cannot start with a upper case letter. The type `@Int` is a _reference_ to `Int`.
 
 Like atoms keys are used as part of more _dynamic_ concepts. For example think
 of a _multityped map_ or _object_ (in e.g a javascript sense) as a behaviour like:
 
-		op get :: O obj -> &T key -> T?
+		op get :: O obj -> @T key -> T?
 
-		op put :: O obj -> &T key -> T value -> O
+		op put :: O obj -> @T key -> T value -> O
 
 The `obj` is a _map_ where the type of the value is associated with the key used
-to look it up. When supplying a `key` of type `&T` one can expect to get a 
+to look it up. When supplying a `key` of type `@T` one can expect to get a 
 value of type `T?` (that is `T` or _nothing_). Conversely a value of type `T`
-can only be associated with a key of matching type `&T` in order to transit from 
+can only be associated with a key of matching type `@T` in order to transit from 
 the origin `obj`ect `O` to a new `O` object as a result.
 
 Keys use a more flexible naming schema to provide a wide range of possible names 
 without "polluting" the single overall identifier namespace. 
 
-		[@a @Key @+ @1 @[other] ]
+		[@a @key @+ @1 @[other] ]
 
-The list shows kins of different valid _keys_. In contrast to atoms keys are
+The list shows kinds of different valid _keys_. In contrast to atoms keys are
 declared as `val` constants. Two keys are consequently equal if they refer to 
 the same constant.
 
@@ -615,4 +619,6 @@ the same constant.
 ## A System of Systems
 
 ## Epilogue
+
+- a computer system that does not crash
 
