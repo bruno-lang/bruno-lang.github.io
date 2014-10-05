@@ -24,11 +24,11 @@ large(r) software systems.
 
 To ease reasoning the possibilities must be restrictable to be effectively simplified.
 By expressing what is impossible the programmer limits what needs to be
-considered and understood. Impossibility allows to imply logical consequences and 
-thereby opens possibilities of simplification and optimisation[^why-restrictions]. 
+considered and understood. Impossibility induces logical consequences what opens 
+possibilities of simplification and optimisation[^why-restrictions]. 
 
 [^why-restrictions]: E.g. pure functions (the impossibility of site-effects) allow
-      to derive, reorder or memorise execution or fuse or inline expressions at 
+      to derive, reorder or memoize execution or fuse or inline expressions at 
       compile-time; immutable values (impossibility of mutation) allows to share
       data without the need to copy it.
 
@@ -75,9 +75,9 @@ use a `'` prefix and are typed through their unit of measure.
 The presence of a unit system makes it unnecessary for the programmer to declare
 or apply conversion between units of the same system.
 
-		Milliseconds two-minutes = '2min + '50sec
+		Milliseconds three-minutes = '2min + '60sec
 
-The duration of `'2min` and `'50sec`, values of type `Minutes` and `Seconds` can 
+The duration of `'2min` and `'60sec`, values of type `Minutes` and `Seconds` can 
 directly be used where e.g. `Milliseconds` are needed as the ratio between these 
 is known.
 
@@ -155,6 +155,14 @@ Compound types can be restricted to an enumeration in a similar way:
 All the `Planet`s in our solar system are given as a _set_ of possible values 
 with their `weight` and `radius`.
 
+Enumerations can also be used as dimension type of arrays.
+
+		data Menu :: Meal[Weekday]
+
+Assuming `Weekday` is a enumeration having `Monday`, `Tuesday` and so on `Menu`
+is an array type of fixed length 7 that is index accessed using the enumeration
+constants.
+
 ### Constants
 A constant is a named `val`ue.
 
@@ -164,9 +172,10 @@ A constant is a named `val`ue.
 course constants can be of any type initialised with any statically resolvable
 expression using functions and any type of literals.
 
-% add example of val using an enum as array dimension
 
 ### Literals
+
+##### Conceptual Literals
 There are three types of value literals; the mostly used conceptual value 
 literals for simple values as scalars, characters and user defined units and 
 dimensions:
@@ -182,6 +191,7 @@ of measure, like `kg`. `Char`acters have `'` as unit and scalars the empty strin
 present the type of a literal is derived form it as it has to be unambiguous in 
 any scope.
 
+##### Binary Literals
 Secondly binary oriented literals typically used for simple numerical values:
 
 		Colour red = #xFF0000
@@ -193,6 +203,7 @@ the default and can be left out.
 
 		Int ten = #10
 
+##### Textual Literals
 The third type of literals are textual oriented. Compound values are given in a 
 way humans are used to write them:
 
@@ -429,6 +440,8 @@ Both partially applied functions are called with `'1` resulting in the list
 ## Abstractions
 
 ### Operations _(abstract over functions)_
+(nominal typed)
+
 
 ### Behaviours _(abstract over sets of functions)_
 
@@ -459,6 +472,7 @@ Both partially applied functions are called with `'1` resulting in the list
 #### Variance 
 
 ### Shapes
+(a form of latent typing but only for constants or more general statically decidable properties)
 
 ### Formats
 
@@ -620,5 +634,9 @@ the same constant.
 
 ## Epilogue
 
-- a computer system that does not crash
+- a computer system that
+	- does not crash, 
+	- can tell why value on what function caused an error
+	- makes it easy to collect all such errors, and 
+	- to find and fix known errors through local reasoning
 
