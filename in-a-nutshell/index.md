@@ -14,7 +14,7 @@ multi-paradigm system.
 Look at it with a fresh and open mind as the system has several novel ideas.
 
 
-## Objectives _(Prologue)_
+## Prologue
 Basic correctness is still too challenging with both classic and modern programming
 systems while software simultaneously attempts to solve problems of continually 
 increasing size accompanied by an equally increase of complexity to control. 
@@ -43,7 +43,8 @@ On these grounds it is an overall theme in the bruno programming system to not
 _extend_ but further and further restrict the more general to the more specific. 
 
 ## Data
-Values are values, thus immutable. All data is represented as values.
+Data is always represented by values. Values are values, thus immutable with
+value equality.
 
 ### Simple Values
 Two types of simple values, `dimension`s and `unit`s. The distinction between 
@@ -102,7 +103,7 @@ range.
 
 		data UTF8CodePoint :: Byte[1-4]
 
-A UTF8 code point is `1-4` `Byte`s. Length or range furthermore allow the use of
+A UTF-8 code point is `1-4` `Byte`s. Length or range furthermore allow the use of
 a wildcard `*` to indicate _any unknown_ length.
 
 		data Nonempty :: Int[1-*]
@@ -141,7 +142,7 @@ where in case of a list `False` will also be associated with index `'0` and
 The possible `Fruits` are `Apples` and `Pears`, this time with _set_ semantics. 
 Compound types can be restricted to an enumeration in a similar way:
 
-		data Planet :: (Kilogram weight, Meters radius) = { 
+		data Planet :: (Kilograms weight, Meters radius) = { 
 			Mercury ('3.303e+23kg, '2.4397e6m),
 			Venus   ('4.869e+24kg, '6.0518e6m),
 			Earth   ('5.976e+24kg, '6.37814e6m),
@@ -161,7 +162,8 @@ Enumerations can also be used as dimension type of arrays.
 
 Assuming `Weekday` is a enumeration having `Monday`, `Tuesday` and so on `Menu`
 is an array type of fixed length 7 that is index accessed using the enumeration
-constants.
+constants: `Meal on-monday = menu at Monday`. Index access has no special syntax
+and uses a function (`at`) like all other operations.
 
 ### Constants
 A constant is a named `val`ue.
@@ -233,17 +235,18 @@ A set literal is used to simulate a _map_ through a set of pairs. Each pair
 is the result of the _associate_ `=>` procedure available for any value type. 
 It is not a special map syntax but a usual procedure call resulting in a pair.
 
-#### Atoms _("untyped" constant literals)_
-Atoms are dimensionless values, conceptually zero-tuples of type `Atom`. Different 
-constants are defined by `` ` `` followed by any sequence of characters except 
-whitespace.
+#### Atoms _("typeless" constant literals)_
+Atoms are dimensionless values, conceptually zero-tuples of type `Atom`. 
+Different constants are defined by `` ` `` followed by any sequence of 
+characters except whitespace.
 
 		[`a `atom `+ `/ `-> ]
 		
-The above is a list of valid atoms. Any two atoms are equal if their sequence
-of characters are. Atoms do not have a value besides being equal to another atom 
-or not. They are therefore mostly used as keys or _tags_.
- As such they are important for the declarations of the language's AST.
+The above is a list of valid atoms. Any two atoms are logically equal if their 
+sequence of characters are. 
+Atoms do not have a value besides being equal to another atom or not. 
+They are therefore mostly used as keys or _tags_.
+As such they are important for the declarations of the language's AST.
 
 
 ### Initial Values _(Default Values)_
@@ -390,7 +393,7 @@ first class as operations will shortly show.
 ### Partial Application
 Another situation that results in function types is partial application of
 arguments of a function. Any number of arguments can be left out, each not 
-applied one is indicated by the underscore `_` _wildcard_.
+applied parameter is indicated by the underscore `_` _wildcard_.
 
 		(Int -> Int) inc = '1 + _
 
@@ -432,9 +435,9 @@ For example `plus` is such a function:
 
 Now `each` can be used like
 
-		'1 each ['2 + _, '2 - _]
+		('1, '2) each [+, -]
 
-Both partially applied functions are called with `'1` resulting in the list 
+Both functions are called with `'1` and `'2` as arguments resulting in the list 
 `['3, '1]`.
 
 ## Abstractions
@@ -640,3 +643,4 @@ the same constant.
 	- makes it easy to collect all such errors, and 
 	- to find and fix known errors through local reasoning
 
+- programming paradigms do not matter - just the properties of the system we work with
