@@ -600,9 +600,9 @@ or effects are involved.
 
 
 ### Keys _(Typed "References")_
-A _key_ is a constant that does not have a (relevant) type on its own but 
-_refers_ to a value of a specific type. All keys however are of type `Key`, that
-type itself is of less importance.
+A _key_ is a constant that _carries_ the type of a value that is accesses using
+the key. The key _refers_ to the value without referring to a specific location. 
+The keys themselves are of a uniform type `Key`, a type of less importance.
 
 		val @refers-to-Int :: Int
 
@@ -610,8 +610,9 @@ Key constants start with a `@` followed by any sequence of characters except
 whitespace and `,`. Yet to avoid confusion with the reference type itself a key
 cannot start with a upper case letter. The type `@Int` is a _reference_ to `Int`.
 
-Like atoms keys are used as part of more _dynamic_ concepts. For example think
-of a _multityped map_ or _object_ (in e.g a javascript sense) as a behaviour like:
+Like atoms keys are used as part of more _dynamic_ concepts. 
+For example a _multi-typed map_ or _object_ (in e.g the javascript sense) with 
+a behaviour like:
 
 		op get :: O obj -> @T key -> T?
 
@@ -629,8 +630,9 @@ without "polluting" the single overall identifier namespace.
 		[@a @key @+ @1 @[other] ]
 
 The list shows kinds of different valid _keys_. In contrast to atoms keys are
-declared as `val` constants. Two keys are consequently equal if they refer to 
-the same constant.
+declared as `val` constants where the declared type is the type of the value the
+key refers to. 
+Two keys are consequently equal if they refer to the same constant.
 
 
 ## A System of Systems
