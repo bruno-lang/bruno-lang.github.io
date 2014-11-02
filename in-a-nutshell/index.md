@@ -608,7 +608,9 @@ The keys themselves are of a uniform type `Key`, a type of less importance.
 
 Key constants start with a `@` followed by any sequence of characters except 
 whitespace and `,`. Yet to avoid confusion with the reference type itself a key
-cannot start with a upper case letter. The type `@Int` is a _reference_ to `Int`.
+cannot start with a upper case letter. 
+The type `@Int` is a _reference_ to an `Int` value while `@int` is a key named
+`int`.
 
 Like atoms keys are used as part of more _dynamic_ concepts. 
 For example a _multi-typed map_ or _object_ (in e.g the javascript sense) with 
