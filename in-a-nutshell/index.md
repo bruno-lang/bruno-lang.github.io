@@ -468,13 +468,87 @@ Both functions are called with `'1` and `'2` as arguments resulting in the list
 (list sorts of types here)
 
 ### Specialisation -- Generalisation
+The bruno type system uses a type polymorphism that is crucially different
+from textbook interface inheritance (subtyping) or implementation inheritance
+(OO like inheritance). Therefore it is important not to think in these familiar 
+terms/semantics but to develop an independent understanding. 
+
+Fundamentally two kinds of types are to be distinguished:
+
+* Value Types
+* Function Types
+
+For simplicity the following explanations should be associated with value types. 
+The semantics of function types are (just) a consequence of value type semantics.
+
+Two (value) types can be related in such a way that 
+a value of a _subtype_ is also usable as a value of the _supertype_.
+When a value of a _subtype_ is used as a value of its _supertype_ it is 
+conceptually substituted with an _equivalent_ value of the _supertype_. 
+This means a value instance never _acts_ as a value of its _supertype_ but 
+literally _becomes_ such a value.
+
+As this is different from the semantics usually associated with the terms 
+_subtype_ and _supertype_ this novel kind of relation is called 
+_specialisation_ / _generalisation_. A _derived_ type is said to be a 
+specialisation of a more general type - or vice versa - a type another type
+is derived from is said to be the generalisation of the more special, derived 
+type. 
+
+The fundamental difference is well illustrated by the observation that types are 
+related in a _hierarchy_ (more precisely in a 
+[DAG](http://en.wikipedia.org/wiki/Directed_acyclic_graph)) while values
+(actual instances) do not have such relations. A value of formal type `A` is 
+always an instance of actual type `A`, consequently formal and actual value 
+types are always identical, a distinction unnecessary.
+
+In contrast to implementation inheritance a specialisation is a strictly more 
+_narrow_ type than its generalisation. It can neither add state nor can it 
+widen the range or change the nature of possible values. 
+The set of all possible values of a specialisation `B` is a strict subset of 
+the set of possible values of a generalisation `A`. 
+Yet any value in the set the of more special type `B` can appear (at least) in 
+the two flavours, that of `A` and that of `B`. The data of such a value however 
+is indistinguishable for `A` and `B` but it might be typed as `A` in one context 
+and as `B` in another as given by a program. 
+
+When `B` is generalised to `A` its value (instance) is simply passed along as 
+`A`. It effectively _became_ an `A` and will be treated as such from then on. 
+Whereas a specialisation from `A` to `B` the value is (bound) checked for the 
+more narrow specification of `B` before it can be passed along as a `B`. 
+Actual allocation or instantiation of another value is not necessary. 
+A specialisation though can be impossible for some values in `A` not just
+for the reason that the set of possible `A`s contains values that aren't
+members of the set of possible `B`s. `B` could also be constraint in further
+ways that are orthogonal to the constraints of `A`. So while all `B`s are always 
+also `A`s only some `A`s might be valid `B`s, what has to be determined at 
+runtime.
+
+It could be said that types _carry_ static properties of values. A value that 
+has been proven to conform to the properties of a type can be specialised to
+that type. Type conversion however is only allowed between values of related
+types that are known to be based on the same data structure. 
+A _universal_ top type does not exist.
+
+To put it yet another way, types give meaning to bits and bytes of data
+structures. Data structures of the same form can be meaningful in different
+ways what is reflected through different, often related types. 
+On these grounds it might become clear that _below_ the level of nominal types
+there is a level of structural types as well. A type's structure is equivalent
+to its most general generalisation.
+
+#### Variance
+
+#### Runtime Type Information
 
 ### Type Inference
 - mandatory type annotations, inference where unambiguous
 
-#### Variance 
-
 ### Shapes
+Types and values are not two independent universes. 
+There are several aspects where types and values blend into each other; 
+this should not be confused with dependent typing.
+
 (a form of latent typing but only for constants or more general statically decidable properties)
 
 ### Formats
