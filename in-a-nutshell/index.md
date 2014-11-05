@@ -520,22 +520,28 @@ Actual allocation or instantiation of another value is not necessary.
 A specialisation though can be impossible for some values in `A` not just
 for the reason that the set of possible `A`s contains values that aren't
 members of the set of possible `B`s. `B` could also be constraint in further
-ways that are orthogonal to the constraints of `A`. So while all `B`s are always 
-also `A`s only some `A`s might be valid `B`s, what has to be determined at 
-runtime.
+ways that are orthogonal to the constraints of `A`. 
+So while any `B` is an `A` only some `A`s can become `B`s. Therefore the
+generalisation from `B` to `A` is a implicit _noop_ but a specialisation from 
+`A` to `B` has to be _demanded_ explicitly and could fail at runtime. 
 
 It could be said that types _carry_ static properties of values. A value that 
 has been proven to conform to the properties of a type can be specialised to
 that type. Type conversion however is only allowed between values of related
-types that are known to be based on the same data structure. 
-A _universal_ top type does not exist.
+types that are structurally compatible. That means a specialisation can be
+tried for any two types that have a common generalisation type and are not
+known to have mutual exclusive value sets.
+
+Similar to nominal subtyping a type relation is explicitly declared. 
+While declared types are always named types a _abstract_ generalisation of 
+any named type is its _anonymous_ structure that can be expressed as a 
+structural type as well.
 
 To put it yet another way, types give meaning to bits and bytes of data
 structures. Data structures of the same form can be meaningful in different
 ways what is reflected through different, often related types. 
-On these grounds it might become clear that _below_ the level of nominal types
-there is a level of structural types as well. A type's structure is equivalent
-to its most general generalisation.
+
+A _universal_ top type does not exist.
 
 #### Variance
 
