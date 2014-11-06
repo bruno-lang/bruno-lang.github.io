@@ -5,14 +5,16 @@ title:  "in a Nutshell"
 
 # _bruno_ in a Nutshell
 
-bruno is a novel likewise classic [programming system](/glossary/#programming-system); in simplified terms it
-could illogical be condensed to _declarative programming with data and extension 
-functions along with concurrent processes and message passing._
-Even though there is a strong influence of functional programming bruno mostly 
-has its own twist and borrows from different paradigms without being a 
-multi-paradigm system. 
-Look at it with a fresh and open mind as the system has several novel ideas.
+The bruno [programming system](/glossary/#programming-system) revisits and
+and improves classic programming ideas that are (at least) around since the '60s.
+Well-known constructs have been further developed and combined into a novel 
+programming system with today's challenges in mind.
 
+The system could illogical be condensed to _declarative programming with data 
+and extension functions, concurrent processes and message passing._
+
+The closest existing language would be a statically typed Erlang influenced by
+Haskell and Clojure.
 
 ## Prologue
 Basic correctness is still too challenging with both classic and modern programming
@@ -464,22 +466,33 @@ Both functions are called with `'1` and `'2` as arguments resulting in the list
 ### Channels _(Message Passing)_
 
 
+## Modules _(Artefacts)_
+
+### Namespaces
+
+### Libraries
+
 ## Types _(Type System)_
 (list sorts of types here)
 
-### Specialisation -- Generalisation
+### Specialisation -- Generalisation _(Type Polymorphism)_
 The bruno type system uses a type polymorphism that is crucially different
-from textbook interface inheritance (subtyping) or implementation inheritance
-(OO like inheritance). Therefore it is important not to think in these familiar 
-terms/semantics but to develop an independent understanding. 
+from textbook subtyping (interface inheritance) or OO like inheritance 
+(implementation inheritance). 
+Therefore it is important not to think in these familiar terms/semantics but to 
+develop an new, independent understanding. 
 
-Fundamentally two kinds of types are to be distinguished:
+Fundamentally four kinds of types are to be distinguished:
 
 * Value Types
 * Function Types
+* Effect Types
+* Abstraction Types
 
-For simplicity the following explanations should be associated with value types. 
-The semantics of function types are (just) a consequence of value type semantics.
+For simplicity the following explanations should be associated with value types
+that are the basis for everything else. 
+The semantics of function types are a consequence of value type semantics.
+Effect- and abstraction types have mostly slightly modified value semantics.
 
 Two (value) types can be related in such a way that 
 a value of a _subtype_ is also usable as a value of the _supertype_.
@@ -491,39 +504,37 @@ literally _becomes_ such a value.
 As this is different from the semantics usually associated with the terms 
 _subtype_ and _supertype_ this novel kind of relation is called 
 _specialisation_ / _generalisation_. A _derived_ type is said to be a 
-specialisation of a more general type - or vice versa - a type another type
-is derived from is said to be the generalisation of the more special, derived 
-type. 
+specialisation of a more general type - or vice versa - any type another type
+is derived from is said to be the generalisation of of that type. 
 
 The fundamental difference is well illustrated by the observation that types are 
 related in a _hierarchy_ (more precisely in a 
 [DAG](http://en.wikipedia.org/wiki/Directed_acyclic_graph)) while values
 (actual instances) do not have such relations. A value of formal type `A` is 
-always an instance of actual type `A`, consequently formal and actual value 
-types are always identical, a distinction unnecessary.
+always an instance of actual type `A`. Consequently formal and actual value 
+types are always identical, a distinction is unnecessary.
 
 In contrast to implementation inheritance a specialisation is a strictly more 
-_narrow_ type than its generalisation. It can neither add state nor can it 
+_limited_ type than its generalisation. It can neither add state nor can it 
 widen the range or change the nature of possible values. 
 The set of all possible values of a specialisation `B` is a strict subset of 
 the set of possible values of a generalisation `A`. 
 Yet any value in the set the of more special type `B` can appear (at least) in 
-the two flavours, that of `A` and that of `B`. The data of such a value however 
+two flavours, that of `A` and that of `B`. The data of such a value however 
 is indistinguishable for `A` and `B` but it might be typed as `A` in one context 
 and as `B` in another as given by a program. 
 
 When `B` is generalised to `A` its value (instance) is simply passed along as 
 `A`. It effectively _became_ an `A` and will be treated as such from then on. 
-Whereas a specialisation from `A` to `B` the value is (bound) checked for the 
-more narrow specification of `B` before it can be passed along as a `B`. 
-Actual allocation or instantiation of another value is not necessary. 
-A specialisation though can be impossible for some values in `A` not just
-for the reason that the set of possible `A`s contains values that aren't
-members of the set of possible `B`s. `B` could also be constraint in further
-ways that are orthogonal to the constraints of `A`. 
-So while any `B` is an `A` only some `A`s can become `B`s. Therefore the
-generalisation from `B` to `A` is a implicit _noop_ but a specialisation from 
-`A` to `B` has to be _demanded_ explicitly and could fail at runtime. 
+Whereas a specialisation from `A` to `B` the value needs to be checked for the 
+more limited specification of `B` before it can be passed along as a `B`. 
+Actual allocation or instantiation of a new value is not necessary as values do
+not need or have a reference to their type since it is statically known from 
+the formal type declaration.
+So while any `B` can become a `A` it is unclear if a `A` can become a `B`. 
+Therefore a generalisation from `B` to `A` is a implicit _noop_ but 
+a specialisation from `A` to `B` has to be _demanded_ explicitly as it could 
+fail at runtime. 
 
 It could be said that types _carry_ static properties of values. A value that 
 has been proven to conform to the properties of a type can be specialised to
@@ -541,7 +552,12 @@ To put it yet another way, types give meaning to bits and bytes of data
 structures. Data structures of the same form can be meaningful in different
 ways what is reflected through different, often related types. 
 
-A _universal_ top type does not exist.
+A _universal_ top type does not and cannot exist as it would have to be
+structurally compatible with all other, structurally different types.
+
+- strictly speaking it is wrong to say that one type can be assigned to another
+  as one values of the exact same type are compatible; but other types might be
+  possible to be converted into the demanded type.
 
 #### Variance
 
@@ -558,13 +574,6 @@ this should not be confused with dependent typing.
 (a form of latent typing but only for constants or more general statically decidable properties)
 
 ### Formats
-
-
-## Modules _(Artefacts)_
-
-### Namespaces
-
-### Libraries
 
 
 ## Advanced Techniques
