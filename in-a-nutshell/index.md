@@ -5,21 +5,18 @@ title:  "in a Nutshell"
 
 # _bruno_ in a Nutshell
 
-The bruno [programming system](/glossary/#programming-system) revisits and
-and improves classic programming ideas that are (at least) around since the '60s.
-Well-known constructs have been further developed and combined into a novel 
-programming system with today's challenges in mind.
+bruno is a declarative high level programming language where data is the central
+aspect of programming. It is transformed by pure functions using isolated 
+lightweight processes that communicate only via message passing.
 
-The system could illogical be condensed to _declarative programming with data 
-and extension functions, concurrent processes and message passing._
-
-The closest existing language would be a statically typed Erlang influenced by
-Haskell and Clojure.
+The closest existing language(s) would be a statically typed Erlang mixed with
+some Haskell and Clojure.
 
 ## Prologue
-Basic correctness is still too challenging with both classic and modern programming
-systems while software simultaneously attempts to solve problems of continually 
-increasing size accompanied by an equally increase of complexity to control. 
+Basic correctness is still too challenging with both classic and modern
+[programming systems](/glossary/#programming-system) while software 
+simultaneously attempts to solve problems of continually increasing size 
+accompanied by an equally increase of complexity to control. 
 It is my believe that a programming system must enable [*operative modularisation*](/glossary/#operative-modularisation)
 and [*local reasoning*](/glossary/#local-reasoning) to let programmers succeed in dividing and conquering 
 large(r) software systems. 
