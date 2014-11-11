@@ -468,12 +468,10 @@ Both functions are called with `'1` and `'2` as arguments resulting in the list
 
 ## Modules _(Artefacts)_
 
-### Namespaces
-
 ### Libraries
 
 ## Types _(Type System)_
-(list sorts of types here)
+(list sorts of types here - type konstructors)
 
 ### Specialisation -- Generalisation _(Type Polymorphism)_
 The bruno type system uses a type polymorphism that is crucially different
@@ -727,6 +725,9 @@ Two keys are consequently equal if they refer to the same constant.
 
 
 ## A System of Systems
+
+### Modular Software
+- where can we declare code? (where/who does declare -> use site vs declaration site)
 
 ## Epilogue
 
