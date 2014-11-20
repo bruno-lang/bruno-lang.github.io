@@ -458,9 +458,48 @@ Both functions are called with `'1` and `'2` as arguments resulting in the list
 
 ### Streams _(IO)_
 
-### Processes
-
 ### Channels _(Message Passing)_
+
+### Processes
+A process is a lightweight isolated thread of execution exclusively connected 
+to _outside world_ through channels. 
+It is the only construct to model behaviour around enduring state. 
+A process's state is always local to the process. 
+Each process is a little state machine that decides when to receive from or 
+send messages to a channels. 
+
+The state of a `process` is declared by as a map of possible states and their
+state transitions. 
+
+		process Server :: { 
+			Ready => [ Ready ], 
+			_ => [ Ready ] 
+		}
+
+A `Server` process has one state `Ready` that only can transit to itself.
+Any other (error) state (`_`) transits to `Ready` as well.
+
+A concrete process is given as a set of `when` state transition functions that 
+compute a process's successor state. 
+
+		data HttpServer :: (
+			HttpRequest[<] requests,
+			HttpResponse[>] responses,
+			(HttpRequest -> HttpResponse) app
+		)
+
+		when Ready :: HttpServer server -> HttpServer
+		1. server responses >> 
+			(server app (server requests <<))
+		.. Ready: server
+
+The `data` structure `HttpServer` is used as a concrete process. The body of
+a process function enumerates the steps of the transition. The `1.` step of
+the server is to send (`>>`) a message to `server responses` channel after it
+has been computed by the `server app` function for the request that is
+received (`<<`) from the `server requests` channel. 
+The process continues (`..`) in state `Ready` with same `server` state as before.
+
 
 
 ## Modules _(Artefacts)_
