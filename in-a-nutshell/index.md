@@ -54,27 +54,30 @@ will go into the details).
 		dimension Time [T] :: Int '0..
 
 `Time` is a specialisation of a integral number `>= 0` measured in `T`. While the
-dimension `Time` describes a kind of value _time_ as such has no meaningful value 
-itself. Therefore some `unit`s are introduced:
+dimension `Time` describes a kind of value _time_ is more of a concept than a
+measurable value. Therefore some _time_ `unit`s are introduced:
 
 		unit Minutes [min] :: Time
 		unit Seconds [sec] :: Time
 
-Both `Minutes` and `Seconds` are units for the dimension `Time` measured in `min`s
-and `sec`s. Units of the same dimension can be related using a `unit system` and
-`ratio`s:
+Both `Minutes` and `Seconds` are units within `Time` dimension measured in `min`s
+and `sec`s. Units of the same dimension can be related using `ratio`s:
 
-		unit system SI :: =
-			ratio Time :: [
-				'1min = '60sec,
-				'1sec = '1000ms 
-			]
+		ratio Time :: SI = {
+			'1min = '60sec,
+			'1sec = '1000ms 
+		}
 
-A minute `'1min` is `'60sec`, a second `'1sec` is e.g. `'1000ms`. Hence literals
-use a `'` prefix and are typed through their unit of measure.
+		dimension SI :: ()
 
-The presence of a unit system makes it unnecessary for the programmer to declare
-or apply conversion between units of the same system.
+A `Time` `ratio` within the unit system `SI` declares a  minute `'1min` as 
+`'60sec`, a second `'1sec` as `'1000ms` (and so forth). 
+The `SI` dimension models a unit system used as a fix point to group ratios
+within the same system.
+Literals use a `'` prefix and are typed through their unit of measure.
+
+The presence of a unit system `ratio`s makes it unnecessary to declare or apply 
+conversion between values within the same system.
 
 		Milliseconds three-minutes = '2min + '60sec
 
@@ -473,25 +476,26 @@ Both functions are called with `'1` and `'2` as arguments resulting in the list
 ### Channels _(Message Passing)_
 
 ### Processes
-A process is a lightweight isolated thread of execution exclusively connected 
-to _outside world_ through channels. 
+A process is a isolated lightweight thread of execution exclusively connected 
+to the _outside world_ by channels. 
 It is the only construct to model behaviour around enduring state. 
-A process's state is always local to the process. 
+The state of a process is always local to that process. 
 Each process is a little state machine that decides when to receive from or 
 send messages to a channels. 
 
 A `process` is declared in terms of the possible state transitions. 
 
-		process Server :: { 
+		process Server :: = { 
 			Ready => [ Ready ], 
-			_ => [ Ready ] 
+			    _ => [ Ready ] 
 		}
 
 A `Server` process has one state `Ready` that only can transit to itself.
-Any other (error) state (`_`) transits to `Ready` as well.
+Any other (error) state (`_`) transits to `Ready` as well. A `process`
+declaration encapsulate a behavioural pattern that can be used to many concrete
+automata. 
 
-A concrete process is given as a set of `when` state transition functions that 
-compute a process's successor state. 
+The `data` structure `HttpServer` is used as state of a concrete process. 
 
 		data HttpServer :: (
 			HttpRequest[<] requests,
@@ -499,19 +503,32 @@ compute a process's successor state.
 			(HttpRequest -> HttpResponse) app
 		)
 
+The concrete process is given as a set of `when`-_then_ state transitions that 
+run a sequence of effects before the successor state is computed. 
+
 		when Ready :: HttpServer server -> HttpServer
 		1. server responses >> 
 			(server app (server requests <<))
 		.. Ready: server
 
-The `data` structure `HttpServer` is used as a concrete process. The body of
-a process function enumerates the steps of the transition. The `1.` step of
-the server is to send (`>>`) a message to `server responses` channel after it
-has been computed by the `server app` function for the request that is
-received (`<<`) from the `server requests` channel. 
+The body of a process function enumerates the steps of the transition. 
+The `1.` step of the server is to send (`>>`) a message to `server responses` 
+channel after it has been computed by the `server app` function for the request 
+that is received (`<<`) from the `server requests` channel. 
 The process continues (`..`) in state `Ready` with same `server` state as before.
 
+Faults or Exceptions that occur during a state transition automatically 
+continue with the matching error state transition. 
+These use the type of fault instead of a state constant. 
 
+		when Out-Of-Memory! :: HttpServer server -> Worker?
+		..
+
+Should a `Out-Of-Memory!` error occur the `server` does not continue with any
+state what indicates the termination of the process. 
+
+Error handlers make it easy to model robust enduring self-repairing processes 
+or fragile daemons with task specific tear-down behaviour.
 
 ## Modules _(Artefacts)_
 
@@ -693,6 +710,8 @@ the pair `(K, V)`. When called, for example to add an entry to a map
 
 the compiler will expand the implementation of the procedure's AST with the 
 actual arguments for each usage.
+Note that functions passed to a procedure will not come at the expense of a
+virtual function call as the actual function is substituted by the compiler.
 
 #### Call-Site Inlining
 Any function call to a non-recursive function can be inlined at the call-site
@@ -710,8 +729,8 @@ Usually inlining trades better performance for larger artefact code size as code
 is not _shared_ but _duplicated_. In cases of short functions inlining might even 
 result in smaller artefacts. Still compile-time inlining always contains the
 risk that different callers of the same function run different versions of it.
-On the other hand inlining also can remove a runtime dependency as all uses are
-inlined.
+On the other hand inlining also can remove a runtime dependency when all 
+dependent usages are inlined.
 
 
 ### Eager Expressions _(Compile-Time Evaluation)_

@@ -88,7 +88,7 @@ content h4, content h5 {
 }
 content h1 { font-size: 2.4em; font-weight: normal; color: #69402e; counter-reset: h2 -1;}
 content h1 em { color: black; }
-content h2 { font-size: 1.5em; }
+content h2 { font-size: 1.75em; }
 content h3 { font-size: 1.25em; }
 content h4 { font-size: 1.125em; }
 content h5 { font-size: 1em; margin-bottom: 0; }
@@ -119,7 +119,7 @@ content h2:before {
 code kw { color: #859900; }
 code lit { color: #268bd2; }
 code lit ind { color: #565A9D; }
-code lit uom {color: #859900; }
+code lit uom {color: #839496; }
 code op { color: #cb4b16; }
 code uop { color: #b58900; }
 code def { color: #268bd2; }
