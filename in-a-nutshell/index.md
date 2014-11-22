@@ -6,11 +6,12 @@ title:  "in a Nutshell"
 # _bruno_ in a Nutshell
 
 bruno is a declarative high level programming language where data is the central
-aspect of programming. It is transformed by pure functions using isolated 
-lightweight processes that communicate only via message passing.
+aspect of programming. It is transformed by pure functions driven by isolated 
+lightweight processes that communicate just via message passing.
 
-The closest existing language(s) would be a statically typed Erlang mixed with
-some Haskell and Clojure.
+The language(s) is loosely influenced by Erlang, Haskell and Clojure and seams
+to have a philosophy comparable to that of Virgil III but there is no single 
+predecessor language.
 
 ## Prologue
 Basic correctness is still too challenging with both classic and modern
@@ -82,22 +83,23 @@ directly be used where e.g. `Milliseconds` are needed as the ratio between these
 is known.
 
 ### Compound Values
-Compound values (often loosely equated with records, structs or tuples) are 
-declared as a `data` types.
+Compound values (often loosely equated with records or structs) are declared as 
+`data` types.
 
 		data Rect :: (Length width, Length height)
 
 A `Rect` is a tuple with two `Length` fields, `width` and `height`. While all 
-types are named they can be used as tuples (structurally typed). A `Rect` is 
+types are nominal they can be used as (structurally typed) tuples. A `Rect` is 
 also a tuple of type `(Length, Length)`.
 
-Finally there are collection types for arrays/vectors with fixed length:
+Finally there are collection types for arrays/vectors of elements of identical 
+type with fixed length:
 
 		data Code :: Char[8]
 		data RGB :: Colour[3]
 
-A `Code` is sequence of `8` `Char`acters. A `RGB` colour one of `3` `Colour`s,
-where the length is part of the array's type. This length can also be within a
+A `Code` is vector of `8` `Char`acters. A `RGB` colour one of `3` `Colour`s,
+where the length is part of the array's type. A length can also be within a
 range.
 
 		data UTF8CodePoint :: Byte[1-4]
@@ -108,7 +110,7 @@ a wildcard `*` to indicate _any unknown_ length.
 		data Nonempty :: Int[1-*]
 
 An array is `Nonempty` when it has at least `1` up to any `*` number of elements. [^no-dependent-typing]
-In contrast to the fix length of arrays we can declare:
+In contrast to the fix length of arrays we can declare list as:
 
 		data Sentence :: [Word]
 
@@ -125,6 +127,16 @@ A `Team` is a _set_ of `Member`s. Maps are nothing else than sets of tuples:
 		data Dict :: {(Word, Translation)}
 
 A `Dict` is a set of `(Word, Translation)` twin-tuples (pairs).
+
+### Views
+Slicing arrays `[*]` creates a slice `[:*]`. 
+
+		Char[:2] he = "hello world" slice '0 '2 
+
+A slice is a view upon a section of a already immutable underlying array
+extended with the information about the position of the slice within the 
+originating array and the ability derive slices upon the same underlying array
+that are moved or changed in length.
 
 ### Enumerations
 Both simple and compound value types can be initialised with a list or set of
@@ -312,18 +324,18 @@ There is a single control flow construct directly embedded in a function
 declaration syntax. This implies that the construct cannot be nested. Extension
 functions and the `where` clause are used to avoid nesting, as shown soon.
 
-		fn min :: Int a -> Int b -> Int 
-			\ a < b \= a
-			\       \= b
+		fn min :: Int a -> Int b -> Int =
+			a < b : a
+			      : b
 
 The `min`imum of two values `a` and `b` is `a` in case `a < b` otherwise `b`.
-The cases `\ ... \` are checked in order of appearance. The last case has to
+The cases `condition : expr` are checked in order of appearance. The last case has to
 be the universal (true'ish) condition. For enumerations alternatively all
 values can be covered. 
 
-		fn show :: Bool b -> String
-			\ False \= "false"
-			\ True  \= "true"
+		fn show :: Bool b -> String =
+			False : "false"
+			True  : "true"
 
 Each case is implemented by an expression (the formalism has literally no statements).
 
@@ -351,9 +363,9 @@ at all) of local variables is not the programmer's burden.
 ### Loops
 The primary way to _loop_ is to use recursive functions:
 
-		fn factorial :: Int n -> Int
-			\ n == '0 \= '1
-			\         \= n * factorial (n - '1)
+		fn factorial :: Int n -> Int =
+			n == '0 : '1
+			        : n * factorial (n - '1)
 
 All tail recursive functions will use tail call elimination, thus not create/use
 stack frames. Due to referential transparency and _annotated_ commutativity of 
@@ -412,7 +424,7 @@ way to look at it is to assume that all functions just have one parameter being
 a n-tuple of the multiple elements. 
 
 		fn multi :: Int a -> Int b -> Int c -> Int
-		fn unified :: (Int, Int, Int) tuple -> Int 
+		fn unified :: (Int, Int, Int) abc -> Int 
 
 Both `multi` and `unified` compute an `Int` from three inputs of type `Int`.
 They have a functionally identical signature. This does not mean that everything
@@ -468,8 +480,7 @@ A process's state is always local to the process.
 Each process is a little state machine that decides when to receive from or 
 send messages to a channels. 
 
-The state of a `process` is declared by as a map of possible states and their
-state transitions. 
+A `process` is declared in terms of the possible state transitions. 
 
 		process Server :: { 
 			Ready => [ Ready ], 
@@ -722,32 +733,34 @@ any form of literal(s). In other words, it works as long as no abstractions
 or effects are involved.
 
 
-### Keys _(Typed "References")_
-A _key_ is a constant that _carries_ the type of a value that is accesses using
-the key. The key _refers_ to the value without referring to a specific location. 
-The keys themselves are of a uniform type `Key`, a type of less importance.
+### Keys _(Typed "Paths")_
+A _key_ is a constant that _carries_ the type of values that are accessed using
+that key. The keys themselves are of a uniform type `Key`, that is of little 
+importance.
+Each key is an abstract path to values rather than a reference or pointer to 
+a specific location or value. 
 
 		val @refers-to-Int :: Int
 
 Key constants start with a `@` followed by any sequence of characters except 
-whitespace and `,`. Yet to avoid confusion with the reference type itself a key
+whitespace and `,`. Yet to avoid confusion with a key type the key constant name
 cannot start with a upper case letter. 
-The type `@Int` is a _reference_ to an `Int` value while `@int` is a key named
-`int`.
+The type `@Int` is the type of a key being a _path_ to `Int` values 
+while `@int` is a key named `int`.
 
-Like atoms keys are used as part of more _dynamic_ concepts. 
-For example a _multi-typed map_ or _object_ (in e.g the javascript sense) with 
-a behaviour like:
+Like atoms keys are used as part of more _generic_ concepts. 
+For example, a _object_ (in say the javascript sense) could be modelled like:
 
 		op get :: O obj -> @T key -> T?
 
 		op put :: O obj -> @T key -> T value -> O
 
-The `obj` is a _map_ where the type of the value is associated with the key used
-to look it up. When supplying a `key` of type `@T` one can expect to get a 
-value of type `T?` (that is `T` or _nothing_). Conversely a value of type `T`
-can only be associated with a key of matching type `@T` in order to transit from 
-the origin `obj`ect `O` to a new `O` object as a result.
+The `obj` is a _container_ where the type of the value is brought along by a key. 
+When supplying a `key` of type `@T` one can expect to get a value of type `T?` 
+(that is `T` or _nothing_). 
+Conversely a value of type `T` can only be associated with a key of matching 
+type `@T` in order to transit from the origin `obj`ect `O` to a new `O` object 
+as a result.
 
 Keys use a more flexible naming schema to provide a wide range of possible names 
 without "polluting" the single overall identifier namespace. 
@@ -756,8 +769,8 @@ without "polluting" the single overall identifier namespace.
 
 The list shows kinds of different valid _keys_. In contrast to atoms keys are
 declared as `val` constants where the declared type is the type of the value the
-key refers to. 
-Two keys are consequently equal if they refer to the same constant.
+key leads to. 
+Two keys are consequently equal if they are the same constant.
 
 
 ## A System of Systems
