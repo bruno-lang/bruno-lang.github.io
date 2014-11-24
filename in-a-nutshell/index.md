@@ -474,6 +474,82 @@ Both functions are called with `'1` and `'2` as arguments resulting in the list
 ### Streams _(IO)_
 
 ### Channels _(Message Passing)_
+A channel is a typed queue of fix or variable length. Each channel transports
+only a particular simple or compound data type through the channel. 
+
+		TODO how are channels created...
+
+While each channel has an input and an output end a channel type is either
+an input `[<]` end or an output `[>]` end.
+
+		Message[<] input
+		Message[>] output
+
+Usually channels are of fixed length and block on send or receive if the channel
+if full or respectively empty. Another type of channel is non-blocking; their
+square brackets are inverse symbolising their responsiveness. 
+
+		Message]<[ non-blocking-input
+		Message]>[ non-blocking-output
+
+Finally it can also be expressed as a channel type that the blocking behaviour 
+of a channel is unknown or unimportant.
+
+		Message[<[ may-block-input
+		Message]>] may-block-output
+
+The different types of channels allow to write functions that work just for
+blocking (`M[>]`,`M[<]`) or non-blocking (`M]>[`,`M]<[`) channels or both of 
+them (`M]>]`,`M[<[`) and for particular value types or specific instances by 
+using a type variable like `M` would be.
+
+#### Cross-Channel-Synchronisation
+As channels can block a situation naturally arises where a value should be
+send to the first of a couple of channels that accepts the value or where
+a value should be received from the first of a couple of channels that has
+a value available with the guarantee that in the end only one channel is 
+affected. This is called a _select_ operation.
+
+To receive the first available value from a list of channels the alternatives
+are listed with the _select_ operator `|=` instead of usual _let_ `=`:
+
+		T value
+			|= channel-a <<
+			|= channel-b <<
+			|= channel-c <<
+
+_Select_ tries to receive a `value` of type `T` in the order given, top to bottom.
+If non of the channels offers a value (they all blocked waiting) `value` becomes 
+the first value available for any of the channels with no particular priority 
+should multiple channels offer a value _simultaneously_.
+
+Similarly to send to the first channel that accepts a value the _select_ 
+operator `|=` is used as well:
+
+		T[>] channel 
+			|= value >> channel-a
+			|= value >> channel-b
+			|= value >> channel-c
+
+The _select_ tries to send a `value` in the order given, top to bottom.
+In non of the channels directly accepts the value (they all blocked waiting)
+the `value` is send to the first channel accepting it with no particular priority
+should multiple channels accept a value _simultaneously_.
+In any case the operation returns the channel that accepted the value.
+The value could also be different for each alternative. 
+
+#### Time-outs
+When blocking send or receive should time out a _select_ is used together with
+a special channel that accepts/offers a value after a certain time. 
+
+		Int value
+			|= channel <<
+			|= '7 after '5ms
+
+The `after` procedure creates an ad hoc channel that offers `'7` after `5ms`.
+To synchronise such a time-out for multiple parallel processes a common 
+time-out channel can be used.
+
 
 ### Processes
 A process is a isolated lightweight thread of execution exclusively connected 
@@ -492,10 +568,11 @@ A `process` is declared in terms of the possible state transitions.
 
 A `Server` process has one state `Ready` that only can transit to itself.
 Any other (error) state (`_`) transits to `Ready` as well. A `process`
-declaration encapsulate a behavioural pattern that can be used to many concrete
+declaration encapsulate a behavioural pattern that can be used for many concrete
 automata. 
 
 The `data` structure `HttpServer` is used as state of a concrete process. 
+It holds channels to communicate with the _outside world_.
 
 		data HttpServer :: (
 			HttpRequest[<] requests,
@@ -517,18 +594,33 @@ channel after it has been computed by the `server app` function for the request
 that is received (`<<`) from the `server requests` channel. 
 The process continues (`..`) in state `Ready` with same `server` state as before.
 
+#### Error Handling
 Faults or Exceptions that occur during a state transition automatically 
 continue with the matching error state transition. 
 These use the type of fault instead of a state constant. 
 
-		when Out-Of-Memory! :: HttpServer server -> Worker?
+		when Out-Of-Memory! :: P p -> P?
 		..
 
-Should a `Out-Of-Memory!` error occur the `server` does not continue with any
-state what indicates the termination of the process. 
+Should a `Out-Of-Memory!` error occur the process `p` does not continue with any
+state what indicates the termination of the process. The optional type `P?` 
+indicates on type level that this might be the outcome of the transition. 
 
 Error handlers make it easy to model robust enduring self-repairing processes 
 or fragile daemons with task specific tear-down behaviour.
+
+For a generic error handling the actual `error` can be passed to the state
+transition by adding it as an extra argument.
+
+		when _! :: P p -> E! error -> P?
+
+#### IO-Devices
+In a system build out of processes and channels input devices like keyboards,
+mouses become become endpoints that feed data into a particular channel. 
+Output devices like a monitor is a endpoint that consumes a _screen data_ 
+channel and so forth. From the point of view of a program given through 
+processes there are just channels to talk to the _outside world_. 
+
 
 ## Modules _(Artefacts)_
 
