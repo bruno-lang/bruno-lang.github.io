@@ -2,6 +2,17 @@
 @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic,700italic);
 @import url(http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic);
 
+@page {
+	size: auto;
+	margin: 25mm 1cm 25mm 4cm;
+
+	counter-increment: page;
+  counter-reset: page 1;
+  @bottom-right {
+		content: counter(page);
+	}
+}
+
 html {
   background-color: #c3ccd1;
 	background-image: url(../img/noisy-2.png);
@@ -14,19 +25,29 @@ body {
 	font-size: 16px;
 }
 code, pre {
-	font-family: "Source Code Pro";
+	font-family: "Source Code Pro", monospace;
 }
 
 page {
-	border-radius: 4px;
 	display: block;
-	margin: 0 auto;
-	width: 580px;
-	padding-right: 250px;
-	padding-left: 140px;
-	padding-top: 2em;
 	background-color: white;
-	min-height: 200px;
+}
+@media screen {
+	page {
+		margin: 0 auto;
+		width: 580px;
+		border-radius: 4px;
+		padding-top: 2em;
+		min-height: 200px;
+		padding-right: 250px;
+		padding-left: 140px;
+
+	}
+}
+@media print {
+	page {
+		width: 16cm;
+	}
 }
 
 footer {
@@ -64,8 +85,12 @@ content pre code {
 	color: black;
 }
 
+@media screen {
+	content p code {
+		color: #565A9D;
+	}
+}
 content p code {
-	color: #565A9D;
 	white-space: nowrap;
 	padding: 0 3px;
 }
@@ -86,51 +111,86 @@ content blockquote em {
 content h4, content h5 {
 	font-weight: normal; font-family: "Source Code Pro"; color: black;
 }
-content h1 { font-size: 2.4em; font-weight: normal; color: #69402e; counter-reset: h2 -1;}
+content h1 { font-size: 2.4em; font-weight: normal; counter-reset: h2 -1;}
 content h1 em { color: black; }
 content h2 { font-size: 1.75em; }
 content h3 { font-size: 1.25em; }
 content h4 { font-size: 1.125em; }
 content h5 { font-size: 1em; margin-bottom: 0; }
 content h1 em { font-style: normal; font-weight: bold; }
-content h1:first-child { position: fixed; width: 600px; margin: 0; top: 0; padding: 0; 
-  letter-spacing: -0.03em;
-  background: linear-gradient(to bottom, rgba(255,255,255,1),  rgba(255,255,255,0));
-	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,1)),to(rgba(255,255,255,0)), color-stop(.8,rgba(255,255,255,0.8)));
-	background-image: -moz-linear-gradient(rgba(255,255,255,1) 60%, rgba(255,255,255,0) 100%);
-	line-height: 4;
+@media screen {
+  content h1 { color: #69402e; }
+	content h1:first-child { position: fixed; width: 600px; margin: 0; top: 0; padding: 0; 
+		letter-spacing: -0.03em;
+		background: linear-gradient(to bottom, rgba(255,255,255,1),  rgba(255,255,255,0));
+		background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,1)),to(rgba(255,255,255,0)), color-stop(.8,rgba(255,255,255,0.8)));
+		background-image: -moz-linear-gradient(rgba(255,255,255,1) 60%, rgba(255,255,255,0) 100%);
+		line-height: 4;
+	}
+	content h1:first-child + * { padding-top: 100px; }
 }
-content h1:first-child + * { padding-top: 100px; }
-content h2 { margin-top: 3em; font-weight: bold; letter-spacing: -0.03em; }
-content h3 { margin-top: 2em; }
+content h2 { font-weight: bold; letter-spacing: -0.03em; }
 content h4 em, content h3 em, content h2 em { font-size: 80%; font-weight: 300; font-style: normal; }
 
-content h2:before { 
-  counter-increment: h2; 
-  content: counter(h2, decimal); 
-  color: #aaa;
-  font-size: 48px;
-	margin-right: -60px;
-	margin-top: -1em;
-	position: absolute;
-	right: 0;
+@media screen {
+	content h2 { margin-top: 3em; }
+	content h3 { margin-top: 2em; }
+	content h2:before { 
+		counter-increment: h2; 
+		content: counter(h2, decimal); 
+		color: #aaa;
+		font-size: 48px;
+		margin-right: -60px;
+		margin-top: -1em;
+		position: absolute;
+		right: 0;
+	}
 }
 
-code kw { color: #859900; }
-code lit { color: #268bd2; }
-code lit ind { color: #565A9D; }
-code lit uom {color: #839496; }
-code op { color: #cb4b16; }
-code uop { color: #b58900; }
-code def { color: #268bd2; }
-code as { color: #dc322f; }
-code atom { color: #d33682; }
-code var { font-style: normal; color: #b58900; }
-code key, code key dim { color: #d33682; }
-code set, code sep, code dim { color: #565A9D; }
-code g { color: #2aa198; }
-code unit, code unit g { color: #565A9D; };
+@media print {
+	content h1 { margin-top: 40%; margin-bottom: 20%; text-align: center;}	
+	content h1 + p, content h1 + p + p { text-align: justify; width: 80%; margin: 0.5em auto; }
+	content h2 { page-break-before: always; padding-top: 5em; font-size: 2em; }
+	content h2:before { 
+		counter-increment: h2; 
+		content: counter(h2, decimal);
+		position: absolute;
+		right: 0;
+		font-size: 3cm;
+		margin-top: -1em;
+		font-weight: normal;
+		line-height: 1em;
+	}
+	content h3 { padding-top: 3.5em; }
+	content > p { widows: 3; orphans: 3; line-height: 1.6; font-size: 1rem; }
+	.sidenote { font-size: 0.9em; }
+	h1, h2, h3, h4, h5 { page-break-after: avoid; }
+}
 
+/* syntax highlighting */
+@media print {
+	code kw { color: black; font-weight: bold; font-family: monospace; }
+	code def { text-decoration: underline; }
+}
+@media screen {
+	code kw { color: #859900; }
+	code lit { color: #268bd2; }
+	code lit ind { color: #565A9D; }
+	code lit uom {color: #839496; }
+	code op { color: #cb4b16; }
+	code uop { color: #b58900; }
+	code def { color: #268bd2; }
+	code as { color: #dc322f; }
+	code atom { color: #d33682; }
+	code var { font-style: normal; color: #b58900; }
+	code key, code key dim { color: #d33682; }
+	code set, code sep, code dim { color: #565A9D; }
+	code g { color: #2aa198; }
+	code unit, code unit g { color: #565A9D; };
+}
+@media print {
+	toc { display: none; }
+}
 toc {
 	position: fixed;
 	top: 0;
