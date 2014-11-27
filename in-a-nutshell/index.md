@@ -42,18 +42,35 @@ level implementation details.
 On these grounds it is an overall theme in the bruno programming system to not 
 _extend_ but further and further restrict the more general to the more specific. 
 
+## Format
+The language uses more or less independent declarations of the form.
+
+		what name [unit] :: declaration-body
+
+* `what` is a keyword like word describing what is declared
+* `name` follows the keyword and gives a name to the declared thing
+* `::` is the _is declared as_ operator
+* `declaration-body` is the individual declaration itself that differs for the 
+  different declaration types.
+
+While there are several types of declarations each having a particular 
+_keyword_ this identifiers can be used in the declaration body as well.
+There are no reserved words.
+
+The syntax has no statements or ending marks like a semicolon. 
+While white-space is not significant in general a line-break might mark the
+end of some types of expressions. 
+
 ## Data
-Data is always represented by values. Values are values, thus immutable with
-value equality.
+Data is always represented by values, thus is immutable with value equality and
+no concept of identity.
 
 ### Simple Values
-Two types of simple values, `dimension`s and `unit`s. The distinction between 
-`dimension` and `unit` allows to model _type families_ (the type system section 
-will go into the details).
+There are two types of simple values, independent `dimension`s and dependent `unit`s. 
 
 		dimension Time [T] :: Int '0..
 
-`Time` is a specialisation of a integral number `>= 0` measured in `T`. While the
+`Time` is a specialisation of a integral number `>= 0` abbr. as `T`. While the
 dimension `Time` describes a kind of value _time_ is more of a concept than a
 measurable value. Therefore some _time_ `unit`s are introduced:
 
@@ -76,8 +93,8 @@ The `SI` dimension models a unit system used as a fix point to group ratios
 within the same system.
 Literals use a `'` prefix and are typed through their unit of measure.
 
-The presence of a unit system `ratio`s makes it unnecessary to declare or apply 
-conversion between values within the same system.
+The presence of a unit system with `ratio`s makes it unnecessary to declare or 
+explicitly apply conversion between values within the same system.
 
 		Milliseconds three-minutes = '2min + '60sec
 
@@ -85,8 +102,8 @@ The duration of `'2min` and `'60sec`, values of type `Minutes` and `Seconds` can
 directly be used where e.g. `Milliseconds` are needed as the ratio between these 
 is known.
 
-### Compound Values
-Compound values (often loosely equated with records or structs) are declared as 
+### Composite Values
+Composite values (often loosely equated with records or structs) are declared as 
 `data` types.
 
 		data Rect :: (Length width, Length height)
@@ -115,13 +132,17 @@ a wildcard `*` to indicate _any unknown_ length.
 An array is `Nonempty` when it has at least `1` up to any `*` number of elements. [^no-dependent-typing]
 In contrast to the fix length of arrays we can declare list as:
 
+#### Collections
+Two collection types are supported with special syntax but conceptually they 
+are [behaviours](#behaviours).
+A `Sentence` is a _list_ of `Word`s of variable length. 
+
 		data Sentence :: [Word]
 
 [^no-dependent-typing]: Note that the [formalism](/glossary/#formalism) is not dependently typed. Its 
     concept of (type) shapes is related but less open.
 
-A `Sentence` is a _list_ of `Word`s of variable length. Furthermore sets are
-supported with special syntax.
+Furthermore sets are supported with special syntax.
 
 		data Team :: {Member}
 
@@ -142,7 +163,7 @@ originating array and the ability derive slices upon the same underlying array
 that are moved or changed in length.
 
 ### Enumerations
-Both simple and compound value types can be initialised with a list or set of
+Both simple and composite value types can be initialised with a list or set of
 possible values to model enumerations. Classic enumerations are 0-tuples:
 
 		dimension Bool :: () = [ False, True ]
@@ -154,7 +175,7 @@ where in case of a list `False` will also be associated with index `'0` and
 		dimension Fruits :: = { Apples, Pears }
 
 The possible `Fruits` are `Apples` and `Pears`, this time with _set_ semantics. 
-Compound types can be restricted to an enumeration in a similar way:
+Composite types can be restricted to an enumeration in a similar way:
 
 		data Planet :: (Kilograms weight, Meters radius) = { 
 			Mercury ('3.303e+23kg, '2.4397e6m),
@@ -220,7 +241,7 @@ the default and can be left out.
 		Int ten = #10
 
 ##### Textual Literals
-The third type of literals are textual oriented. Compound values are given in a 
+The third type of literals are textual oriented. Composite values are given in a 
 way humans are used to write them:
 
 		String msg = "hello world!"
@@ -228,7 +249,7 @@ way humans are used to write them:
 		Date imagine = "1971-10-11"
 
 The `Point` and `Date` example illustrates that textual literals can be used for 
-any compound type (when defined appropriate, <a href="#formats">formats</a> will
+any composite type (when defined appropriate, <a href="#formats">formats</a> will
 go into the details later). The type of textual literals is inferred from the 
 context, such as the variable, parameter or return type.
 
@@ -249,10 +270,10 @@ A set literal is used to simulate a _map_ through a set of pairs. Each pair
 is the result of the _associate_ `=>` procedure available for any value type. 
 It is not a special map syntax but a usual procedure call resulting in a pair.
 
-#### Atoms _("typeless" constant literals)_
+#### Atoms _("type-less" constant literals)_
 Atoms are dimensionless values, conceptually zero-tuples of type `Atom`. 
 Different constants are defined by `` ` `` followed by any sequence of 
-characters except whitespace.
+characters except white-space.
 
 		[`a `atom `+ `/ `-> ]
 		
@@ -310,7 +331,7 @@ operators are short hands for function calls.
 		fn mul [*] :: Int a -> Int b -> Int
 		
 The `plus` function is bound to `+` operator, the `mul` function to `*`
-(within each namespace this operator _alias_ has to be unambiguous).
+(within each module this operator _alias_ has to be unambiguous).
 
 		'1 + '2 * '3 == ('1 + '2) * '3
 		
@@ -364,7 +385,13 @@ can be chosen for best readability. Also the necessity of computation (order or
 at all) of local variables is not the programmer's burden.
 
 ### Loops
-The primary way to _loop_ is to use recursive functions:
+The primary way to _loop_ is to use build in operators that work on arrays in
+the fashion of
+[APL](http://en.wikipedia.org/wiki/APL_%28programming_language%29) like 
+languages like [K](http://en.wikipedia.org/wiki/K_%28programming_language%29). 
+The exact operators and syntax haven't been decided yet. 
+
+The secondary way to _loop_ is to use recursive functions:
 
 		fn factorial :: Int n -> Int =
 			n == '0 : '1
@@ -376,17 +403,13 @@ appropriate functions the multiplication in the above example could also be
 written vice versa `factorial (n - '1) * n` and still be executed without 
 consuming stack frames as `*` is such an _annotated_ operation.
 
-Another construct is planed for loops that _do_ something several times or with
-several elements of a collection (imperative _for_ loops). The goal is to find a
-declarative way that does not require accessible (named) mutable state, as 
-counters or the current element in a _foreach_ loop.
-
 ### First Class Functions
 Functions are also values, they can appear as parameter and return type of a 
 function declaration and be assigned to variables (`where`-clause). Such 
 functions are _anonymous_ in the sense that their original name is _lost_.
 
-A function that takes an `Int` and computes a `Bool` has a type of `(Int -> Bool)`.
+For example, a function that takes an `Int` and computes a `Bool` has a type 
+of `(Int -> Bool)`.
 
 		fn even :: (Int n -> Bool) = n mod '2 == '0
 
@@ -417,8 +440,8 @@ Instead of passing an actual argument to `+` the function is partially applied
 resulting in a function `inc`[^plus] that takes (or _on_) the left out 
 argument `b` which itself than results in a value of type `Int`. 
 
-### Unified Arity
-Any simple value is identical to the 1-tuple of that simple value. 
+### Arity Equivalence 
+Excursion: Any simple value is identical to the 1-tuple of that simple value. 
 For example a value of type `Int` is identical to the type `(Int)`.
 Similarly a `[Int]` is `([Int])` or a `{Int}` is also `({Int})`.
 
@@ -427,32 +450,15 @@ way to look at it is to assume that all functions just have one parameter being
 a n-tuple of the multiple elements. 
 
 		fn multi :: Int a -> Int b -> Int c -> Int
-		fn unified :: (Int, Int, Int) abc -> Int 
+		fn uni :: (Int, Int, Int) abc -> Int 
 
-Both `multi` and `unified` compute an `Int` from three inputs of type `Int`.
+Both `multi` and `uni` compute an `Int` from three inputs of type `Int`.
 They have a functionally identical signature. This does not mean that everything
 is normalised to one (multiple simple parameters) or the other (one tuple 
 parameter) but that an variable amount of parameters can be expressed through
 its tuple equivalent. 
 
-		fn each :: T value -> [(T -> Int)] fs -> [Int]
 
-`each` is a function that given a `value` of any type bound to a type variable 
-`T` (type variables will be explained shortly) takes as list of functions `fs` 
-that operate on the same type `T` to compute a list of the function results 
-that is returned. The type variable `T` here could be substituted to any type. 
-When using a pair of `(Int, Int)` any function with 2 `Int` parameters or 1 
-pair of `(Int, Int)` is possible to use in list of `fs`.
-For example `plus` is such a function:
-
-		fn plus [+] :: Int a -> Int b -> Int
-
-Now `each` can be used like
-
-		('1, '2) each [+, -]
-
-Both functions are called with `'1` and `'2` as arguments resulting in the list 
-`['3, '1]`.
 
 ## Abstractions
 
@@ -464,7 +470,7 @@ Both functions are called with `'1` and `'2` as arguments resulting in the list
 
 ### Notations _(abstract over cases)_
 
-### Type Schemas _(abstract over types)_
+### Type Families _(abstract over types)_
 
 
 ## Effects _(a.k.a. Side Effects)_
@@ -476,7 +482,7 @@ Both functions are called with `'1` and `'2` as arguments resulting in the list
 
 ### Channels _(Message Passing)_
 A channel is a typed queue of fix or variable length. Each channel transports
-values of a particular simple or compound data type. 
+values of a particular simple or composite data type. 
 
 		TODO how are channels created...
 
@@ -634,7 +640,7 @@ channels and streams to effect the _outside world_.
 ### Libraries
 
 ## Types _(Type System)_
-(list sorts of types here - type konstructors)
+(list sorts of types here - type constructors)
 
 ### Specialisation -- Generalisation _(Type Polymorphism)_
 The bruno type system uses a type polymorphism that is crucially different
@@ -776,7 +782,7 @@ explicit type _annotation_ for that form:
 
 The form is tagged as a `` `date ``, followed by a date value in three components. 
 The tag hints what types are expected/checked for the following elements. The 
-binding between tag and type is done itself as a tagged form in the namespace.
+binding between tag and type is done itself as a tagged form in the library or 
 
 		(`use `date Date)
 
@@ -861,7 +867,7 @@ a specific location or value.
 		val @refers-to-Int :: Int
 
 Key constants start with a `@` followed by any sequence of characters except 
-whitespace and `,`. Yet to avoid confusion with a key type the key constant name
+white-space and `,`. Yet to avoid confusion with a key type the key constant name
 cannot start with a upper case letter. 
 The type `@Int` is the type of a key being a _path_ to `Int` values 
 while `@int` is a key named `int`.
@@ -881,7 +887,7 @@ type `@T` in order to transit from the origin `obj`ect `O` to a new `O` object
 as a result.
 
 Keys use a more flexible naming schema to provide a wide range of possible names 
-without "polluting" the single overall identifier namespace. 
+without "polluting" the single overall identifier names-pace. 
 
 		[@a @key @+ @1 @[other] ]
 

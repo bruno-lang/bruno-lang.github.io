@@ -139,11 +139,11 @@ content h4 em, content h3 em, content h2 em { font-size: 80%; font-weight: 300; 
 		counter-increment: h2; 
 		content: counter(h2, decimal); 
 		color: #aaa;
-		font-size: 48px;
-		margin-right: -60px;
+		font-size: 2cm;
+		margin-right: -2cm;
 		margin-top: -1em;
-		position: absolute;
-		right: 0;
+		position: relative;
+		float: right;
 	}
 }
 
@@ -154,8 +154,8 @@ content h4 em, content h3 em, content h2 em { font-size: 80%; font-weight: 300; 
 	content h2:before { 
 		counter-increment: h2; 
 		content: counter(h2, decimal);
-		position: absolute;
-		right: 0;
+		position: relative;
+		float: right;
 		font-size: 3cm;
 		margin-top: -1em;
 		font-weight: normal;
