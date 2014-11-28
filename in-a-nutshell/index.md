@@ -49,17 +49,26 @@ The language uses more or less independent declarations of the form.
 
 * `what` is a keyword like word describing what is declared
 * `name` follows the keyword and gives a name to the declared thing
+* `unit` optional part where a abbr. for a unit or operator of the data type or function is declared
 * `::` is the _is declared as_ operator
 * `declaration-body` is the individual declaration itself that differs for the 
-  different declaration types.
+  different declaration types
 
 While there are several types of declarations each having a particular 
-_keyword_ this identifiers can be used in the declaration body as well.
+_keyword_ this keyword like identifiers can be used in the declaration body as well.
 There are no reserved words.
 
 The syntax has no statements or ending marks like a semicolon. 
 While white-space is not significant in general a line-break might mark the
-end of some types of expressions. 
+end of some types of expressions.
+
+A single `=` usually stands for _has the value_ where value could be the 
+expression that implements a function.
+
+**OBS** The code examples given are exemplary and use mostly fictional types and 
+function names to be more descriptive and familiar to the reader.
+The section on [types](#types) goes into the details of the actual build in 
+language base.
 
 ## Data
 Data is always represented by values, thus is immutable with value equality and
