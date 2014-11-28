@@ -139,11 +139,12 @@ a wildcard `*` to indicate _any unknown_ length.
 		data Nonempty :: Int[1-*]
 
 An array is `Nonempty` when it has at least `1` up to any `*` number of elements. [^no-dependent-typing]
-In contrast to the fix length of arrays we can declare list as:
 
 #### Collections
 Two collection types are supported with special syntax but conceptually they 
 are [behaviours](#behaviours).
+In contrast to the fix length of arrays collection are of a variable length 
+that is unknown on type level.
 A `Sentence` is a _list_ of `Word`s of variable length. 
 
 		data Sentence :: [Word]
@@ -165,6 +166,11 @@ A `Dict` is a set of `(Word, Translation)` twin-tuples (pairs).
 Slicing arrays `[*]` creates a slice `[:*]`. 
 
 		Char[:2] he = "hello world" slice '0 '2 
+
+By `slice`ing a section of the string `"hello world"` starting at positon
+`'0` with a length of `'2` the varibale `he`, that is a slice of two
+characters `Char[:2]`, refers to the first two characters of that string,
+namely `"he"`.
 
 A slice is a view upon a section of a already immutable underlying array
 extended with the information about the position of the slice within the 
