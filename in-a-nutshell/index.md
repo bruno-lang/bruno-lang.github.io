@@ -264,8 +264,8 @@ way humans are used to write them:
 		Date imagine = "1971-10-11"
 
 The `Point` and `Date` example illustrates that textual literals can be used for 
-any composite type (when defined appropriate, <a href="#formats">formats</a> will
-go into the details later). The type of textual literals is inferred from the 
+any composite type (when these declare a text-[format](#formats)). 
+The type of textual literals is inferred from the 
 context, such as the variable, parameter or return type.
 
 #### Collection Literals
