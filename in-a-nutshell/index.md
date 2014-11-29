@@ -43,7 +43,7 @@ On these grounds it is an overall theme in the bruno programming system to not
 _extend_ but further and further restrict the more general to the more specific. 
 
 ## Format
-The language uses more or less independent declarations of the form.
+The language uses set of more or less independent declarations of the form.
 
 		what name [unit] :: declaration-body
 
