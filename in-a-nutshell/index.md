@@ -3,71 +3,77 @@ layout: default
 title:  "in a Nutshell"
 ---
 
-# _bruno_ in a Nutshell
+# bruno in a Nutshell
 
-bruno is a declarative high level programming language where data is the central
-aspect of programming. It is transformed by pure functions driven by isolated 
-lightweight processes that communicate just via message passing.
+bruno is a declarative high level programming language designed for correctness
+on the basis of data and pure functions. 
+State is restrained in isolated lightweight processes that communicate only by
+message passing.
 
-The language(s) is loosely influenced by Erlang, Haskell and Clojure and seams
-to have a philosophy comparable to that of Virgil III but there is no single 
-predecessor language.
+bruno is influenced by ideas found in Erlang, Haskell and Clojure and appears 
+to have a philosophical basis similar to that of Virgil III but there is no 
+direct predecessor language.
 
+<noindex/>
 ## Prologue
 Basic correctness is still too challenging with both classic and modern
 [programming systems](/glossary/#programming-system) while software 
 simultaneously attempts to solve problems of continually increasing size 
 accompanied by an equally increase of complexity to control. 
-It is my believe that a programming system must enable [*operative modularisation*](/glossary/#operative-modularisation)
-and [*local reasoning*](/glossary/#local-reasoning) to let programmers succeed in dividing and conquering 
-large(r) software systems. 
+
+To not be overwhelmed by complexity a programming system needs to enable 
+[*operative modularisation*](/glossary/#operative-modularisation)
+and [*local reasoning*](/glossary/#local-reasoning) to let programmers succeed 
+in dividing and conquering large(r) software systems. 
 
 To ease reasoning the possibilities must be restrictable to be effectively simplified.
 By expressing what is impossible the programmer limits what needs to be
-considered and understood. Impossibility induces logical consequences what opens 
-possibilities of simplification and optimisation[^why-restrictions]. 
+considered and understood. Impossibility is accompanied by logical consequences 
+what opens possibilities of simplification and optimisation[^why-restrictions]. 
 
 [^why-restrictions]: E.g. pure functions (the impossibility of site-effects) allow
-      to derive, reorder or memoize execution or fuse or inline expressions at 
-      compile-time; immutable values (impossibility of mutation) allows to share
-      data without the need to copy it.
+      to derive, reorder or memoize execution, fuse or inline expressions at 
+      compile-time; immutable values (the impossibility of mutation) allows to 
+      share data without copying it.
 
-When composing systems out of restricted specific constructs (rather than 
+By composing systems out of a handful restricted specific constructs (rather than 
 unrestricted generic ones) application-, compiler- and VM-programmers share a 
-more meaningful common language that communicates its possibilities and impossibilities
-along the stages. On the contrary the concreteness of the constructs must still
-maintain the ability to abstract ideas effectively and allow controlling low 
-level implementation details.
+meaningful common language that carries its possibilities and impossibilities
+along the stages so that they can be utilised. 
+On the contrary the concreteness of the constructs must still maintain the 
+ability to abstract ideas intuitively and allow to control low level 
+implementation details.
 
 On these grounds it is an overall theme in the bruno programming system to not 
 _extend_ but further and further restrict the more general to the more specific. 
 
+
 ## Format
-The language uses set of more or less independent declarations of the form.
+The language uses sets of more or less independent declarations of the form:
 
-		what name [unit] :: declaration-body
+		keyword name [unit] :: declaration-body
 
-* `what` is a keyword like word describing what is declared
-* `name` follows the keyword and gives a name to the declared thing
-* `unit` optional part where a abbr. for a unit or operator of the data type or function is declared
-* `::` is the _is declared as_ operator
-* `declaration-body` is the individual declaration itself that differs for the 
-  different declaration types
+* `keyword` what kind of thing is declared?
+* `name` what is the identity of the declared thing?
+* `unit` how to identify values of this particular thing?
+* `::` (is the _is declared as_ operator)
+* `declaration-body` how does the thing relate to other things?
 
-While there are several types of declarations each having a particular 
-_keyword_ this keyword like identifiers can be used in the declaration body as well.
-There are no reserved words.
+There are a dozen types of declarations each using a distinctive _keyword_.
+In the declaration body however any valid identifier (including these words) 
+can be used. There are no reserved words.
 
-The syntax has no statements or ending marks like a semicolon. 
+The syntax has no statements or ending marks (like a semicolon) but predefined
+sets of character used for operators, literals and forms of expressions. 
 While white-space is not significant in general a line-break might mark the
 end of some types of expressions.
 
-A single `=` usually stands for _has the value_ where value could be the 
-expression that implements a function.
+A single `=` usually stands for: _has the value_ (where value could also refer to
+the expression that implements a function).
 
-**OBS** The code examples given are exemplary and use mostly fictional types and 
-function names to be more descriptive and familiar to the reader.
-The section on [types](#types) goes into the details of the actual build in 
+**Note** that the code examples given are exemplary and use mostly fictional 
+types or functions to be more descriptive and familiar to the reader.
+The section on [types](#types) goes into the details of the actual build-in 
 language base.
 
 ## Data
@@ -141,10 +147,11 @@ a wildcard `*` to indicate _any unknown_ length.
 An array is `Nonempty` when it has at least `1` up to any `*` number of elements. [^no-dependent-typing]
 
 #### Collections
-Two collection types are supported with special syntax but conceptually they 
-are [behaviours](#behaviours).
+Two collection types are supported with special syntax although conceptually 
+they aren't data types but [behaviours](#behaviours).
 In contrast to the fix length of arrays collection are of a variable length 
-that is unknown on type level.
+that is not reflected on type level.
+
 A `Sentence` is a _list_ of `Word`s of variable length. 
 
 		data Sentence :: [Word]
@@ -476,20 +483,96 @@ its tuple equivalent.
 
 
 ## Abstractions
+Abstractions are forms of indirections that allow to formulate code on more
+abstract levels. This avoids code duplication at the costs of a small runtime
+overhead.
+
+Operations, behaviours and notations, have their origins in the idea of an ADT 
+and build upon dynamic dispatch at runtime. Type families in contrast statically
+abstract over the properties of member types and are used like type variables.
 
 ### Operations _(abstract over functions)_
-(nominal typed)
+Operations are used to abstract the meaning of a set of functions that is 
+reflected by the operation's name.
+
+An operation `op` is abstract or virtual nominal typed function. 
+Most often operations are used in conbination with a _type variable_ as the 
+target type is abstract as well. 
+
+		op eq :: (T one -> T other -> Bool)
+
+The `eq` operation (`op`) is a virtual function of type `(T -> T -> Bool)` where
+`one` and `other` are of the same actual type substituted for the 
+_type variable_ `T`. 
+
+#### Polymorphism à la carte
+Operations are implemented by functions of matching type through a explicitly 
+declared specialisation binding validly within the declaring a context of a 
+library or module.
+
+		(`auto equal-ints eq [Int])
+
+The [tagged form](#tagged-forms) `` `auto `` declares the automatic (implicit)
+specialisation of the function `equal-ints` to the operation `eq` when that
+is required for the a _type variable_ `T` of actual type `Int`. 
+So in this example `equal-ints` has to be similar to:
+
+		fn equal-ints :: Int a -> Int b -> Bool = a == b
+
+Operations can also be bound in the `where`-clause of a function.
+
+		where
+			equal-ints ~> eq Int
+
+The function `equal-ints` is specialised to the operation `eq` for type `Int`
+within the body of the `where`-clause's function.
+
+On the use-site operations are not declared as explicit parameters but passed 
+implicit as existential type constraints expressed as part of a type family 
+(a _type variable_).
+
+		family T :: _ & eq
+
+Any type (`_`) for which a `eq` operation exists in the usage context is a 
+member of the type family `T`. 
+
+		fn contains :: 
+		T[*] vector -> T sample -> Index start -> Bool =
+			start >= vector length : False
+			e eq sample            : True
+			                       : vector contains e, next
+		where 
+			T e = vector at start
+			Int next = start + '1
+
+The function `contains` is implemented using the operation `eq` to compare the
+`sample` with the actual element `e`. Because `T` is constraint to a type for
+which the `eq` operation exists it can be used within the body of `contains`
+like a normal function of `T`. When using `contains` the type of comparison
+can be chosen by the function bound to the operation in the caller's context.
 
 
-### Behaviours _(abstract over sets of functions)_
+### Behaviours _(abstract over data)_
+
+<!--
+A `behaviour` is an abstract data type (ADT) described by the set of supported 
+operations.
+
+		op push :: [T] stack -> T e -> [T]
+		op pop :: [T] stack -> T?
+
+		behaviour Stack :: [T] = { push, pop }
+
+		family S :: [T] + Stack
+-->
 
 ### Notations _(abstract over cases)_
 
 ### Type Families _(abstract over types)_
 
 
-## Effects _(a.k.a. Side Effects)_
 
+## Effects _(a.k.a. Side Effects)_
 
 ### Transients
 
@@ -644,10 +727,10 @@ successor state `P?` or _nothing_ depending on the actual `error`.
 
 #### IO-Devices
 In a system build out of processes and channels input devices like a mouse or a
-keyboard become endpoints (processes) that feed data into a particular channels. 
+keyboard become endpoints (processes) that feed data into a particular channel. 
 Sockets become types of channels and so forth. 
-From the point of view of a program given through processes there are just 
-channels and streams to effect the _outside world_.
+From the point of view of a program composed out of processes there are just 
+channels and streams to affect the _outside world_.
 
 
 ## Modules _(Artefacts)_

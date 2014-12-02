@@ -111,7 +111,7 @@ content blockquote em {
 content h4, content h5 {
 	font-weight: normal; font-family: "Source Code Pro"; color: black;
 }
-content h1 { font-size: 2.4em; font-weight: normal; counter-reset: h2 -1;}
+content h1 { font-size: 2.4em; font-weight: bold; counter-reset: h2 -1;}
 content h1 em { color: black; }
 content h2 { font-size: 1.75em; }
 content h3 { font-size: 1.25em; }
@@ -119,7 +119,7 @@ content h4 { font-size: 1.125em; }
 content h5 { font-size: 1em; margin-bottom: 0; }
 content h1 em { font-style: normal; font-weight: bold; }
 @media screen {
-  content h1 { color: #69402e; }
+  content h1 { /* color: #69402e; */ }
 	content h1:first-child { position: fixed; width: 600px; margin: 0; top: 0; padding: 0; 
 		letter-spacing: -0.03em;
 		background: linear-gradient(to bottom, rgba(255,255,255,1),  rgba(255,255,255,0));
@@ -135,7 +135,7 @@ content h4 em, content h3 em, content h2 em { font-size: 80%; font-weight: 300; 
 @media screen {
 	content h2 { margin-top: 3em; }
 	content h3 { margin-top: 2em; }
-	content h2:before { 
+	content h2:not([id$=logue]):before { 
 		counter-increment: h2; 
 		content: counter(h2, decimal); 
 		color: #aaa;
@@ -151,7 +151,7 @@ content h4 em, content h3 em, content h2 em { font-size: 80%; font-weight: 300; 
 	content h1 { margin-top: 40%; margin-bottom: 20%; text-align: center;}	
 	content h1 + p, content h1 + p + p { text-align: justify; width: 80%; margin: 0.5em auto; }
 	content h2 { page-break-before: always; padding-top: 5em; font-size: 2em; }
-	content h2:before { 
+	content h2:not([id$=logue]):before { 
 		counter-increment: h2; 
 		content: counter(h2, decimal);
 		position: relative;
@@ -235,10 +235,11 @@ toc li.toc-H2:before {
 }
 
 .sidenote {
-	position: absolute;
-	right: -240px;
-	width: 230px;
+	position: relative;
 	margin: 0;
+	margin-right: -240px;
+	float: right;
+	width: 230px;
 	font-family: "Source Sans Pro";
 	font-size: 0.76em;
 	text-align: justify;
