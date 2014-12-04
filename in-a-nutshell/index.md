@@ -18,18 +18,20 @@ direct predecessor language.
 ## Prologue
 Basic correctness is still too challenging with both classic and modern
 [programming systems](/glossary/#programming-system) while software 
-simultaneously attempts to solve problems of continually increasing size 
-accompanied by an equally increase of complexity to control. 
+simultaneously attempts to solve problems of continually increasing scale 
+accompanied by an equally increase of complexity. 
 
-To not be overwhelmed by complexity a programming system needs to enable 
+Mastering complexity however is an utopian fallacy, it has to be avoided in the
+first place. A programming system that allows for 
 [*operative modularisation*](/glossary/#operative-modularisation)
-and [*local reasoning*](/glossary/#local-reasoning) to let programmers succeed 
-in dividing and conquering large(r) software systems. 
+and [*local reasoning*](/glossary/#local-reasoning) lets programmers succeed 
+in dividing and conquering large(r) software systems by composing them out of
+many simple components.
 
 To ease reasoning the possibilities must be restrictable to be effectively simplified.
 By expressing what is impossible the programmer limits what needs to be
-considered and understood. Impossibility is accompanied by logical consequences 
-what opens possibilities of simplification and optimisation[^why-restrictions]. 
+considered and understood. Impossibility is coupled with logical consequences 
+that enable possibilities of simplification and optimisation[^why-restrictions]. 
 
 [^why-restrictions]: E.g. pure functions (the impossibility of site-effects) allow
       to derive, reorder or memoize execution, fuse or inline expressions at 
