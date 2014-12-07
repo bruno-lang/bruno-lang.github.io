@@ -43,8 +43,7 @@ unrestricted generic ones) application-, compiler- and VM-programmers share a
 meaningful common language that carries its possibilities and impossibilities
 along the stages so that they can be utilised. 
 On the contrary the concreteness of the constructs must still maintain the 
-ability to abstract ideas intuitively and allow to control low level 
-implementation details.
+ability to abstract ideas intuitively and allow to control low level details.
 
 On these grounds it is an overall theme in the bruno programming system to not 
 _extend_ but further and further restrict the more general to the more specific. 
@@ -486,7 +485,7 @@ its tuple equivalent.
 
 ## Abstractions
 Abstractions are forms of indirections that allow to formulate code on more
-abstract levels. This avoids code duplication at the costs of a small runtime
+abstract levels. Code duplication is avoided at the costs of a minimal runtime
 overhead.
 
 Operations, behaviours and notations, have their origins in the idea of an ADT 
@@ -494,10 +493,10 @@ and build upon dynamic dispatch at runtime. Type families in contrast statically
 abstract over the properties of member types and are used like type variables.
 
 ### Operations _(abstract over functions)_
-Operations are used to abstract the meaning of a set of functions that is 
-reflected by the operation's name.
+Operations are used to abstract over the meaning of a group of congeneric 
+functions. This meaning is expressed through the operation's name.
 
-An operation `op` is abstract or virtual nominal typed function. 
+An operation `op` is an abstract or virtual nominal typed function. 
 Most often operations are used in conbination with a _type variable_ as the 
 target type is abstract as well. 
 
@@ -509,14 +508,14 @@ _type variable_ `T`.
 
 #### Polymorphism à la carte
 Operations are implemented by functions of matching type through a explicitly 
-declared specialisation binding validly within the declaring a context of a 
+declared specialisation binding validly within the declaring context of a 
 library or module.
 
 		(`auto equal-ints eq [Int])
 
 The [tagged form](#tagged-forms) `` `auto `` declares the automatic (implicit)
-specialisation of the function `equal-ints` to the operation `eq` when that
-is required for the a _type variable_ `T` of actual type `Int`. 
+specialisation of the function `equal-ints` to the operation `eq` where the 
+_type variable_ `T` is of actual type `Int`. 
 So in this example `equal-ints` has to be similar to:
 
 		fn equal-ints :: Int a -> Int b -> Bool = a == b
@@ -530,10 +529,10 @@ The function `equal-ints` is specialised to the operation `eq` for type `Int`
 within the body of the `where`-clause's function.
 
 On the use-site operations are not declared as explicit parameters but passed 
-implicit as existential type constraints expressed as part of a type family 
-(a _type variable_).
+implicitly as existential type constraints expressed as part of a type family 
+(for now a _type variable_).
 
-		family T :: _ & eq
+		family T :: _ with eq
 
 Any type (`_`) for which a `eq` operation exists in the usage context is a 
 member of the type family `T`. 
@@ -555,18 +554,76 @@ can be chosen by the function bound to the operation in the caller's context.
 
 
 ### Behaviours _(abstract over data)_
+Like operations give meaning to functions a `behaviour` gives meaning to a group
+of functions that have particular interaction semantics. The behaviour describes
+an abstract data type (ADT) by the set of supported operations.
 
-<!--
-A `behaviour` is an abstract data type (ADT) described by the set of supported 
-operations.
+Given the three operations `push`, `peek` and `pop`, 
 
-		op push :: [T] stack -> T e -> [T]
-		op pop :: [T] stack -> T?
+		op push :: S stack -> E e -> S
+		op peek :: S stack -> E?
+		op pop  :: S stack -> S
 
-		behaviour Stack :: [T] = { push, pop }
+where both the _stack_ `S` as well as its _elements_ `E` can be of any type 
+(`_`),
 
-		family S :: [T] + Stack
--->
+		family S :: _
+		family E :: _
+
+a `Stack` is declared as a `behaviour` having the three operations.
+
+		behaviour Stack E :: = { push, peek, pop }
+		
+The `Stack` captures the type variable of the _elements_ `E` so that it can
+be parametrised and thereby further specialised when used. 
+
+With the behavioural _contract_ in place a `Stack` is used through type families. 
+Assuming code in another module declares two fresh type variables 
+(here named `S1` and `E1` to avoid confusion with `S` and `E`):
+
+		family E1 :: _
+		family S1 :: _ as Stack E1
+
+Any type (`_`) that in known to _behave_ `as` a `Stack` is a member of the
+type family `S1`; thus `S1` can be used as `Stack` of elements of type `E1`. 
+The fresh type variable `E1` is substituted for the earlier captured variable `E`.
+
+		fn push? :: S1 stack -> E1 e -> S1 =
+			stack peek is-nothing? : stack push e
+			                       : stack
+
+The function `push?` just pushes the element `e` to the `stack` if it is empty, 
+otherwise the stack is left unchanged. `S1` is known to have the `Stack`
+`behaviour` so `push` and `peek` can be used as if they were function declared
+on type `S1`.
+
+Practically any type that has matching functions can get the behaviour of a 
+`Stack`. This is thou (as always) declared explicitly for a module or library:
+
+		(`auto Stack { 
+			array-push => push, 
+			array-peek => peek,
+			array-pop  => pop })
+
+The `` `auto`` -matic specialisation to `Stack` is declared by mapping the
+actual function (here `array-*`) to the operation from the `Stack` behaviour.
+
+The actual types that can be specialised to a `Stack` depend on the type(s)
+stated in the mapped functions. If multiple function of same name are in the
+name-space the function is qualified with the containing module or library name.
+
+The actual implementing functions are usual (maybe existing) functions. 
+To illustrate `push` on basis of an array:
+
+		family E :: _
+		fn array-push :: E[] stack -> E e -> E[]
+			= stack prepand e
+
+The `array-push` function has a compatible signature to the operation `push`.
+`S` becomes the actual type `E[]`, the actual `E` is still any (`_`) type.
+As `array-push` is equivalent to `prepand` the mapping could very well also 
+used `prepand` directly. 
+
 
 ### Notations _(abstract over cases)_
 
