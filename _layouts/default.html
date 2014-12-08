@@ -24,6 +24,7 @@
 function highlight(_, html) {
    return html
 	.replace(/([a-z]+\s+)([-a-zA-Z0-9]+)(\s*(\[[^\]]+\]\s*)?::)/g, "$1<def>$2</def>$3")
+	.replace(/([a-z]+\s+)([-a-zA-Z0-9]+)(\s*\<def\>[-a-zA-Z0-9]+\<\/def\>\s*(\[[^\]]+\]\s*)?::)/g, "$1<def>$2</def>$3")
 	.replace(/(\s|^)(unit|dimension|data|fn|op|protocol|notation|where|ratio|family|system|machine|behaviour|val|proc|when|process|keyword|with|as)(\s|$)/g, '$1<kw>$2</kw>$3')
 
 	.replace(/"([^"]*)"/g, '<lit><ind>\"</ind>$1<ind>\"</ind></lit>')

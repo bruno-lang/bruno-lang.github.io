@@ -488,23 +488,23 @@ Abstractions are forms of indirections that allow to formulate code on more
 abstract levels. Code duplication is avoided at the costs of a minimal runtime
 overhead.
 
-Operations, behaviours and notations, have their origins in the idea of an ADT 
-and build upon dynamic dispatch at runtime. Type families in contrast statically
-abstract over the properties of member types and are used like type variables.
+### Notations _(abstract over cases)_
+
+### Type Families _(abstract over types)_
 
 ### Operations _(abstract over functions)_
 Operations are used to abstract over the meaning of a group of congeneric 
 functions. This meaning is expressed through the operation's name.
 
 An operation `op` is an abstract or virtual nominal typed function. 
-Most often operations are used in conbination with a _type variable_ as the 
+Most often operations are used in conbination with a type variable as the 
 target type is abstract as well. 
 
 		op eq :: (T one -> T other -> Bool)
 
 The `eq` operation (`op`) is a virtual function of type `(T -> T -> Bool)` where
 `one` and `other` are of the same actual type substituted for the 
-_type variable_ `T`. 
+type variable `T`. 
 
 #### Polymorphism à la carte
 Operations are implemented by functions of matching type through a explicitly 
@@ -529,34 +529,39 @@ The function `equal-ints` is specialised to the operation `eq` for type `Int`
 within the body of the `where`-clause's function.
 
 On the use-site operations are not declared as explicit parameters but passed 
-implicitly as existential type constraints expressed as part of a type family 
-(for now a _type variable_).
+implicitly as existential type constraints expressed as part of a type family.
 
-		family T :: _ with eq
+		family E :: _ with eq
 
-Any type (`_`) for which a `eq` operation exists in the usage context is a 
-member of the type family `T`. 
+Any type (`_`) for which an implementation of the `eq` operation exists 
+in the usage context is a member of the type family `E`. 
 
-		fn contains :: 
-		T[*] vector -> T sample -> Index start -> Bool =
-			start >= vector length : False
-			e eq sample            : True
-			                       : vector contains e, next
-		where 
-			T e = vector at start
-			Int next = start + '1
+		fn index-of :: E[*] arr -> E sample -> Int pos -> Int? =
+			pos >= arr length    : ()
+			arr at pos eq sample : pos
+			                     : arr index-of (e, pos + '1)
 
-The function `contains` is implemented using the operation `eq` to compare the
-`sample` with the actual element `e`. Because `T` is constraint to a type for
-which the `eq` operation exists it can be used within the body of `contains`
-like a normal function of `T`. When using `contains` the type of comparison
+The function `index-of` is implemented using the operation `eq` to compare the
+`sample` with the actual element `e`. Because `E` is constraint to types for
+which the `eq` operation exists it can be used in connection with `E`
+like a usual function on `E`. When using `index-of` the actual comparison
 can be chosen by the function bound to the operation in the caller's context.
 
+		fn contains :: Char[*] arr -> Char sample -> Bool 
+			= arr index-of (sample, '0) is-something?
+		where
+			equals-ignore-case ~> eq Char
+
+`contains` compares the characters on the basis of the `equals-ignore-case`
+functions that takes the role of `eq` operations for `Char` values so that it is
+used as implicit argument when `index-of` is called.
 
 ### Behaviours _(abstract over data)_
 Like operations give meaning to functions a `behaviour` gives meaning to a group
 of functions that have particular interaction semantics. The behaviour describes
 an abstract data type (ADT) by the set of supported operations.
+While this abstracts their behaviour the actual data types still are persistent 
+data structures.
 
 Given the three operations `push`, `peek` and `pop`, 
 
@@ -587,13 +592,17 @@ Assuming code in another module declares two fresh type variables
 Any type (`_`) that in known to _behave_ `as` a `Stack` is a member of the
 type family `S1`; thus `S1` can be used as `Stack` of elements of type `E1`. 
 The fresh type variable `E1` is substituted for the earlier captured variable `E`.
+That mean `E1` must be sufficient to satify `E` but can be more specialised.
+
+On the basis of `S1` and `E1` functions can be declared using the `Stack` 
+operations.
 
 		fn push? :: S1 stack -> E1 e -> S1 =
 			stack peek is-nothing? : stack push e
 			                       : stack
 
-The function `push?` just pushes the element `e` to the `stack` if it is empty, 
-otherwise the stack is left unchanged. `S1` is known to have the `Stack`
+The function `push?` just pushes the element `e` to the `stack` if the stack is 
+empty, otherwise the stack is left unchanged. `S1` is known to have the `Stack`
 `behaviour` so `push` and `peek` can be used as if they were function declared
 on type `S1`.
 
@@ -612,8 +621,8 @@ The actual types that can be specialised to a `Stack` depend on the type(s)
 stated in the mapped functions. If multiple function of same name are in the
 name-space the function is qualified with the containing module or library name.
 
-The actual implementing functions are usual (maybe existing) functions. 
-To illustrate `push` on basis of an array:
+A behaviour's actual implementation consists of functions. 
+Here `push` on basis of an array:
 
 		family E :: _
 		fn array-push :: E[] stack -> E e -> E[]
@@ -624,10 +633,6 @@ The `array-push` function has a compatible signature to the operation `push`.
 As `array-push` is equivalent to `prepand` the mapping could very well also 
 used `prepand` directly. 
 
-
-### Notations _(abstract over cases)_
-
-### Type Families _(abstract over types)_
 
 
 
