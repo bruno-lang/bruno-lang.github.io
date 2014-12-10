@@ -396,21 +396,23 @@ A function body is one expression, sometimes split into cases. As there are no
 statements local variables are declared in a function's context, the `where`
 clause:
 
-		data Point :: (Int a, Int b)
+		data Point :: (Int x, Int y)
 		fn distance :: Point a -> Point b -> Float
-			= (dx-square + dy-square) sqrt
+			= (dx2 + dy2) sqrt
 		where 
-			Int dx-square = dx * dx
-			Int dy-square = dy * dy
+			Int dx2 = dx * dx
+			Int dy2 = dy * dy
 			Int dx = b x - a x
 			Int dy = b y - a y
 
 The function `distance` calculates the distance between 2 points `a` and `b`.
-Local variables like `dx`, `dy`, `dx-square` and `dy-square` can  be 
+Local variables like `dx`, `dy`, `dx2` and `dy2` can  be 
 declared based on the function's parameters and any of the other variables. 
-Thanks to referential transparency order of declaration is irrelevant and
+Due to referential transparency the order of declaration is irrelevant and
 can be chosen for best readability. Also the necessity of computation (order or
-at all) of local variables is not the programmer's burden.
+at all) of local variables is not the programmer's burden. Fields of tuple
+types like `Point` are accessed similar as calling a equally named function `x`
+or `y` on a point.
 
 ### Loops
 The primary way to _loop_ is to use build in operators that work on arrays in
@@ -514,8 +516,7 @@ type variable `T`.
 
 #### Polymorphism à la carte
 Operations are implemented by functions of matching type through a explicitly 
-declared specialisation binding validly within the declaring context of a 
-library or module.
+declared specialisation for a particular library or module context.
 
 		(`auto equal-ints eq [Int])
 
@@ -540,7 +541,7 @@ implicitly as existential type constraints expressed as part of a type family.
 		family E :: _ with eq
 
 Any type (`_`) for which an implementation of the `eq` operation exists 
-in the usage context is a member of the type family `E`. 
+in context of usage is a member of the type family `E`. 
 
 		fn index-of :: E[*] arr -> E sample -> Int pos -> Int? =
 			pos >= arr length    : ()
@@ -550,11 +551,11 @@ in the usage context is a member of the type family `E`.
 The function `index-of` is implemented using the operation `eq` to compare the
 `sample` with the actual element `e`. Because `E` is constraint to types for
 which the `eq` operation exists it can be used in connection with `E`
-like a usual function on `E`. When using `index-of` the actual comparison
+like a usual function of `E`. When using `index-of` the actual comparison
 can be chosen by the function bound to the operation in the caller's context.
 
 		fn contains :: Char[*] arr -> Char sample -> Bool 
-			= arr index-of (sample, '0) is-something?
+			= arr index-of (sample, '0) exists?
 		where
 			equals-ignore-case ~> eq Char
 
