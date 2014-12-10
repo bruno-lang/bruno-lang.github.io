@@ -53,9 +53,9 @@ page {
 footer {
 	display: block;
 	text-align: right;
-	font-style: italic;
 	font-size: 80%;
 	padding: 1em;
+	font-family: "Source Sans Pro"
 }
 
 content {
@@ -65,6 +65,9 @@ content {
 }
 content p {
 	line-height: 1.4; 
+}
+content h4 + p, content h5 + p {
+	margin-top: 8px;
 }
 content sup {
 	line-height: 1em;
@@ -108,61 +111,57 @@ content blockquote em {
 	font-weight: bold;
 }
 
+content blockquote + blockquote {
+	text-align: right;
+	font-style: normal;
+}
+
 content h4, content h5 {
-	font-weight: normal; font-family: "Source Code Pro"; color: black;
+	font-weight: bold; font-family: "Source Sans Pro"; margin-bottom: 0;
 }
-content h1 { font-size: 2.4em; font-weight: bold; counter-reset: h2 -1;}
-content h1 em { color: black; }
-content h2 { font-size: 1.75em; }
-content h3 { font-size: 1.25em; }
-content h4 { font-size: 1.125em; }
+content h1 { text-align: center; font-size: 2.4em; font-weight: normal; counter-reset: h2 -1; color: black; font-family: "Source Sans Pro"; text-transform: uppercase; }
+content h1 em { font-style: normal; font-weight: bold; font-size: 2.3em; text-transform: lowercase; font-family: Lora; display: block; }
+content h2 { font-size: 2em; font-family: "Source Sans Pro"; color: black; }
+content h3 { font-size: 1.4em; }
+content h4 { font-size: 1.1em; text-transform: uppercase; }
 content h5 { font-size: 1em; margin-bottom: 0; }
-content h1 em { font-style: normal; font-weight: bold; }
-@media screen {
-  content h1 { /* color: #69402e; */ }
-	content h1:first-child { position: fixed; width: 600px; margin: 0; top: 0; padding: 0; 
-		letter-spacing: -0.03em;
-		background: linear-gradient(to bottom, rgba(255,255,255,1),  rgba(255,255,255,0));
-		background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,1)),to(rgba(255,255,255,0)), color-stop(.8,rgba(255,255,255,0.8)));
-		background-image: -moz-linear-gradient(rgba(255,255,255,1) 60%, rgba(255,255,255,0) 100%);
-		line-height: 4;
-	}
-	content h1:first-child + * { padding-top: 100px; }
-}
 content h2 { font-weight: bold; letter-spacing: -0.03em; }
 content h4 em, content h3 em, content h2 em { font-size: 80%; font-weight: 300; font-style: normal; }
 
-@media screen {
-	content h2 { margin-top: 3em; }
-	content h3 { margin-top: 2em; }
-	content h2:not([id$=logue]):before { 
-		counter-increment: h2; 
-		content: counter(h2, decimal); 
-		color: #aaa;
-		font-size: 2cm;
-		margin-right: -2cm;
-		margin-top: -1em;
-		position: relative;
-		float: right;
-	}
+content h2 { margin-top: 6cm; }
+content h3 { margin-top: 2em; }
+content h2[id$=logue] {
+	text-align: center; text-transform: uppercase; letter-spacing: 2px;
 }
+content h2:not([id$=logue]):before { 
+	counter-increment: h2; 
+	content: counter(h2, decimal); 
+	font-size: 4cm;
+	margin-top: -1em;
+	position: relative;
+	float: right;
+	font-family: "Source Sans Pro";
+	font-weight: normal;
+}
+content h2:not([id$=logue]):after { 
+	font-weight: normal;
+	content: "SECTION"; 
+	font-size: 1.2cm;
+	margin-top: -2cm;
+	margin-right: 5mm;
+	position: relative;
+	float: right;
+	font-family: "Source Sans Pro";
+}
+
+content h1 + p { text-align: justify; }
 
 @media print {
 	content h1 { margin-top: 40%; margin-bottom: 20%; text-align: center;}	
-	content h1 + p, content h1 + p + p { text-align: justify; width: 80%; margin: 0.5em auto; }
+	content h1 + p, content h1 + p + p { width: 80%; margin: 0.5em auto; }
 	content h2 { page-break-before: always; padding-top: 5em; font-size: 2em; }
-	content h2:not([id$=logue]):before { 
-		counter-increment: h2; 
-		content: counter(h2, decimal);
-		position: relative;
-		float: right;
-		font-size: 3cm;
-		margin-top: -1em;
-		font-weight: normal;
-		line-height: 1em;
-	}
-	content h3 { padding-top: 3.5em; }
-	content > p { widows: 3; orphans: 3; line-height: 1.6; font-size: 1rem; }
+	content h3 { padding-top: 1em; }
+	content > p { widows: 3; orphans: 3; line-height: 1.4; font-size: 1rem; }
 	.sidenote { font-size: 0.9em; }
 	h1, h2, h3, h4, h5 { page-break-after: avoid; }
 }

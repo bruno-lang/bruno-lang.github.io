@@ -3,18 +3,14 @@ layout: default
 title:  "in a Nutshell"
 ---
 
-# bruno in a Nutshell
+# _bruno_ in a Nutshell
 
 bruno is a declarative high level programming language designed for correctness
 on the basis of data and pure functions. 
-State is restrained in isolated lightweight processes that communicate only by
-message passing.
+Robust, inherently parallel systems are composed out of job-oriented state 
+machines, each being an isolated lightweight process that communicates with 
+other processes only through message passing.
 
-bruno is influenced by ideas found in Erlang, Haskell and Clojure and appears 
-to have a philosophical basis similar to that of Virgil III but there is no 
-direct predecessor language.
-
-<noindex/>
 ## Prologue
 Basic correctness is still too challenging with both classic and modern
 [programming systems](/glossary/#programming-system) while software 
@@ -22,15 +18,15 @@ simultaneously attempts to solve problems of continually increasing scale
 accompanied by an equally increase of complexity. 
 
 Mastering complexity however is an utopian fallacy, it has to be avoided in the
-first place. A programming system that allows for 
-[*operative modularisation*](/glossary/#operative-modularisation)
-and [*local reasoning*](/glossary/#local-reasoning) lets programmers succeed 
-in dividing and conquering large(r) software systems by composing them out of
-many simple components.
+first place. To let programmers succeed in dividing and conquering large(r) 
+software systems those have to be decomposed into many simple ones.
+An [*operative modularisation*](/glossary/#operative-modularisation)
+and conditions that allow [*local reasoning*](/glossary/#local-reasoning) are 
+the prerequisites of such systems.
 
 To ease reasoning the possibilities must be restrictable to be effectively simplified.
 By expressing what is impossible the programmer limits what needs to be
-considered and understood. Impossibility is coupled with logical consequences 
+considered and understood. Impossibility bears logical consequences 
 that enable possibilities of simplification and optimisation[^why-restrictions]. 
 
 [^why-restrictions]: E.g. pure functions (the impossibility of site-effects) allow
@@ -38,18 +34,20 @@ that enable possibilities of simplification and optimisation[^why-restrictions].
       compile-time; immutable values (the impossibility of mutation) allows to 
       share data without copying it.
 
-By composing systems out of a handful restricted specific constructs (rather than 
+By composing systems out of a few restricted specific constructs (rather than 
 unrestricted generic ones) application-, compiler- and VM-programmers share a 
 meaningful common language that carries its possibilities and impossibilities
 along the stages so that they can be utilised. 
-On the contrary the concreteness of the constructs must still maintain the 
-ability to abstract ideas intuitively and allow to control low level details.
+On the contrary the limitations of the constructs still must maintain the 
+ability to abstract ideas intuitively and allow to control implementation details.
 
 On these grounds it is an overall theme in the bruno programming system to not 
 _extend_ but further and further restrict the more general to the more specific. 
 
 
-## Format
+## Introduction
+
+### Notes on Syntax
 The language uses sets of more or less independent declarations of the form:
 
 		keyword name [unit] :: declaration-body
@@ -78,17 +76,17 @@ The section on [types](#types) goes into the details of the actual build-in
 language base.
 
 ## Data
-Data is always represented by values, thus is immutable with value equality and
-no concept of identity.
+Data is always represented by values, thus it is immutable with value equality 
+and no presence of an identity.
 
 ### Simple Values
 There are two types of simple values, independent `dimension`s and dependent `unit`s. 
 
-		dimension Time [T] :: Int '0..
+		dimension Time :: Int '0..
 
-`Time` is a specialisation of a integral number `>= 0` abbr. as `T`. While the
-dimension `Time` describes a kind of value _time_ is more of a concept than a
-measurable value. Therefore some _time_ `unit`s are introduced:
+`Time` is a _specialisation_ of a integral number larger than or equal to `'0`.
+While the dimension `Time` describes a kind of value, _time_ is more of a concept 
+than a measurable thing itself. Therefore some _time_ `unit`s are introduced:
 
 		unit Minutes [min] :: Time
 		unit Seconds [sec] :: Time
@@ -119,17 +117,20 @@ directly be used where e.g. `Milliseconds` are needed as the ratio between these
 is known.
 
 ### Composite Values
+
+#### Tuples
 Composite values (often loosely equated with records or structs) are declared as 
 `data` types.
 
 		data Rect :: (Length width, Length height)
 
-A `Rect` is a tuple with two `Length` fields, `width` and `height`. While all 
-types are nominal they can be used as (structurally typed) tuples. A `Rect` is 
-also a tuple of type `(Length, Length)`.
+A `Rect` is a tuple with two `Length` fields, `width` and `height`. While `data` 
+types are nominal typed they can be used as (structurally typed) tuples. 
+A `Rect` can be _generalised_ to a tuple of type `(Length, Length)`.
 
-Finally there are collection types for arrays/vectors of elements of identical 
-type with fixed length:
+#### Arrays
+Secondly there is the composite type of fixed length arrays (or vectors) of 
+elements of identical type:
 
 		data Code :: Char[8]
 		data RGB :: Colour[3]
@@ -147,19 +148,18 @@ a wildcard `*` to indicate _any unknown_ length.
 
 An array is `Nonempty` when it has at least `1` up to any `*` number of elements. [^no-dependent-typing]
 
-#### Collections
-Two collection types are supported with special syntax although conceptually 
-they aren't data types but [behaviours](#behaviours).
-In contrast to the fix length of arrays collection are of a variable length 
-that is not reflected on type level.
-
-A `Sentence` is a _list_ of `Word`s of variable length. 
-
-		data Sentence :: [Word]
-
 [^no-dependent-typing]: Note that the [formalism](/glossary/#formalism) is not dependently typed. Its 
     concept of (type) shapes is related but less open.
 
+#### Collections
+Two collection types are supported with special syntax although conceptually 
+they aren't specific data types but abstract data [behaviours](#behaviours).
+In contrast to the fix length of arrays collection are of a variable length 
+(that is not reflected on type level).
+
+		data Sentence :: [Word]
+
+A `Sentence` is a _list_ of `Word`s of variable length. 
 Furthermore sets are supported with special syntax.
 
 		data Team :: {Member}
@@ -171,7 +171,7 @@ A `Team` is a _set_ of `Member`s. Maps are nothing else than sets of tuples:
 A `Dict` is a set of `(Word, Translation)` twin-tuples (pairs).
 
 ### Views
-Slicing arrays `[*]` creates a slice `[:*]`. 
+Slicing an array of type `T[*]` creates a slice of type `T[:*]`. 
 
 		Char[:2] he = "hello world" slice '0 '2 
 
@@ -184,6 +184,11 @@ A slice is a view upon a section of a already immutable underlying array
 extended with the information about the position of the slice within the 
 originating array and the ability derive slices upon the same underlying array
 that are moved or changed in length.
+
+		Char[:2] ld = he shift-to-end
+
+For example `he` could be moved to the end of the underlying array resulting in
+the slice `ld` referring to the sequence `"ld"`.
 
 ### Enumerations
 Both simple and composite value types can be initialised with a list or set of
@@ -224,7 +229,7 @@ constants: `Meal on-monday = menu at Monday`. Index access has no special syntax
 and uses a function (`at`) like all other operations.
 
 ### Constants
-A constant is a named `val`ue.
+A constant is a _specialised_ named `val`ue.
 
 		val Pi :: Float = '3.14159265359
 
@@ -235,10 +240,9 @@ expression using functions and any type of literals.
 
 ### Literals
 
-##### Conceptual Literals
+#### Conceptual Literals
 There are three types of value literals; the mostly used conceptual value 
-literals for simple values as scalars, characters and user defined units and 
-dimensions:
+literals for simple values as scalars, characters and user defined units:
 
 		Int scalar = '42
 		Float real = '-0.42
@@ -246,12 +250,13 @@ dimensions:
 		Mass weight = '10kg
 
 Conceptual literals start with a `'` followed by a number or symbol and the unit
-of measure, like `kg`. `Char`acters have `'` as unit and scalars the empty string;
-(numbers without a leading `'` are a length type). When a unit of measure is
-present the type of a literal is derived form it as it has to be unambiguous in 
-any scope.
+of measure, like `kg`. `Char`acters have `'` as their _unit_. Scalar numbers
+have no unit of measure. When a unit of measure is present the type of a literal 
+is derived form it as it has to be unambiguous in any scope.
+Numbers without a leading `'` on the other hand are no value literals but 
+length types. 
 
-##### Binary Literals
+#### Binary Literals
 Secondly binary oriented literals typically used for simple numerical values:
 
 		Colour red = #xFF0000
@@ -263,7 +268,7 @@ the default and can be left out.
 
 		Int ten = #10
 
-##### Textual Literals
+#### Textual Literals
 The third type of literals are textual oriented. Composite values are given in a 
 way humans are used to write them:
 
@@ -329,7 +334,7 @@ A _optional_ `Point?` is either a `Point` or _nothing_.
 
 Functions are functions, thus pure, statically resolved and referentially transparent[^purity]. 
 All functions are understood as _extension functions_ on the type of the 1st 
-parameter (here `a`).
+parameter.
 
 		fn double :: Int a -> Int = a * '2
 
@@ -342,8 +347,8 @@ an `Int`. Now when using `double` to compute the `quad`
 To calculate 4 times of `a` it is `double`d once and that result, again an `Int`,
 is `double`d one more time equal to `(a double) double`. 
 
-While `a` is a value, not an object, functions are syntactically invoked _on_ it 
-(similar to methods on an object in OOP). This notation reads more natural and 
+While `a` is a value and not an object, functions are syntactically invoked _on_ 
+it (similar to methods on an object in OOP). This notation reads more natural and 
 often can avoid parentheses. 
 
 ### Evaluation and Operators
@@ -463,7 +468,7 @@ Instead of passing an actual argument to `+` the function is partially applied
 resulting in a function `inc`[^plus] that takes (or _on_) the left out 
 argument `b` which itself than results in a value of type `Int`. 
 
-### Arity Equivalence 
+### Equivalence of Arity
 Excursion: Any simple value is identical to the 1-tuple of that simple value. 
 For example a value of type `Int` is identical to the type `(Int)`.
 Similarly a `[Int]` is `([Int])` or a `{Int}` is also `({Int})`.
@@ -484,9 +489,10 @@ its tuple equivalent.
 
 
 ## Abstractions
-Abstractions are forms of indirections that allow to formulate code on more
-abstract levels. Code duplication is avoided at the costs of a minimal runtime
-overhead.
+
+> The purpose of abstraction is not to be vague, but to create a new semantic level in which one can be absolutely precise 
+
+> -- Edsger Dijkstra
 
 ### Notations _(abstract over cases)_
 
