@@ -9,12 +9,9 @@ body {
 	background-image: url(../img/noisy-2.png);
 }
 .cover {
-	width: 12cm;
-	padding-left: 1.5cm;
-	padding-right: 1.5cm;
+	width: 14cm;
 	background-color: #69402e; /* #935D3B; /* #64320E; */
-	border-radius: 0.08cm;
-	min-height: 21cm;
+	min-height: 20cm;
 	position: relative;
 	font-family: Lora, serif;
 	font-weight: 400;
@@ -23,16 +20,18 @@ body {
 	-webkit-box-shadow: 5px 6px 8px -3px rgba(0,0,0,0.75);
 	-moz-box-shadow: 5px 6px 8px -3px rgba(0,0,0,0.75);
 	box-shadow: 5px 6px 8px -3px rgba(0,0,0,0.75);
-	border: 1px solid #777;
-	border-width: 0 0 1px 1px;
 	text-align: center;
 	display: block;
 	text-decoration: none;
+	border: 1px solid #777;
+	border-width: 0 0 1px 1px;
 	border-width: 0;
+	border-radius: 0.08cm;
 }
 
-.cover h2 {	font-weight: normal; margin-top: -1.5em; letter-spacing: -0.03em; font-size: 1.44em; }
-.cover h1 { font-weight: normal; font-size: 128px; margin: 1cm auto 0 auto; padding-top: 3cm; letter-spacing: -0.03em; }
+.cover h2 {	font-weight: normal; margin-top: -22px; letter-spacing: -0.03em; font-size: 20px; background-color: #111; line-height: 1.6em; color: #FaF8E8; font-style: italic; }
+.cover h1 { font-weight: normal; font-size: 128px; margin: 0 auto 0 auto; padding: 0.5cm 0 0 0; letter-spacing: -0.06em; background-color: #FaF8E8; border-radius: 0.08cm 0.08cm 0 0; line-height: 1em; color: #69402e; }
+.cover .header { background-color: #FaF8E8; height: 3cm; display: block; 	 border-bottom: 1cm solid #fcd937; }
 
 hr { border-width: 0; border-top:1px solid #888; height: 0; }
 q {font-style: normal; font-family: Lora, serif; }
