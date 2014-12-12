@@ -9,24 +9,20 @@ body {
 	background-image: url(../img/noisy-2.png);
 }
 .cover {
-	width: 14cm;
-	background-color: #69402e; /* #935D3B; /* #64320E; */
-	min-height: 20cm;
+	display: block;
 	position: relative;
+	width: 14cm;
+	margin: auto;
+	min-height: 20cm;
 	font-family: Lora, serif;
 	font-weight: 400;
-	color: #fcd937;
-	margin: auto;
-	-webkit-box-shadow: 5px 6px 8px -3px rgba(0,0,0,0.75);
-	-moz-box-shadow: 5px 6px 8px -3px rgba(0,0,0,0.75);
-	box-shadow: 5px 6px 8px -3px rgba(0,0,0,0.75);
 	text-align: center;
-	display: block;
 	text-decoration: none;
-	border: 1px solid #777;
-	border-width: 0 0 1px 1px;
-	border-width: 0;
+	background-color: #69402e;
+	color: #fcd937;
 	border-radius: 0.08cm;
+	-moz-box-shadow: 5px 6px 8px -3px rgba(80,80,80,0.6);
+	box-shadow: 5px 6px 8px -3px rgba(80,80,80,0.6);
 }
 
 .cover h2 {	font-weight: normal; margin-top: -22px; letter-spacing: -0.03em; font-size: 20px; background-color: #111; line-height: 1.6em; color: #FaF8E8; font-style: italic; }

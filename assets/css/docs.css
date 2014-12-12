@@ -55,7 +55,7 @@ footer {
 	text-align: right;
 	font-size: 80%;
 	padding: 1em;
-	font-family: "Source Sans Pro"
+	font-family: "Source Sans Pro";
 }
 
 content {
@@ -121,23 +121,20 @@ content h4, content h5 {
 }
 content h1 { text-align: center; font-size: 2.4em; font-weight: normal; counter-reset: h2 -1; color: black; font-style: italic; }
 content h1 em { font-style: normal; font-weight: bold; font-size: 2.3em; text-transform: lowercase; font-family: Lora; display: block; }
-content h2 { font-size: 2em; font-family: "Source Sans Pro"; color: black; }
-content h3 { font-size: 1.4em; }
-content h4 { font-size: 1.1em; text-transform: uppercase; }
+content h2 { font-size: 1cm; font-family: "Source Sans Pro"; color: black; text-transform: uppercase; margin-top: 6cm; }
+content h3 { font-size: 1.4em; margin-top: 2em; }
+content h4 { font-size: 1.1em; }
 content h5 { font-size: 1em; margin-bottom: 0; }
-content h2 { font-weight: bold; letter-spacing: -0.03em; }
-content h4 em, content h3 em, content h2 em { font-size: 80%; font-weight: 300; font-style: normal; }
-
-content h2 { margin-top: 6cm; }
-content h3 { margin-top: 2em; }
+content h4 em, content h3 em, content h2 em { font-size: 80%; font-weight: 300; font-style: italic; }
+content h2 em { font-family: Lora; text-transform: none; font-size: 60%; }
 content h2[id$=logue] {
-	text-align: center; text-transform: uppercase; letter-spacing: 2px;
+	text-align: center; text-transform: lowercase; letter-spacing: 1px; font-weight: bold; font-variant: small-caps;
 }
 content h2:not([id$=logue]):before { 
 	counter-increment: h2; 
 	content: counter(h2, decimal); 
-	font-size: 4cm;
-	margin-top: -1em;
+	font-size: 3.6cm;
+	margin-top: -4.8cm;
 	position: relative;
 	float: right;
 	font-family: "Source Sans Pro";
@@ -147,18 +144,25 @@ content h2:not([id$=logue]):after {
 	font-weight: normal;
 	content: "SECTION"; 
 	font-size: 1.2cm;
-	margin-top: -2cm;
-	margin-right: 5mm;
+	margin-top: -3.2cm;
+	margin-right: 2cm;
 	position: relative;
 	float: right;
 	font-family: "Source Sans Pro";
 }
 
-content h1 + p { text-align: justify; }
+content author { display: block; margin: 0 auto; text-align: center; padding: 1em 0; font-family: Lora, "Source Sans Pro"; font-style: italic; }
+content author + p { text-align: justify; padding: 0 2cm; }
+
+@media screen {
+	content h1, content author + p, content author { margin-right: -80px; } 
+  content h1 + p { padding-top: 1.5cm; }
+}
 
 @media print {
-	content h1 { margin-top: 40%; margin-bottom: 20%; text-align: center;}	
-	content h1 + p, content h1 + p + p { width: 80%; margin: 0.5em auto; }
+	content h1 { margin-top: 40%; text-align: center; margin-right: -2cm; }	
+	content author + p { margin: 0.5em auto; margin-right: -2cm; }
+	content author { margin-right: -2cm; } 
 	content h2 { page-break-before: always; padding-top: 5em; font-size: 2em; }
 	content h3 { padding-top: 1em; }
 	content > p { widows: 3; orphans: 3; line-height: 1.4; font-size: 1rem; }

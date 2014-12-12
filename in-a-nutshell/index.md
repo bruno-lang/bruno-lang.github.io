@@ -1,9 +1,12 @@
 ---
 layout: default
 title:  "in a Nutshell"
+author: Jan Bernitt
 ---
 
 # _bruno_ in a Nutshell
+
+<author>Jan Bernitt</author>
 
 bruno is a declarative high level programming language designed for correctness
 on the basis of data and pure functions. 
@@ -1070,6 +1073,7 @@ Two keys are consequently equal if they are the same constant.
 
 ### Modular Software
 - where can we declare code? (where/who does declare -> use site vs declaration site)
+- programming with and upon properties!
 
 ## Epilogue
 
