@@ -1,6 +1,7 @@
 ---
 layout: default
 title:  "Glossary"
+class: glossary
 ---
 # Glossary
 
@@ -20,8 +21,8 @@ system in mind and vice versa the system to fit the language.
 
 The considerations of a programming system are diverse but typically include
 all stages of software production process. For example how software can be 
-designed, reasoned about, modularised, edited, analysed, tested, deployed or 
-maintained.
+designed, reasoned about, modularised, edited, interpreted, compiled, analysed, 
+tested, deployed or maintained.
 
 Another understanding of a programming system (that is not meant in this context) 
 is focused on the capabilities of a language to be used as a basis to build a 
@@ -37,24 +38,27 @@ of the originating language (especially for Lisps).
 ### Programming Formalism
 The term of a _programming formalism_ is proposed for programming languages or 
 systems that embody an understanding of programming and of a program as a formal, 
-almost mathematical way of expressing intent. These are to be distinguished from 
+almost mathematical way to express intent. These are to be distinguished from 
 those _programming languages_ that embody programming as expressing intent 
-through (ideally) natural language.
+in the form of (ideally) natural language. 
+While a formalism expresses intent through assertions or constraints that are 
+universally true languages mostly expresses what happens in individual 
+situations in terms of state and flow without a global consistency.
 
-A formal nature should not be confused with mathematical notations or a syntax
-that is hard to read. A formalism aims for readability like languages do. 
-
+The formal nature however should not be confused with mathematical notations or a 
+syntax that is hard to read. A formalism aims for readability like languages do
+but it does favour understandability over syntactic readability. 
 
 ### Local Reasoning
 _Local reasoning_ should be understood as a form of 
 [formal](http://en.wikibooks.org/wiki/Effective_Reasoning/Informal_and_Formal_Reasoning) 
 or [deductive reasoning](http://en.wikipedia.org/wiki/Deductive_reasoning) 
-that is possible to do in a small, self-contained local context. 
+that is possible to do in a small, self-contained context. 
 This implies that everything that has to be considered is directly 
 (locally) represented.
 Thereby correct and complete reasoning becomes possible without taking the
-_outside world_ into account. This does not imply that the local context isn't
-connected to the outside world but that it is sufficient to consider 
+_outside world_ into account. However, this does not imply that the local 
+context isn't connected to the outside world but that it is sufficient to consider 
 the outside world only through the connection ends visible in the local 
 context.
 
@@ -85,12 +89,14 @@ Expandability has to be given in such a way that extending modules can
 effectively extend the concepts of an extended module without the need 
 to re-build (compile) it. 
 The more concepts are extensible by pure addition done external to the 
-extended module the more modular is such a modularisation. 
-It becomes operative when any addition (intended to be possible in the system) 
-that could be made within a module can likewise be done on the outside. 
+extended module the more modular it is. 
+It becomes _operative_ when any addition (intended to be possible in the system) 
+that could be made within a module can likewise be done on the outside;
+that is to say in another module. 
 
-In other words: Program semantics and the expressiveness of the 
-language are independent of the way a program is split into code units. 
+In other words: 
+
+> Program semantics and the expressiveness of the language are independent of the way a program is split into code units. 
 
 To give an example: Classes are not an operative modularisation concept 
 as it is -- among other things -- impossible to add methods outside the 
@@ -98,7 +104,20 @@ file (code unit) that contains the class.
 Class based inheritance is also not an operative modularisation concept 
 as the reference to the extended class can only be defined by the extending 
 class and therefore within the defining _module_. 
+
 In fact almost all programming systems - be it OOP or FP systems - have none or
-just very few concepts of operative modularisation what is e.g. reflected by 
-the complications they undergo to solve the 
-[expression problem](http://en.wikipedia.org/wiki/Expression_problem). 
+just very few concepts of module-independent modularisation what is for example
+reflected by the complications they undergo or the inability they have to solve 
+the [expression problem](http://en.wikipedia.org/wiki/Expression_problem). 
+While many dynamic and/or prototype based languages do not face similar 
+problems to define code in other modules they often take this too far
+by letting other modules change the overall program semantics. They do not just
+extend but change what a program means depending on the composition of modules.
+This is a form of over-expressiveness that undermines correctness by making
+[local reasoning](#local-reasoning) impossible as each overall composition needs 
+to be reconsidered what quickly is over one's head. 
+Such modules can not be composed freely as they might affect each others meaning.
+When concerns of correctness or program semantics are intertwined with 
+concerns of modules as functional units such a modularisation is not considered
+to be _operative_.
+

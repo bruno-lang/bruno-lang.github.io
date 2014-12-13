@@ -127,10 +127,11 @@ content h4 { font-size: 1.1em; }
 content h5 { font-size: 1em; margin-bottom: 0; }
 content h4 em, content h3 em, content h2 em { font-size: 80%; font-weight: 300; font-style: italic; }
 content h2 em { font-family: Lora; text-transform: none; font-size: 60%; }
-content h2[id$=logue] {
+
+.nutshell content h2[id$=logue] {
 	text-align: center; text-transform: lowercase; letter-spacing: 1px; font-weight: bold; font-variant: small-caps;
 }
-content h2:not([id$=logue]):before { 
+.nutshell content h2:not([id$=logue]):before { 
 	counter-increment: h2; 
 	content: counter(h2, decimal); 
 	font-size: 3.6cm;
@@ -140,7 +141,7 @@ content h2:not([id$=logue]):before {
 	font-family: "Source Sans Pro";
 	font-weight: normal;
 }
-content h2:not([id$=logue]):after { 
+.nutshell content h2:not([id$=logue]):after { 
 	font-weight: normal;
 	content: "SECTION"; 
 	font-size: 1.2cm;
@@ -151,18 +152,18 @@ content h2:not([id$=logue]):after {
 	font-family: "Source Sans Pro";
 }
 
-content author { display: block; margin: 0 auto; text-align: center; padding: 1em 0; font-family: Lora, "Source Sans Pro"; font-style: italic; }
-content author + p { text-align: justify; padding: 0 2cm; }
+.nutshell content author { display: block; margin: 0 auto; text-align: center; padding: 1em 0; font-family: Lora, "Source Sans Pro"; font-style: italic; }
+.nutshell content author + p { text-align: justify; padding: 0 2cm; }
 
 @media screen {
-	content h1, content author + p, content author { margin-right: -80px; } 
-  content h1 + p { padding-top: 1.5cm; }
+	.nutshell content h1, .nutshell content author + p, .nutshell content author { margin-right: -80px; } 
+  .nutshell content h1 + p { padding-top: 1.5cm; }
 }
 
 @media print {
-	content h1 { margin-top: 40%; text-align: center; margin-right: -2cm; }	
-	content author + p { margin: 0.5em auto; margin-right: -2cm; }
-	content author { margin-right: -2cm; } 
+	.nutshell content h1 { margin-top: 40%; text-align: center; margin-right: -2cm; }	
+	.nutshell content author + p { margin: 0.5em auto; margin-right: -2cm; }
+	.nutshell content author { margin-right: -2cm; } 
 	content h2 { page-break-before: always; padding-top: 5em; font-size: 2em; }
 	content h3 { padding-top: 1em; }
 	content > p { widows: 3; orphans: 3; line-height: 1.4; font-size: 1rem; }
@@ -238,7 +239,6 @@ toc li.toc-H2:before {
 }
 
 .sidenote {
-	position: relative;
 	margin: 0;
 	margin-right: -240px;
 	float: right;

@@ -2,6 +2,7 @@
 layout: default
 title:  "in a Nutshell"
 author: Jan Bernitt
+class: nutshell
 ---
 
 # _bruno_ in a Nutshell
@@ -20,12 +21,12 @@ Basic correctness is still too challenging with both classic and modern
 simultaneously attempts to solve problems of continually increasing scale 
 accompanied by an equally increase of complexity. 
 
-Mastering complexity however is an utopian fallacy, it has to be avoided in the
+Mastering complexity however is an utopian fallacy -- it has to be avoided in the
 first place. To let programmers succeed in dividing and conquering large(r) 
-software systems those have to be decomposed into many simple ones.
-An [*operative modularisation*](/glossary/#operative-modularisation)
-and conditions that allow [*local reasoning*](/glossary/#local-reasoning) are 
-the prerequisites of such systems.
+software systems those have to be decomposed into many simple parts
+(the principle of [*operative modularisation*](/glossary/#operative-modularisation)) 
+the programmer can reason about independently 
+(the principle of [*local reasoning*](/glossary/#local-reasoning)). 
 
 To ease reasoning the possibilities must be restrictable to be effectively simplified.
 By expressing what is impossible the programmer limits what needs to be
@@ -37,7 +38,7 @@ that enable possibilities of simplification and optimisation[^why-restrictions].
       compile-time; immutable values (the impossibility of mutation) allows to 
       share data without copying it.
 
-By composing systems out of a few restricted specific constructs (rather than 
+By composing systems out of a few specific and restricted constructs (rather than 
 unrestricted generic ones) application-, compiler- and VM-programmers share a 
 meaningful common language that carries its possibilities and impossibilities
 along the stages so that they can be utilised. 
@@ -491,25 +492,248 @@ is normalised to one (multiple simple parameters) or the other (one tuple
 parameter) but that an variable amount of parameters can be expressed through
 its tuple equivalent. 
 
+### Annotating Functions
 
+TODO
 
 ## Abstractions
 
-> The purpose of abstraction is not to be vague, but to create a new semantic level in which one can be absolutely precise 
+> The purpose of abstraction is *not* to be vague, but to create a new semantic level in which one can be absolutely precise.
 
-> -- Edsger Dijkstra
+> -- Edsger Dijkstra[^EWD340]
 
+[^EWD340]: [EWD340 - The Humble Programmer](https://www.cs.utexas.edu/~EWD/transcriptions/EWD03xx/EWD340.html)
+
+<!-- (unclear if Notations are really needed)
 ### Notations _(abstract over cases)_
+-->
 
 ### Type Families _(abstract over types)_
+A type `family` is mostly a _type variable_ bound to certain constraints in
+terms of the qualities of its member types. 
+Any actual type is a member of a vide variety of families bases on its properties. 
+Membership is not declared by an actual type but implicitly given or not, 
+depending on its sort, shape, value range or suchlike qualities. 
+
+		family T :: Int
+
+The family for type variable `T` contains all types that can be generalised to
+`Int`. Type variables generally have names consisting of a single upper-case 
+letter, what distinguishes them from concrete types that cannot have such names. 
+
+		fn plus [+] :: T a -> T b -> T = (`+ ?a ?b)
+
+The `plus` function is in effect declared for all types that are a members of
+the type family `T`. Most notable this also results in a value of type `T` 
+without having to specify any particular type or requiring value _factories_.
+
+When used the type variable is conceptually substituted with the actual type 
+that satisfies the constraints of the family.
+
+		unit Mass [kg] :: Int '0..
+		Mass m = '1kg + '2kg 
+
+As `Mass` is a specialisation of `Int` its values can be added using the `plus`
+function, resulting in a value of type `Mass`. If `plus` would have been 
+declared in terms of `Int`s, like
+
+		fn plus [+] :: Int a -> Int b -> Int = (`+ ?a ?b)
+
+the function would still be usable for `Mass` values (as they would be
+generalised to `Int`) but it would result in an `Int` instead of a `Mass`:
+
+		Int mass = '1kg + '2kg 
+
+That way using functions would generalise the type of the return value what 
+often isn't intended for calculations with values of one type. 
+This behaviour however is expected for functions that are type conversions, so
+these are simply declared like that.
+
+#### Equality of Type Families
+Type families are local to the declaring module as their idea is to become 
+independent of a particular type (that needs to be referenced; being 
+_abstract_ or not) but instead to describe the qualities of _some_ type that matter 
+to be able to use them in a certain situation. Yet, this does not prevent the 
+use of code based on type families in other modules as two type families
+or variables from two different modules are considered equal if they have the
+exact same qualification. 
+
+Within one module two separate type families are used whenever two independent
+type variables are required. When used as classical _type variables_ type 
+families are often not constrained at all.
+
+		family A :: _
+		family B :: _
+
+Both `A` and `B` can be of any type (described by the `_` type wild-card).
+The is often used for general functions so that `A` and `B` can be substituted
+with different actual types.
+
+		fn map :: [A] list -> (A -> B) f -> [B]
+
+To `map` a `list` of any type `A` to any other type `B` two type variables are
+used.
+
+#### Types of Qualification
+The examples so far used simple base type qualification. Other properties of
+types can be used just as well. 
+
+##### Qualifying Range 
+In addition to base type a value range is given that a type must satisfy at
+the minimum. 
+
+		family N :: Int '0..
+
+All types based on `Int` that have a value range that covers `'0` and higher
+is a member of the family `N`.
+
+		family M :: Int '0..'1023
+
+Similar types are members of the family `M` if their range covers zero to `'1023`.
+Note that most numbers would satisfy this qualification. Just types with a 
+smaller range or a range starting higher than `'0` would not satisfy it.
+
+##### Qualifying Shape
+In this context the shape of a type refers to the structure of tuples or
+functions. 
+
+A tuple type can be described in terms of variable component types.
+
+		family T1 :: (_, Int)
+
+Any `data` type that has two components, the first being of any type (`_`) and
+the second being generalisable to `Int` is a member of family `T1`. 
+
+		dimension Coordinate :: Int
+		data Point :: (Coordinate x, Coordinate y)
+
+`Point` is a member of `T1` as `y` is generalisable to `Int`.
+
+Besides abstracting the type of a tuple's element a family can also abstract 
+from the element quantity and position (with some limitation).
+
+		family T2 :: (String, ..)
+
+Any tuple having a `String` as its first element is a member of `T2`; this 
+even includes the type `String` itself as `String` is identical to `(String)`.
+Similar reasoning can be applied to far more sophisticated shapes.
+
+		family T3 :: ([T2], .., Bool)
+
+`T3` includes all types of tuples with a list of any type that satisfies `T2` 
+and a last element of `Bool`. The simplest case would be `([String], Bool)` as
+the `..` can also be substituted to no extra element.
+
+Similar to tuples the shape of functions can be qualified with type families.
+
+		family F1 :: (_ -> _)
+
+Any function with one parameter is a member of `F1`. 
+Further or different qualification of functions works like is did for tuples.
+
+		family T  :: _
+		family F2 :: (T -> T -> Bool)
+
+To give one more example: all functions with two identical parameter types 
+resulting in a `Bool` are a member of the family `F2`.
+
+		fn in-range :: Int32 a -> Int64 b -> Bool
+
+Assuming `Int32` is a 32-bit number and `Int64` a 64-bit with them having a
+common base type the function `in-range` actually is a member of `F2` as there
+exists a type `T` that `a` and `b` can be generalised to. If the two types
+on the other hand do not share a common base type it is not a member of `F2`.
+In such cases it is often easier to consider the tuple equivalent:
+`(Int32, Int64)` would satisfy `(Int, Int)` (if `Int` is the common base type).
+
+##### Qualifying Kind
+Even more general than qualifying a shape is to just qualify the kind of type
+expected.
+
+		family T :: (,)
+		family F :: (->)
+		family A :: _[]
+		family V :: _[:]
+		family L :: [_]
+		family S :: {_}
+
+`T` is any tuple regardless of its shape, `F` any function regardless of its
+arity, `A` is any array regardless of its element type or dimension range,
+`V` is any view or slice of such an array, `L` is any list and `S` is any set 
+regardless of their element types.
+
+There are three more qualifications for kinds that haven't been mentioned so far.
+But to abstract over them by kind their semantics don't need to be understood.
+
+		family P :: _(->)
+		family I :: _[<]
+		family O :: _[>]
+
+`P` is any operation (abstract function), `I` is any input- and `O` any output-
+channel type regardless of their element types.
+
+Except for the operations, where `_` stands for the name, the type wild-card `_` 
+used within a kind concerns the type of the _elements_ of the composite. 
+It can likewise be substituted with any _base type_ the composite should be
+further constraint to. Again, this would be the type to be satisfied by an
+actual type and not the only actual type possible. That means all types that
+are generalisable to it could be used as well. 
+
+##### Qualifying the Existence of Functions or Behaviours
+In addition to the qualities of the type itself a family can also be qualified
+by the kind of function(s) that should exist (in the scope) for that type.
+These constraints are given in the form of operations (abstract functions) 
+and/or behaviours (sets of abstract functions) for which there should exist
+a known implementation (actual functions) for the actual type. 
+
+This is further illustrated in detail shortly in connection with operations and 
+behaviours but the principle is this:
+
+		family A :: _ with plus
+
+Any type (indicated by the wild-card `_` as usual) `with` the an actual 
+implementation for the abstract function `plus` is a member of family `A`.
+Equally multiple existential qualifications can be given:
+
+		family B :: _ with plus, minus
+
+To be a member of family `B` there need to be implementation for both `plus`
+and `minus`. Of course this can be combined with qualifications of the type
+itself.
+
+		family C :: Int with plus, minus
+
+Likewise the existence of one or more behaviours can be added as a qualification.
+
+		family D :: _ as Stack
+
+Any type that can act `as` a `Stack` (that means an implementation for a 
+particular set of operations exists) is a member of the family `D`. Again,
+this can extended to multiple behaviours.
+
+		family E :: _ as Stack, Collection
+
+Only types that have an actual implementation for the operations of both the 
+`Stack` and the `Collection` behaviour are members of the family `E`. 
+
+Lastly a type can be qualified by the existence of both operations and 
+behaviours (and if required by the type itself).
+
+		family F :: _ as Stack with plus
+
+Type families are a powerful way to abstract over types in terms of their
+qualities. To better understand the possibilities and limitations one should
+look into the details of the type system as described in a later section.
+It is in particular important to understand the generalisation--specialisation
+relation between types and their static nature.
 
 ### Operations _(abstract over functions)_
 Operations are used to abstract over the meaning of a group of congeneric 
 functions. This meaning is expressed through the operation's name.
 
 An operation `op` is an abstract or virtual nominal typed function. 
-Most often operations are used in conbination with a type variable as the 
-target type is abstract as well. 
+Most often operations are used in combination with a type variable as no 
+particular type is targeted but a [type family](#type-families) with certain qualities. 
 
 		op eq :: (T one -> T other -> Bool)
 
@@ -1074,6 +1298,7 @@ Two keys are consequently equal if they are the same constant.
 ### Modular Software
 - where can we declare code? (where/who does declare -> use site vs declaration site)
 - programming with and upon properties!
+- type families => generic programming without abstract code
 
 ## Epilogue
 
