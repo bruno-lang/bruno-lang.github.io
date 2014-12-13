@@ -868,19 +868,67 @@ As `array-push` is equivalent to `prepand` the mapping could very well also
 used `prepand` directly. 
 
 
+## Exceptions
 
 
 ## Effects _(a.k.a. Side Effects)_
 
 ### Transients
+Transient types are _mutable_ specialisations of the in general _immutable_ 
+data types. This does not say that transient values can be mutated freely. 
+A transient value has just one owner at any point in time so that a modification
+_in place_ is conceptually indistinguishable from creating a new value as there
+in no other reference to that place that would expect to see the old value.
+
+> Transient types disallow more than one possible reference to a value 
+> at a time but in return allow to mutate that value in place.
+
+To become the owner of a transient value the value either needs to be created 
+within the function or passed to the function as a transient value.
+In the latter case the ownership is transferred from the calling owner into
+the called function. Once a function became the owner of a transient value it 
+can use that value once. 
+
+Return types are not explicit labelled as transient types as all return values
+always have to be owned (or usual immutable) values.
+
+A transient type (variant) is indicated by a `*` after the data type.
+For example `Int*` is the transient variant of `Int`.
+
+		data Matrix :: Int[N][N]
+		
+		fn rotate90 :: Matrix* m -> Matrix
+
+A `Matrix` is a 2-dimensional array. When `rotate90` is called `m` has to be
+owned within the calling context; the ownership is transferred into `rotate90`.
+
+		fn rotate180 :: Matrix* m -> Matrix 
+			= m rotate90 rotate90
+
+To rotate a matrix by 180 degrees `rotate90` is used twice. The first call 
+`(m rotate90)` transfers the ownership of `m` from within `rotate180` into 
+`rotate90`. Its return value is again owned by `rotate180` before the 
+ownership is transfers into `rotate90` for the second rotation. 
+Effectively the input matrix `m` has been mutated in place twice.
+
+A disallowed use is illustrated by the following function:
+
+		fn rotate-and-add :: Matrix* m -> Matrix 
+			= (m rotate90) + (m rotate180)
+
+Surely `m` is owned by `rotate-and-add` initially but it is used in two places.
+Even if the second usage would not require ownership it still must be disallowed
+to use `m` again as in effect the value `m` does not exist any longer after 
+execution of `rotate90` as it has been mutated _in place_ to some other value.
 
 ### Streams _(IO)_
 
 ### Channels _(Message Passing)_
 A channel is a typed queue of fix or variable length. Each channel transports
-values of a particular simple or composite data type. 
-
-		TODO how are channels created...
+values of a particular simple or composite data type. Implementation-wise a
+channel is a behaviour that can be implemented in various ways. 
+The usual way is use a (fixed length) array so that the overall system
+features reasonable [back pressure](http://en.wikipedia.org/wiki/Backpressure_routing). 
 
 While each channel has an input and an output end a channel type is either
 an input `[<]` end or an output `[>]` end.
@@ -954,6 +1002,29 @@ The `after` procedure creates an ad hoc channel that offers `'7` after `'5ms`.
 To synchronise time-outs for multiple parallel processes a common _time-out_
 channel is used as alternative for all of them. 
 
+#### (A)synchronous Interconnections
+In general channels decouple processes. In principle the connection between a 
+consuming and a producing process can be seen as an asynchronous connection 
+where the producer can send as message without waiting for the receiver or where
+the receiver can receive a message without waiting for the sender. 
+Depending on the kind of channel used this might change to a synchronous 
+connection for sending messages if the queue is full or for receiving messages
+if the queue is empty. This means, to emulate a direct synchronous _call_ 
+between processes as caller and callee those can just be connected using 
+a blocking queue with a fixed length of 1.
+
+#### Order of Messages
+While it is obvious for the most channel implementations that they will 
+keep the order of messages the general contract of channels does not implicate 
+a guarantee as channels are also used to communicate with remote systems.
+
+Secondly any process should be as self-contained as possible what includes 
+not to expect a certain behaviour from the process surrounding in which it is
+embedded through channels. The order of messages is such an expectation that 
+might be necessary in some cases but should not be in general.
+
+In the future the language might even distinguish channels that guarantee to
+keep order as a specialisation type of a channel that does not.
 
 ### Processes
 A process is a isolated lightweight thread of execution exclusively connected 
