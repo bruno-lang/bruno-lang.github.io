@@ -51,20 +51,35 @@ _extend_ but further and further restrict the more general to the more specific.
 
 ## Introduction
 
-### Notes on Syntax
+TODO what will we see... (go through sections shortly)
+
+#### Notes on Examples
+Note that the code examples given are exemplary and use mostly fictional 
+types or functions to be more descriptive and familiar to the reader.
+The section on [types](#types) goes into the details of the actual build-in 
+language base.
+Often the example code isn't even idiomatic in that it often uses very general
+types (like `Int` would be) to not overwhelm the reader with details that are
+not important to exemplify a concept. In practice general types like `Int`
+would only be used for generic code at a higher levels of abstraction. 
+As types are not burdened with a runtime cost and stay applicable it is 
+idiomatic to use very precise types as long it is beneficial to understanding 
+and usage.
+
+#### Notes on Syntax
 The language uses sets of more or less independent declarations of the form:
 
 		keyword name [unit] :: declaration-body
 
-* `keyword` what kind of thing is declared?
-* `name` what is the identity of the declared thing?
-* `unit` how to identify values of this particular thing?
-* `::` (is the _is declared as_ operator)
-* `declaration-body` how does the thing relate to other things?
+* `keyword` : what kind of thing is declared?
+* `name` . what is the identity of the declared thing?
+* `unit` : how to identify values of this particular thing?
+* `::` (_is declared as_-operator)
+* `declaration-body` : how does the thing relate to other things?
 
 There are a dozen types of declarations each using a distinctive _keyword_.
 In the declaration body however any valid identifier (including these words) 
-can be used. There are no reserved words.
+can be used. There are no reserved words in the classical sense. 
 
 The syntax has no statements or ending marks (like a semicolon) but predefined
 sets of character used for operators, literals and forms of expressions. 
@@ -73,11 +88,6 @@ end of some types of expressions.
 
 A single `=` usually stands for: _has the value_ (where value could also refer to
 the expression that implements a function).
-
-**Note** that the code examples given are exemplary and use mostly fictional 
-types or functions to be more descriptive and familiar to the reader.
-The section on [types](#types) goes into the details of the actual build-in 
-language base.
 
 ## Data
 Data is always represented by values, thus it is immutable with value equality 
@@ -492,9 +502,7 @@ is normalised to one (multiple simple parameters) or the other (one tuple
 parameter) but that an variable amount of parameters can be expressed through
 its tuple equivalent. 
 
-### Annotating Functions
 
-TODO
 
 ## Abstractions
 
@@ -656,28 +664,58 @@ expected.
 		family V :: _[:]
 		family L :: [_]
 		family S :: {_}
+		family D :: *
 
 `T` is any tuple regardless of its shape, `F` any function regardless of its
 arity, `A` is any array regardless of its element type or dimension range,
 `V` is any view or slice of such an array, `L` is any list and `S` is any set 
-regardless of their element types.
+regardless of their element types. Finally `D` is any (array dimension) 
+length type.
 
 There are three more qualifications for kinds that haven't been mentioned so far.
 But to abstract over them by kind their semantics don't need to be understood.
 
-		family P :: _(->)
-		family I :: _[<]
-		family O :: _[>]
+		family O :: *(->)
+		family R :: _[<]
+		family W :: _[>]
 
-`P` is any operation (abstract function), `I` is any input- and `O` any output-
+`O` is any operation (abstract function), `R` is any input- and `W` any output-
 channel type regardless of their element types.
 
-Except for the operations, where `_` stands for the name, the type wild-card `_` 
-used within a kind concerns the type of the _elements_ of the composite. 
+The _any_ type wild-card `_` used within kinds concerns the type of the 
+_elements_ of a composite or function. 
 It can likewise be substituted with any _base type_ the composite should be
 further constraint to. Again, this would be the type to be satisfied by an
 actual type and not the only actual type possible. That means all types that
 are generalisable to it could be used as well. 
+
+In addition to the above basic kinds variants of any of these are possible as 
+kinds on their own. To emphasise the variant the following example uses the 
+_any_ type as basis of its variants. Each variant is build by appending the
+variants symbol to the base type.
+
+		family M :: _?
+		family E :: _!
+		family P :: _*
+
+`M` is any _maybe_ or _option_ type variant (where the value is either of the 
+base type or _nothing_), `E` is any fault or _error_ type (where the value is
+either of the base type or an _error_) and `P` is any _transient_ type variant
+(where the value is of the base type but can be mutated _in place_ under 
+certain conditions). 
+
+Lastly there are different modes to base types that can be combined with all
+of the above mentioned kinds to build other kinds. A mode is build by prepanding
+the modes symbol to the base type.
+
+		family T :: $_
+		family L :: ~_
+		family K :: @_
+
+`T` is any _type of_ a type, `L` is any _lazy_ type (what is syntactic sugar for
+`(() -> _)`) and `K` is any _key of_ a type. The section on the type system will
+explain in more detail what those are. Key take-away here is that those exist 
+so it is possible to express code on this level of abstraction. 
 
 ##### Qualifying the Existence of Functions or Behaviours
 In addition to the qualities of the type itself a family can also be qualified
@@ -721,11 +759,23 @@ behaviours (and if required by the type itself).
 
 		family F :: _ as Stack with plus
 
+
+#### Qualification &amp; Runtime
+
 Type families are a powerful way to abstract over types in terms of their
-qualities. To better understand the possibilities and limitations one should
-look into the details of the type system as described in a later section.
+qualities. To better understand the possibilities and limitations study
+the details of the type system as described in a later section.
 It is in particular important to understand the generalisation--specialisation
-relation between types and their static nature.
+relation between types and the mostly static nature of both types and type 
+families. 
+
+In short this is to say that types and type families allow to
+precisely express ourselves at different levels of abstraction that (mostly) 
+only exist conceptually for the programmer and the compiler to reason and 
+understand how everything fits together. At runtime many of these aspects and
+abstractions are not important any longer as a physical machine makes no 
+difference between most kinds of values. All that matter to the machine is
+how wide values are in terms of bits or bytes.
 
 ### Operations _(abstract over functions)_
 Operations are used to abstract over the meaning of a group of congeneric 
@@ -868,7 +918,10 @@ As `array-push` is equivalent to `prepand` the mapping could very well also
 used `prepand` directly. 
 
 
-## Exceptions
+
+## Errors _(Error-Handling)_
+
+
 
 
 ## Effects _(a.k.a. Side Effects)_
@@ -960,7 +1013,8 @@ As channels could block a situation naturally arises where a value should be
 send to the first of a couple of channels that accepts the value or where
 a value should be received from the first of a couple of channels that has
 a value available with the guarantee that when it happens only one channel is 
-affected. This is called a _select_ operation.
+affected. This is called a _select_ operation; it is used in the `where`-clause 
+of a function.
 
 To receive (`<<`) the first available value from a list of channels the alternatives
 are listed with the _select_ operator `|=` (instead of usual _let_ `=`):
@@ -1001,6 +1055,23 @@ a type of channel that accepts/offers a value after a certain time.
 The `after` procedure creates an ad hoc channel that offers `'7` after `'5ms`.
 To synchronise time-outs for multiple parallel processes a common _time-out_
 channel is used as alternative for all of them. 
+
+#### Receive with Defaults
+When a blocking receive should use a computed or constant default value in
+case the channel cannot offer a value the last alternative simply does not
+involve a channel.
+
+		fn receive :: T[<] channel -> T default -> T = value 
+		where
+			T value
+				|= channel <<
+				|= default
+
+The _select_ operation will try to receive a value in order of given
+alternatives and return the result of the first path that offers a value.
+As the last alternative does not involve potentially blocking constructs the
+`default` value will be the result in case the `channel` did not offer a value
+directly. 
 
 #### (A)synchronous Interconnections
 In general channels decouple processes. In principle the connection between a 
@@ -1094,20 +1165,26 @@ state transition by adding it as an extra argument.
 Any error `_!` is handled by the `when` transition that might result in a
 successor state `P?` or _nothing_ depending on the actual `error`.
 
-#### IO-Devices
+#### System Externals
 In a system build out of processes and channels input devices like a mouse or a
 keyboard become endpoints (processes) that feed data into a particular channel. 
 Sockets become types of channels and so forth. 
-From the point of view of a program composed out of processes there are just 
-channels and streams to affect the _outside world_.
+From the point of view of a program that is composed out of processes there are 
+just channels and streams to affect the _outside world_.
+
 
 
 ## Modules _(Artefacts)_
 
 ### Libraries
 
+
+
+
 ## Types _(Type System)_
 (list sorts of types here - type constructors)
+- we don#t go and look what something is. its known or dispatched
+- introspection/reflection
 
 ### Specialisation -- Generalisation _(Type Polymorphism)_
 The bruno type system uses a type polymorphism that is crucially different
