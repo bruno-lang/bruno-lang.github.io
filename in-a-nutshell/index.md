@@ -428,6 +428,26 @@ at all) of local variables is not the programmer's burden. Fields of tuple
 types like `Point` are accessed similar as calling a equally named function `x`
 or `y` on a point.
 
+#### Case-Matching
+The `where`-clause can also be used to describe cases similar to pattern 
+matching. Case-matching however is a straight value comparison is nothing more
+than another syntax for it that can help to avoid reoccurring comparisons
+in the conditions of cases.
+
+		fn name :: Point p -> String =
+			a. '0 , '0 : "ORIGIN"
+			b. '1 , '1 : "ONE"
+			c.         : p to-string
+		where
+			? = [ p x == _, p y == _ ]
+
+The cases `a.`, `b.` and `c.` match the wild-cards `_` in the comparison 
+pattern described by `? = <expr>`. So case `a.` is equivalent to 
+`p x == '0, p y == '0` and so forth. Wild-cards are matched in order of
+ appearance. If multiple wild-cards are used as in this example the `<expr>`
+given in the pattern is given as a list `[ ... ]`.
+
+
 ### Loops
 The primary way to _loop_ is to use build in operators that work on arrays in
 the fashion of
