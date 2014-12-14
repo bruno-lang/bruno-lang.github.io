@@ -1176,9 +1176,84 @@ just channels and streams to affect the _outside world_.
 
 ## Modules _(Artefacts)_
 
-### Libraries
+### Source Code
+Source code is contained in files with the ending `.bruno`. 
+Each file is said to be a module. 
+It contains a sequence of declaration with no requirements regarding order 
+or limitations to the types of declarations as each declaration states
+a fact that is universally true or given regardless of where it appears. 
 
+There are no _headers_ or other accessory parts in source files. A file
+could literally just contain a single declaration like this:
 
+		data Hash :: Byte[]
+
+Beside source code files there are library files that are concerned with the
+code organisation and interconnection as described shortly.
+
+### Name-spaces
+The language has no distinct name-spaces for types, function and so forth.
+Everything lives within the same naming space. Yet the schemata for legal names
+of different constructs are chosen in way so that they mostly cannot clash. 
+Types and named constants start with upper-case letters, functions and fields
+start with lower-case letters, type variables consist of a single upper-case
+letter.
+
+There is no notion of fully qualified names of types or functions and alike. 
+Names are always just _simple_ as they have been specified in their declaration.
+To be able to use a type or functions these have to be imported into the 
+name-space of a module, what is done in libraries. 
+Within the name-space of a module all names have to be unambiguous. In some cases
+this does not mean that there is just one thing with a certain name but that
+all with the same name are mutual exclusive regarding the involved types so that
+just one of them will fit in any possible usage situation. 
+
+### Source Code Organisation
+How declarations are best split into modules is up to the programmer.
+Usually code that belongs together is defined together. Depending on size or
+usage it might be split into several modules so that each of them is coherent
+and manageable. 
+
+#### Libraries
+The organisation of modules in directory structures is used as a form of
+dependency and name-space management. 
+Each directory is considered to be a library. The code within a library must
+only depend on other libraries that are parent directories or have the same
+direct parent as the library. As a consequence the core runtime is located at
+the _root_ folder. 
+
+		runtime
+			library a
+				library a1
+			library b
+				library b1
+
+The `runtime` depends on nothing as it has no parent or parallel library.
+library `a` might depend on library `b` or vice versa -- but libraries must not
+be cross-dependent or have dependency cycles. Further library `a1` must not
+depend on `b` or `b1` but can depend on `a` or the `runtime`.
+A library may however refer to any other library that is considered as 
+_external_, that is already compiled third-party code. 
+
+A library in this regards is identical with a physical location. It is not
+an abstract path or canonical name in such a way that code that is located in
+physically different locations can be part of the same library. 
+
+#### Benefits of a Constraint Layout
+This layout and the equivalence between directories and libraries has been 
+chosen because it provides very important chracteristics. Code can always be
+compiled from the _root_ directory downwards. With each step down in the 
+directory tree the compilation can be parallelised as all dependencies must 
+have been compiled already. Partial compilation is simpler and more efficient 
+as all modules that might be affected by a certain change must be in a 
+sub-directory or a directory parallel to the direct parent. 
+At runtime the layout largely simplifies code loading as references to libraries
+and the modules within them are identical to the physical location of the code.
+Furthermore the organisation allows for introspection of libraries and modules
+as it is known where to look for them. 
+On a final note, the layout and the 1:1 mapping to physical storage also
+make it very clear that it is not possible for a third-party to add modules to
+a library. 
 
 
 ## Types _(Type System)_
