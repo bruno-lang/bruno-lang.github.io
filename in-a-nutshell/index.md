@@ -50,8 +50,24 @@ _extend_ but further and further restrict the more general to the more specific.
 
 
 ## Introduction
+This guide book introduces the reader into the bruno programming language 
+through (briefly) explained examples. Sections build on one another. Later 
+section will assume the reader to has a sketchy idea of earlier sections. 
+Readers already familiar with the language may very well use this book as
+a reference text.
 
-TODO what will we see... (go through sections shortly)
+The 1st section explains how to declare data types that are a central aspect 
+of programming. The other central aspect - (pure) functions - is presented
+directly afterwards in the 2nd section. Ways to abstract follow in the 3rd
+section before the 4th section explains error handling mechanisms. 
+In the 5th section goes into the details of how to do side effects and 
+compose systems using processes and channels. In this section the concepts
+learned about in preceding sections are applied and composed to little programs.
+The 6th section continues with the modularisation strategy of the language
+before the 7th gives a in depth description of the type system itself. 
+In the 8th section a handful of more advanced topics are briefly touched. 
+The final 9th section closes with thoughts on systems design and the qualities
+of the approach taken by the bruno programming system.
 
 #### Notes on Examples
 Note that the code examples given are exemplary and use mostly fictional 
@@ -83,8 +99,6 @@ can be used. There are no reserved words in the classical sense.
 
 The syntax has no statements or ending marks (like a semicolon) but predefined
 sets of character used for operators, literals and forms of expressions. 
-While white-space is not significant in general a line-break might mark the
-end of some types of expressions.
 
 A single `=` usually stands for: _has the value_ (where value could also refer to
 the expression that implements a function).
