@@ -1207,13 +1207,19 @@ state transition by adding it as an extra argument.
 Any error `_!` is handled by the `when` transition that might result in a
 successor state `P?` or _nothing_ depending on the actual `error`.
 
-#### System Externals
-In a system build out of processes and channels input devices like a mouse or a
-keyboard become endpoints (processes) that feed data into a particular channel. 
-Sockets become types of channels and so forth. 
-From the point of view of a program that is composed out of processes there are 
-just channels and streams to affect the _outside world_.
+#### System Ports and Interfaces
+In a system composed out of processes and channels input devices like mouse and
+keyboard are _driver_ processes that feed data into a particular channel. 
+Sockets are channels, the file system a process that starts up helper
+processes for actual IO and so forth. 
+For a program that is composed out of processes there are just channels and 
+streams to affect the _outside world_. 
 
+This achieves uniformity and technical decoupling from high levels of expression 
+down till low level facilities. 
+It becomes natural and trivial to emulate hardware as no actual coupling to the 
+hardware exists (except within a _driver_ process that might be on the other 
+end of a channel). 
 
 
 ## Modules _(Artefacts)_
@@ -1581,6 +1587,8 @@ Two keys are consequently equal if they are the same constant.
 -->
 
 ### Bootstrapping Scripts
+
+### System Sense
 
 ## Epilogue
 <!--
