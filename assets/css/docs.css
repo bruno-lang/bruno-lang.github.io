@@ -81,8 +81,8 @@ content pre {
 	padding: 10px;
 	background-color: #eee8d5;
 	color: white;
-	tab-size: 4;
-	-moz-tab-size: 4;
+	tab-size: 2;
+	-moz-tab-size: 2;
 }
 content pre code {
 	color: black;
@@ -169,6 +169,8 @@ content h2 em { font-family: Lora; text-transform: none; font-size: 60%; }
 	content > p { widows: 3; orphans: 3; line-height: 1.4; font-size: 1rem; }
 	.sidenote { font-size: 0.9em; }
 	h1, h2, h3, h4, h5 { page-break-after: avoid; }
+	h1 + p, h2 + p, h3 + p, h4 + p, h5 + p, h3 + h4 { page-break-before: avoid; }
+	pre { page-break-inside: avoid; } 
 }
 
 /* syntax highlighting */

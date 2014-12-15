@@ -33,10 +33,10 @@ By expressing what is impossible the programmer limits what needs to be
 considered and understood. Impossibility bears logical consequences 
 that enable possibilities of simplification and optimisation[^why-restrictions]. 
 
-[^why-restrictions]: E.g. pure functions (the impossibility of site-effects) allow
-      to derive, reorder or memoize execution, fuse or inline expressions at 
-      compile-time; immutable values (the impossibility of mutation) allows to 
-      share data without copying it.
+[^why-restrictions]: For example, pure functions (the impossibility of site-effects) allow
+      to derive, reorder or memoize execution or to fuse or inline expressions at 
+      compile-time; immutable values (the impossibility of mutation) 
+      allow to share data without copying it.
 
 By composing systems out of a few specific and restricted constructs (rather than 
 unrestricted generic ones) application-, compiler- and VM-programmers share a 
@@ -60,7 +60,7 @@ The 1st section explains how to declare data types that are a central aspect
 of programming. The other central aspect - (pure) functions - is presented
 directly afterwards in the 2nd section. Ways to abstract follow in the 3rd
 section before the 4th section explains error handling mechanisms. 
-In the 5th section goes into the details of how to do side effects and 
+The 5th section goes into the details of how to do side effects and 
 compose systems using processes and channels. In this section the concepts
 learned about in preceding sections are applied and composed to little programs.
 The 6th section continues with the modularisation strategy of the language
@@ -305,7 +305,7 @@ way humans are used to write them:
 		Date imagine = "1971-10-11"
 
 The `Point` and `Date` example illustrates that textual literals can be used for 
-any composite type (when these declare a text-[format](#formats)). 
+any composite type (when these declare a text-[aspect](#aspects)). 
 The type of textual literals is inferred from the 
 context, such as the variable, parameter or return type.
 
@@ -410,14 +410,18 @@ functions and the `where` clause are used to avoid nesting, as shown soon.
 
 The `min`imum of two values `a` and `b` is `a` in case `a < b` otherwise `b`.
 The cases `condition : expr` are checked in order of appearance. The last case has to
-be the universal (true'ish) condition. For enumerations alternatively all
-values can be covered. 
+be the universal (true'ish) condition. For enumerations all values can be 
+covered alternatively. 
 
-		fn show :: Bool b -> String =
-			False : "false"
-			True  : "true"
+		fn show :: Bool v -> String =
+			a. v == False : "false"
+			b. v == True  : "true"
 
-Each case is implemented by an expression (the formalism has literally no statements).
+Each case is implemented by an expression (the formalism has literally no 
+statements). 
+Note also that each case can be labelled (here `a.` and `b.`) with a lower case 
+letter followed by a dot. This has no role other than the possibility to 
+improve readability and explicability.
 
 ### Local Variables _(Where-Clause)_
 A function body is one expression, sometimes split into cases. As there are no
@@ -453,14 +457,12 @@ in the conditions of cases.
 			b. '1 , '1 : "ONE"
 			c.         : p to-string
 		where
-			? = [ p x == _, p y == _ ]
+			?. p x == _, p y == _ :
 
 The cases `a.`, `b.` and `c.` match the wild-cards `_` in the comparison 
-pattern described by `? = <expr>`. So case `a.` is equivalent to 
+pattern described by `?. <expr> :`. So case `a.` is equivalent to 
 `p x == '0, p y == '0` and so forth. Wild-cards are matched in order of
- appearance. If multiple wild-cards are used as in this example the `<expr>`
-given in the pattern is given as a list `[ ... ]`.
-
+ appearance. 
 
 ### Loops
 The primary way to _loop_ is to use build in operators that work on arrays in
@@ -700,8 +702,9 @@ expected.
 		family S :: {_}
 		family D :: *
 
-`T` is any tuple regardless of its shape, `F` any function regardless of its
-arity, `A` is any array regardless of its element type or dimension range,
+`T` is any tuple regardless of its shape (including _one-tuples_, thus simple 
+value types), `F` any function regardless of its arity, 
+`A` is any array regardless of its element type or dimension range,
 `V` is any view or slice of such an array, `L` is any list and `S` is any set 
 regardless of their element types. Finally `D` is any (array dimension) 
 length type.
@@ -795,21 +798,17 @@ behaviours (and if required by the type itself).
 
 
 #### Qualification &amp; Runtime
-
 Type families are a powerful way to abstract over types in terms of their
-qualities. To better understand the possibilities and limitations study
-the details of the type system as described in a later section.
-It is in particular important to understand the generalisation--specialisation
-relation between types and the mostly static nature of both types and type 
-families. 
+qualities that compose well and don't clutter generic functions with excessive
+type parameterisation. 
 
-In short this is to say that types and type families allow to
-precisely express ourselves at different levels of abstraction that (mostly) 
+Type families allow to be precise on different levels of abstraction that (mostly) 
 only exist conceptually for the programmer and the compiler to reason and 
 understand how everything fits together. At runtime many of these aspects and
 abstractions are not important any longer as a physical machine makes no 
 difference between most kinds of values. All that matter to the machine is
-how wide values are in terms of bits or bytes.
+how wide values are in terms of bits or bytes. This are the limitations
+that type families cannot cross. 
 
 ### Operations _(abstract over functions)_
 Operations are used to abstract over the meaning of a group of congeneric 
@@ -1014,6 +1013,11 @@ execution of `rotate90` as it has been mutated _in place_ to some other value.
 A channel is a typed queue of fix or variable length. Each channel transports
 values of a particular simple or composite data type. Implementation-wise a
 channel is a behaviour that can be implemented in various ways. 
+
+		op send!    :: C channel -> E element -> C
+		op receive! :: C channel -> E
+		behaviour Channel = { send!, receive! }
+
 The usual way is use a (fixed length) array so that the overall system
 features reasonable [back pressure](http://en.wikipedia.org/wiki/Backpressure_routing). 
 
@@ -1095,7 +1099,7 @@ When a blocking receive should use a computed or constant default value in
 case the channel cannot offer a value the last alternative simply does not
 involve a channel.
 
-		fn receive :: T[<] channel -> T default -> T = value 
+		fn receive-or! :: T[<] channel -> T default -> T = value 
 		where
 			T value
 				|= channel <<
@@ -1388,17 +1392,17 @@ structurally compatible with all other, structurally different types.
 
 ### Shapes
 Types and values are not two independent universes. 
-There are several aspects where types and values blend into each other; 
+There are several circumstances where types and values blend into each other; 
 this should not be confused with dependent typing.
 
 (a form of latent typing but only for constants or more general statically decidable properties)
 
-### Formats
+### Aspects
 
 
 ## Advanced Techniques
 
-### Abstarct Synatx Tree
+### Abstract Syntax Tree
 So far everything has been described in terms of the surface syntax. This syntax 
 builds upon the logical constructs of the language and allows to encode them
 more readable and concise. The language is however defined in terms of its 
@@ -1556,6 +1560,8 @@ Two keys are consequently equal if they are the same constant.
 - where can we declare code? (where/who does declare -> use site vs declaration site)
 - programming with and upon properties!
 - type families => generic programming without abstract code
+
+### Bootstrapping Scripts
 
 ## Epilogue
 
