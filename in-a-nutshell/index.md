@@ -953,7 +953,7 @@ used `prepand` directly.
 
 
 ## Errors _(Error-Handling)_
-
+TODO
 
 
 
@@ -1014,9 +1014,9 @@ A channel is a typed queue of fix or variable length. Each channel transports
 values of a particular simple or composite data type. Implementation-wise a
 channel is a behaviour that can be implemented in various ways. 
 
-		op send!    :: C channel -> E element -> C
-		op receive! :: C channel -> E
-		behaviour Channel = { send!, receive! }
+		op send! [>>] :: C channel -> E element -> C
+		op receive! [<<] :: C channel -> E
+		behaviour Channel :: { send!, receive! }
 
 The usual way is use a (fixed length) array so that the overall system
 features reasonable [back pressure](http://en.wikipedia.org/wiki/Backpressure_routing). 
@@ -1099,13 +1099,13 @@ When a blocking receive should use a computed or constant default value in
 case the channel cannot offer a value the last alternative simply does not
 involve a channel.
 
-		fn receive-or! :: T[<] channel -> T default -> T = value 
+		fn receive-or! :: T[<] channel -> T default -> T = value
 		where
 			T value
 				|= channel <<
 				|= default
 
-The _select_ operation will try to receive a value in order of given
+The _select_ operation will try to receive a `value` in order of given
 alternatives and return the result of the first path that offers a value.
 As the last alternative does not involve potentially blocking constructs the
 `default` value will be the result in case the `channel` did not offer a value
@@ -1179,7 +1179,11 @@ channel after it has been computed by the `server app` function for the request
 that is received (`<<`) from the `server requests` channel. 
 The process continues (`..`) in state `Ready` with same `server` state as before.
 
-#### Error Handling
+#### Spawning Processes
+
+TODO
+
+#### Error Handlers
 Faults or Exceptions that occur during a state transition automatically 
 continue with the matching error state transition. 
 These use the type of fault instead of a state constant. For example:
@@ -1293,11 +1297,19 @@ On a final note, the layout and the 1:1 mapping to physical storage also
 make it very clear that it is not possible for a third-party to add modules to
 a library. 
 
+TODO everything that happens in libraries...
 
 ## Types _(Type System)_
+TODO
+<!--
 (list sorts of types here - type constructors)
 - we don#t go and look what something is. its known or dispatched
 - introspection/reflection
+the fundamental idea or feature is that most type information is not attached
+to values at runtime. a value has the machine form where all of the same form
+are technically compatible - generalisation--specialisation just checks at
+compile time if this compatibility is given and wanted.
+-->
 
 ### Specialisation -- Generalisation _(Type Polymorphism)_
 The bruno type system uses a type polymorphism that is crucially different
@@ -1379,26 +1391,31 @@ ways what is reflected through different, often related types.
 A _universal_ top type does not and cannot exist as it would have to be
 structurally compatible with all other, structurally different types.
 
+<!--
 - strictly speaking it is wrong to say that one type can be assigned to another
   as one values of the exact same type are compatible; but other types might be
   possible to be converted into the demanded type.
 
-#### Variance
-
-#### Runtime Type Information
-
 ### Type Inference
 - mandatory type annotations, inference where unambiguous
+#### Variance (some notes on that)
+#### Runtime Type Information (might be covered by other topics before)
+-->
+
+
 
 ### Shapes
+TODO
+<!--
 Types and values are not two independent universes. 
 There are several circumstances where types and values blend into each other; 
 this should not be confused with dependent typing.
 
 (a form of latent typing but only for constants or more general statically decidable properties)
+-->
 
 ### Aspects
-
+TODO
 
 ## Advanced Techniques
 
@@ -1557,14 +1574,16 @@ Two keys are consequently equal if they are the same constant.
 ## A System of Systems
 
 ### Modular Software
+<!--
 - where can we declare code? (where/who does declare -> use site vs declaration site)
 - programming with and upon properties!
 - type families => generic programming without abstract code
+-->
 
 ### Bootstrapping Scripts
 
 ## Epilogue
-
+<!--
 - a computer system that
 	- does not crash, 
 	- can tell why value on what function caused an error
@@ -1572,3 +1591,5 @@ Two keys are consequently equal if they are the same constant.
 	- to find and fix known errors through local reasoning
 
 - programming paradigms do not matter - just the properties of the system we work with
+
+-->
