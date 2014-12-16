@@ -1412,6 +1412,7 @@ structurally compatible with all other, structurally different types.
 
 ### Shapes
 TODO
+
 <!--
 Types and values are not two independent universes. 
 There are several circumstances where types and values blend into each other; 
@@ -1584,6 +1585,7 @@ Two keys are consequently equal if they are the same constant.
 - where can we declare code? (where/who does declare -> use site vs declaration site)
 - programming with and upon properties!
 - type families => generic programming without abstract code
+- sandboxing (a process just has access to channels it got as long as it cannot aquire channels from keys)
 -->
 
 ### Bootstrapping Scripts
