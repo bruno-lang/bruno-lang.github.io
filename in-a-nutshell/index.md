@@ -1146,14 +1146,20 @@ messages to channels.
 A `process` is declared in terms of the possible state transitions. 
 
 		process Server :: = { 
-			Ready => [ Ready ], 
-			    _ => [ Ready ] 
+			Ready => [ Ready ],
+			    _ => [ Ready ],
+			Out-Of-Heap-Space! => []
 		}
 
 A `Server` process has one state `Ready` that only can transit to itself.
-Any other (error) state (`_`) transits to `Ready` as well. A `process`
-declaration encapsulate a behavioural pattern that can be used for many concrete
-automata. 
+Any other (error) state (`_`) transits to `Ready` as well except for the
+`Out-Of-Heap-Space!` fault that transits to no other state what indicates
+process termination.
+
+So a `process` declaration encapsulate a behavioural pattern that can be used 
+for many concrete automata. This contract includes even the error behaviour.
+The compiler makes sure all transitions of actual implementations are following
+this specification. 
 
 The state `data` of a concrete process could look like the structure `HttpServer`.
 It holds channels to communicate with the _outside world_.
@@ -1180,21 +1186,31 @@ that is received (`<<`) from the `server requests` channel.
 The process continues (`..`) in state `Ready` with same `server` state as before.
 
 #### Spawning Processes
+To spawn a process the `spawn!` function is called on the data structure that
+is the concrete process.
 
-TODO
+		fn start! :: HttpServer server -> PID = server spawn!
+
+To `start!` a `HttpServer` value as process `spawn!` is called that returns
+the ID of the created process (`PID`). The `spawn!` function itself
+is implemented by the virtual machine instruction `` `spawn! ``:
+
+		family P :: (,)
+		fn spawn! :: P process -> PID = (`spawn! ?process)
+
+Any value type `(,)` can be a process `P`.
 
 #### Error Handlers
 Faults or Exceptions that occur during a state transition automatically 
 continue with the matching error state transition. 
 These use the type of fault instead of a state constant. For example:
 
-		when Out-Of-Memory! :: P p -> P?
+		when Out-Of-Heap-Space! :: HttpServer server -> ()
 		..
 
-Should a `Out-Of-Memory!` error occur the process `p` does not continue (`..`)
-with any state what indicates the termination of the process. 
-The optional type `P?` indicates on type level that this might be the outcome 
-of the transition. 
+The `server` does not continue (`..`) with any state `when` a 
+`Out-Of-Heap-Space!` error occurs. This indicates the termination of the process. 
+The return type `()` also indicates that the server does not continue.
 
 Error handlers make it easy to model robust enduring and self-repairing 
 processes or fragile daemons with task specific tear-down behaviour.
@@ -1202,10 +1218,12 @@ processes or fragile daemons with task specific tear-down behaviour.
 For a generic error handling the actual `error` could also be passed to the 
 state transition by adding it as an extra argument.
 
-		when _! :: P p -> E! error -> P?
+		when _! :: HttpServer server -> E! error -> HttpServer?
 
 Any error `_!` is handled by the `when` transition that might result in a
-successor state `P?` or _nothing_ depending on the actual `error`.
+successor state `HttpServer?` or _nothing_ depending on the actual `error`.
+The optional type `HttpServer?` indicates on type level that termination might
+be the outcome of the transition.
 
 #### System Ports and Interfaces
 In a system composed out of processes and channels input devices like mouse and
