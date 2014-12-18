@@ -1239,6 +1239,36 @@ It becomes natural and trivial to emulate hardware as no actual coupling to the
 hardware exists (except within a _driver_ process that might be on the other 
 end of a channel). 
 
+#### Cooperative Concurrency
+Processes in bruno use a form of cooperative concurrency closest to 
+[coroutines](http://en.wikipedia.org/wiki/Coroutine) but with the quality of
+[subroutines](http://en.wikipedia.org/wiki/Subroutine) that only one stack 
+(per physical CPU) is favourable. 
+
+In contrast to an [actor](http://en.wikipedia.org/wiki/Actor_model) a process 
+does not respond to messages but represents a state machine that decides when 
+to pull input from channels or push output to channels. 
+The state transitions it undergoes start as control is transfered from the 
+scheduler to the process and end or pause whenever a process interacts with 
+channels or changes over to another state. 
+Then control is transfered back to the scheduler carrying along a resume state. 
+At this point the stack is empty so that the scheduler can continue any other 
+process until that again returns control back to the scheduler and so forth.
+So processes never actually interact with channels themselves but express their
+intent to do so to the scheduler that is carrying out the operations when it is
+possible and the process is chosen to be resumed. 
+This is guaranteed to not block during a state transition as just pure functions
+can be executed in-between context switches.
+
+As a model of thought a process is analogous to a biological cell that is 
+somehow connected to its surrounding. While it is affected by environmental 
+changes in a wider sense there is not necessarily a direct
+[reaction](http://en.wikipedia.org/wiki/Reaction_%28physics%29) - although it
+very well might have a deterministic behaviour on a larger scale. 
+A program or system is likewise analogous to networks of cells that behave
+as an organism. 
+
+
 
 ## Modules _(Artefacts)_
 
