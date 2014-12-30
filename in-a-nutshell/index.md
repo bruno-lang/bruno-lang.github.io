@@ -7,13 +7,13 @@ class: nutshell
 
 # _bruno_ in a Nutshell
 
-<author>Jan Bernitt</author>
+<author><i>by</i> Jan Bernitt</author>
 
 bruno is a declarative high level programming language designed for correctness
 on the basis of data and pure functions. 
 Robust, inherently parallel systems are composed out of job-oriented state 
 machines, each being an isolated lightweight process that communicates with 
-other processes only through message passing.
+other processes through message passing.
 
 ## Prologue
 Basic correctness is still too challenging with both classic and modern
@@ -52,17 +52,18 @@ _extend_ but further and further restrict the more general to the more specific.
 ## Introduction
 This guide book introduces the reader into the bruno programming language 
 through (briefly) explained examples. Sections build on one another. Later 
-section will assume the reader to has a sketchy idea of earlier sections. 
+section will assume the reader has a sketchy idea of earlier sections. 
 Readers already familiar with the language may very well use this book as
 a reference text.
 
-The 1st section explains how to declare data types that are a central aspect 
-of programming. The other central aspect - (pure) functions - is presented
+The 1st section explains how to declare data types -- the basis of programming 
+in bruno. The other central aspect - (pure) functions - is presented
 directly afterwards in the 2nd section. Ways to abstract follow in the 3rd
-section before the 4th section explains error handling mechanisms. 
-The 5th section goes into the details of how to do side effects and 
-compose systems using processes and channels. In this section the concepts
-learned about in preceding sections are applied and composed to little programs.
+section before the 4th section explains error handling. 
+The 5th section discusses how (side) effects occur and systems are composed 
+using processes and channels. 
+In this section the concepts learned about in preceding sections are applied 
+and composed to little programs.
 The 6th section continues with the modularisation strategy of the language
 before the 7th gives a in depth description of the type system itself. 
 In the 8th section a handful of more advanced topics are briefly touched. 
@@ -103,12 +104,16 @@ sets of character used for operators, literals and forms of expressions.
 A single `=` usually stands for: _has the value_ (where value could also refer to
 the expression that implements a function).
 
+
+
 ## Data
 Data is always represented by values, thus it is immutable with value equality 
-and no presence of an identity.
+and no presence of identity.
 
 ### Simple Values
-There are two types of simple values, independent `dimension`s and dependent `unit`s. 
+There are two kinds of simple values, independent `dimension`s and dependent 
+`unit`s. A dimension is the basis of a new sort of values whereas a unit is
+a form of expressing the same sort of value differently. 
 
 		dimension Time :: Int '0..
 
@@ -133,10 +138,10 @@ A `Time` `ratio` within the unit system `SI` declares a  minute `'1min` as
 `'60sec`, a second `'1sec` as `'1000ms` (and so forth). 
 The `SI` dimension models a unit system used as a fix point to group ratios
 within the same system.
-Literals use a `'` prefix and are typed through their unit of measure.
+Literals use a `'` prefix and are typed through their unit of measure suffix.
 
 The presence of a unit system with `ratio`s makes it unnecessary to declare or 
-explicitly apply conversion between values within the same system.
+explicitly apply conversions between values within the same system.
 
 		Milliseconds three-minutes = '2min + '60sec
 
@@ -146,7 +151,7 @@ is known.
 
 ### Composite Values
 
-#### Tuples
+#### Tuples _(Product Types)_
 Composite values (often loosely equated with records or structs) are declared as 
 `data` types.
 
@@ -163,14 +168,14 @@ elements of identical type:
 		data Code :: Char[8]
 		data RGB :: Colour[3]
 
-A `Code` is vector of `8` `Char`acters. A `RGB` colour one of `3` `Colour`s,
+A `Code` is a vector of `8` `Char`acters. A `RGB` colour one of `3` `Colour`s,
 where the length is part of the array's type. A length can also be within a
 range.
 
 		data UTF8CodePoint :: Byte[1-4]
 
-A UTF-8 code point is `1-4` `Byte`s. Length or range furthermore allow the use of
-a wildcard `*` to indicate _any unknown_ length.
+A UTF-8 code point has `1-4` `Byte`s. Length or range furthermore allow the use 
+of a wild-card `*` to indicate _any unknown_ length.
 
 		data Nonempty :: Int[1-*]
 
@@ -183,7 +188,7 @@ An array is `Nonempty` when it has at least `1` up to any `*` number of elements
 Two collection types are supported with special syntax although conceptually 
 they aren't specific data types but abstract data [behaviours](#behaviours).
 In contrast to the fix length of arrays collection are of a variable length 
-(that is not reflected on type level).
+(the length is not reflected on type level).
 
 		data Sentence :: [Word]
 
@@ -208,8 +213,8 @@ By `slice`ing a section of the string `"hello world"` starting at positon
 characters `Char[:2]`, refers to the first two characters of that string,
 namely `"he"`.
 
-A slice is a view upon a section of a already immutable underlying array
-extended with the information about the position of the slice within the 
+A slice is a view upon a section of an already immutable underlying array
+extended with information about the position of the slice within the 
 originating array and the ability derive slices upon the same underlying array
 that are moved or changed in length.
 
@@ -224,13 +229,23 @@ possible values to model enumerations. Classic enumerations are 0-tuples:
 
 		dimension Bool :: () = [ False, True ]
 
-`Bool`eans are derived from unit `()`, allowing for two values: `False` and `True`
-where in case of a list `False` will also be associated with index `'0` and
-`True` with index `'1`. Dimensions based on unit can also omit the `()` as in:
+`Bool`eans are derived from unit `()`, allowing for two values: `True` and 
+`False` where in case of a list `False` will also be associated with index `'0` 
+and `True` with index `'1`. Dimensions based on unit can also omit the `()` as in:
 
 		dimension Fruits :: = { Apples, Pears }
 
-The possible `Fruits` are `Apples` and `Pears`, this time with _set_ semantics. 
+The possible `Fruits` are `Apples` and `Pears`, this time with _set_ semantics.
+Equally any simple type (one-tuple) can be initialised with a fixed set or
+list of possible values.
+
+		dimension Sign :: Char = { 
+			Plus '+', 
+			Minus '-' 
+		}
+
+A `Sign` is either the `Char` `Plus` (what is the value `'+'`) or `Minus`.
+
 Composite types can be restricted to an enumeration in a similar way:
 
 		data Planet :: (Kilograms weight, Meters radius) = { 
@@ -276,11 +291,13 @@ literals for simple values as scalars, characters and user defined units:
 		Float real = '-0.42
 		Char letter = 'a'
 		Mass weight = '10kg
+		Teaspoon salt = '1/2tsp
 
 Conceptual literals start with a `'` followed by a number or symbol and the unit
-of measure, like `kg`. `Char`acters have `'` as their _unit_. Scalar numbers
-have no unit of measure. When a unit of measure is present the type of a literal 
-is derived form it as it has to be unambiguous in any scope.
+of measure, like `kg` or `tsp`. 
+`Char`acters have `'` as their _unit_. Scalar numbers have no unit of measure. 
+When a unit of measure is present the type of a literal is derived form it as 
+it has to be unambiguous in any scope.
 Numbers without a leading `'` on the other hand are no value literals but 
 length types. 
 
@@ -304,7 +321,7 @@ way humans are used to write them:
 		Point p = "1:2"
 		Date imagine = "1971-10-11"
 
-The `Point` and `Date` example illustrates that textual literals can be used for 
+The `Point` and `Date` example illustrate that textual literals can be used for 
 any composite type (when these declare a text-[aspect](#aspects)). 
 The type of textual literals is inferred from the 
 context, such as the variable, parameter or return type.
@@ -341,8 +358,7 @@ As such they are important for the declarations of the language's AST.
 
 
 ### Initial Values _(Default Values)_
-There is no _null_ pointer/reference/value. All simple values are initialised 
-with zero or the lowest possible value should they not be specified otherwise. 
+There is no _null_ pointer/reference/value.
 This is somewhat a non-issue as all data starts from literals. 
 One either gets a value as an argument or starts from a literal.
 
@@ -440,17 +456,17 @@ clause:
 The function `distance` calculates the distance between 2 points `a` and `b`.
 Local variables like `dx`, `dy`, `dx2` and `dy2` can  be 
 declared based on the function's parameters and any of the other variables. 
+Fields of `data` types like `Point` are accessed similar to calling a equally 
+named function `x` or `y`. If a value is computed or not is truly transparent
+from the callers point of view.
 Due to referential transparency the order of declaration is irrelevant and
 can be chosen for best readability. Also the necessity of computation (order or
-at all) of local variables is not the programmer's burden. Fields of tuple
-types like `Point` are accessed similar as calling a equally named function `x`
-or `y` on a point.
+at all) of local variables is not the programmer's burden. 
 
 #### Case-Matching
 The `where`-clause can also be used to describe cases similar to pattern 
-matching. Case-matching however is a straight value comparison is nothing more
-than another syntax for it that can help to avoid reoccurring comparisons
-in the conditions of cases.
+matching. Case-matching however is a straight value comparison that 
+helps to avoid reoccurring comparisons in the conditions of cases.
 
 		fn name :: Point p -> String =
 			a. '0 , '0 : "ORIGIN"
@@ -468,8 +484,8 @@ pattern described by `?. <expr> :`. So case `a.` is equivalent to
 The primary way to _loop_ is to use build in operators that work on arrays in
 the fashion of
 [APL](http://en.wikipedia.org/wiki/APL_%28programming_language%29) like 
-languages like [K](http://en.wikipedia.org/wiki/K_%28programming_language%29). 
-The exact operators and syntax haven't been decided yet. 
+languages like [K](http://en.wikipedia.org/wiki/K_%28programming_language%29)
+(the exact operators and syntax haven't been decided yet). 
 
 The secondary way to _loop_ is to use recursive functions:
 
@@ -483,8 +499,12 @@ appropriate functions the multiplication in the above example could also be
 written vice versa `factorial (n - '1) * n` and still be executed without 
 consuming stack frames as `*` is such an _annotated_ operation.
 
+<!-- 
+TODO example that shows how to annotate
+-->
+
 ### First Class Functions
-Functions are also values, they can appear as parameter and return type of a 
+Functions are also values, they can appear as parameter- or return type of a 
 function declaration and be assigned to variables (`where`-clause). Such 
 functions are _anonymous_ in the sense that their original name is _lost_.
 
@@ -503,14 +523,14 @@ be used as arguments, like in the following expression:
 
 		'1 is even
 
-Function types can be seen as a way to _abstract_ over a functions and see it as
-a member of a _function familiy_. This kind of abstraction can also be made 
+Function types can be seen as a way to _abstract_ over functions and see it as
+a member of a _function family_. This kind of abstraction can also be made 
 first class as operations will shortly show.
 
 ### Partial Application
 Another situation that results in function types is partial application of
-arguments of a function. Any number of arguments can be left out, each not 
-applied parameter is indicated by the underscore `_` _wildcard_.
+function arguments. 
+Each not applied parameter is indicated by the underscore `_` _wild-card_.
 
 		(Int -> Int) inc = '1 + _
 
@@ -554,7 +574,7 @@ its tuple equivalent.
 
 ### Type Families _(abstract over types)_
 A type `family` is mostly a _type variable_ bound to certain constraints in
-terms of the qualities of its member types. 
+terms of the qualities of member types. 
 Any actual type is a member of a vide variety of families bases on its properties. 
 Membership is not declared by an actual type but implicitly given or not, 
 depending on its sort, shape, value range or suchlike qualities. 
@@ -563,11 +583,12 @@ depending on its sort, shape, value range or suchlike qualities.
 
 The family for type variable `T` contains all types that can be generalised to
 `Int`. Type variables generally have names consisting of a single upper-case 
-letter, what distinguishes them from concrete types that cannot have such names. 
+letter (that might be followed by a single digit), what distinguishes them from 
+concrete types that cannot have such names. 
 
 		fn plus [+] :: T a -> T b -> T = (`+ ?a ?b)
 
-The `plus` function is in effect declared for all types that are a members of
+The `plus` function is in effect declared for all types that are members of
 the type family `T`. Most notable this also results in a value of type `T` 
 without having to specify any particular type or requiring value _factories_.
 
@@ -577,7 +598,7 @@ that satisfies the constraints of the family.
 		unit Mass [kg] :: Int '0..
 		Mass m = '1kg + '2kg 
 
-As `Mass` is a specialisation of `Int` its values can be added using the `plus`
+As `Mass` is a specialisation of `Int` -- its values can be added using the `plus`
 function, resulting in a value of type `Mass`. If `plus` would have been 
 declared in terms of `Int`s, like
 
@@ -589,7 +610,7 @@ generalised to `Int`) but it would result in an `Int` instead of a `Mass`:
 		Int mass = '1kg + '2kg 
 
 That way using functions would generalise the type of the return value what 
-often isn't intended for calculations with values of one type. 
+often isn't intended for calculations on values of one type. 
 This behaviour however is expected for functions that are type conversions, so
 these are simply declared like that.
 
@@ -610,13 +631,13 @@ families are often not constrained at all.
 		family B :: _
 
 Both `A` and `B` can be of any type (described by the `_` type wild-card).
-The is often used for general functions so that `A` and `B` can be substituted
+This is often used for general functions so that `A` and `B` can be substituted
 with different actual types.
 
 		fn map :: [A] list -> (A -> B) f -> [B]
 
-To `map` a `list` of any type `A` to any other type `B` two type variables are
-used.
+To `map` a `list` of any type `A` to a list of another type `B` two type 
+variables are used.
 
 #### Types of Qualification
 The examples so far used simple base type qualification. Other properties of
@@ -651,7 +672,7 @@ the second being generalisable to `Int` is a member of family `T1`.
 		dimension Coordinate :: Int
 		data Point :: (Coordinate x, Coordinate y)
 
-`Point` is a member of `T1` as `y` is generalisable to `Int`.
+`Point` is a member of `T1` as `y` is generalisable to `Int` (and `x` to `_`).
 
 Besides abstracting the type of a tuple's element a family can also abstract 
 from the element quantity and position (with some limitation).
@@ -666,14 +687,14 @@ Similar reasoning can be applied to far more sophisticated shapes.
 
 `T3` includes all types of tuples with a list of any type that satisfies `T2` 
 and a last element of `Bool`. The simplest case would be `([String], Bool)` as
-the `..` can also be substituted to no extra element.
+the `..` can also be substituted to no extra element(s).
 
 Similar to tuples the shape of functions can be qualified with type families.
 
 		family F1 :: (_ -> _)
 
 Any function with one parameter is a member of `F1`. 
-Further or different qualification of functions works like is did for tuples.
+Further or different qualification of functions works like it did for tuples.
 
 		family T  :: _
 		family F2 :: (T -> T -> Bool)
@@ -683,10 +704,11 @@ resulting in a `Bool` are a member of the family `F2`.
 
 		fn in-range :: Int32 a -> Int64 b -> Bool
 
-Assuming `Int32` is a 32-bit number and `Int64` a 64-bit with them having a
-common base type the function `in-range` actually is a member of `F2` as there
-exists a type `T` that `a` and `b` can be generalised to. If the two types
-on the other hand do not share a common base type it is not a member of `F2`.
+Assuming `Int32` is a 32-bit number and `Int64` a 64-bit number both derived 
+from a common base type then `in-range` is a member of `F2` as a type `T` exists
+that is a generalisation of both `a` and `b`. 
+If on the other hand the two types do not share a common base type `in-range` 
+is not a member of `F2`.
 In such cases it is often easier to consider the tuple equivalent:
 `(Int32, Int64)` would satisfy `(Int, Int)` (if `Int` is the common base type).
 
@@ -710,9 +732,9 @@ regardless of their element types. Finally `D` is any (array dimension)
 length type.
 
 There are three more qualifications for kinds that haven't been mentioned so far.
-But to abstract over them by kind their semantics don't need to be understood.
+Their semantics don't need to be understood to abstract over them by kind.
 
-		family O :: *(->)
+		family O :: ?(->)
 		family R :: _[<]
 		family W :: _[>]
 
@@ -723,13 +745,13 @@ The _any_ type wild-card `_` used within kinds concerns the type of the
 _elements_ of a composite or function. 
 It can likewise be substituted with any _base type_ the composite should be
 further constraint to. Again, this would be the type to be satisfied by an
-actual type and not the only actual type possible. That means all types that
-are generalisable to it could be used as well. 
+actual type and not the only actual type possible. This means all types that
+are generalisable to the stated type could be used as well. 
 
-In addition to the above basic kinds variants of any of these are possible as 
-kinds on their own. To emphasise the variant the following example uses the 
-_any_ type as basis of its variants. Each variant is build by appending the
-variants symbol to the base type.
+In addition to the basic kinds above variants of any of these are possible as 
+kinds on their own. Each variant is build by appending the variants symbol to 
+the base type. To emphasise the variant the following examples use the 
+_any_ type as basis of the variants. 
 
 		family M :: _?
 		family E :: _!
@@ -741,9 +763,9 @@ either of the base type or an _error_) and `P` is any _transient_ type variant
 (where the value is of the base type but can be mutated _in place_ under 
 certain conditions). 
 
-Lastly there are different modes to base types that can be combined with all
-of the above mentioned kinds to build other kinds. A mode is build by prepanding
-the modes symbol to the base type.
+Lastly there are different indirections to base types that can be combined with 
+all of the above mentioned kinds to build other kinds. 
+A indirection is build by prepanding a indirection symbol to the base type.
 
 		family T :: $_
 		family L :: ~_
@@ -766,8 +788,8 @@ behaviours but the principle is this:
 
 		family A :: _ with plus
 
-Any type (indicated by the wild-card `_` as usual) `with` the an actual 
-implementation for the abstract function `plus` is a member of family `A`.
+Any type (indicated by the wild-card `_` as usual) `with` an actual 
+implementation for the `plus`-operation is a member of family `A`.
 Equally multiple existential qualifications can be given:
 
 		family B :: _ with plus, minus
@@ -784,7 +806,7 @@ Likewise the existence of one or more behaviours can be added as a qualification
 
 Any type that can act `as` a `Stack` (that means an implementation for a 
 particular set of operations exists) is a member of the family `D`. Again,
-this can extended to multiple behaviours.
+this can be extended to multiple behaviours.
 
 		family E :: _ as Stack, Collection
 
@@ -810,6 +832,7 @@ difference between most kinds of values. All that matter to the machine is
 how wide values are in terms of bits or bytes. This are the limitations
 that type families cannot cross. 
 
+
 ### Operations _(abstract over functions)_
 Operations are used to abstract over the meaning of a group of congeneric 
 functions. This meaning is expressed through the operation's name.
@@ -833,17 +856,17 @@ declared specialisation for a particular library or module context.
 The [tagged form](#tagged-forms) `` `auto `` declares the automatic (implicit)
 specialisation of the function `equal-ints` to the operation `eq` where the 
 _type variable_ `T` is of actual type `Int`. 
-So in this example `equal-ints` has to be similar to:
+In this example `equal-ints` has to be similar to:
 
 		fn equal-ints :: Int a -> Int b -> Bool = a == b
 
 Operations can also be bound in the `where`-clause of a function.
 
 		where
-			equal-ints ~> eq Int
+			equal-ints +> eq Int
 
 The function `equal-ints` is specialised to the operation `eq` for type `Int`
-within the body of the `where`-clause's function.
+within the body of the function, that belongs to the `where`-clause.
 
 On the use-site operations are not declared as explicit parameters but passed 
 implicitly as existential type constraints expressed as part of a type family.
@@ -851,7 +874,7 @@ implicitly as existential type constraints expressed as part of a type family.
 		family E :: _ with eq
 
 Any type (`_`) for which an implementation of the `eq` operation exists 
-in context of usage is a member of the type family `E`. 
+in usage context is a member of the type family `E`. 
 
 		fn index-of :: E[*] arr -> E sample -> Int pos -> Int? =
 			pos >= arr length    : ()
@@ -867,7 +890,7 @@ can be chosen by the function bound to the operation in the caller's context.
 		fn contains :: Char[*] arr -> Char sample -> Bool 
 			= arr index-of (sample, '0) exists?
 		where
-			equals-ignore-case ~> eq Char
+			equals-ignore-case +> eq Char
 
 `contains` compares the characters on the basis of the `equals-ignore-case`
 functions that takes the role of `eq` operations for `Char` values so that it is
@@ -909,7 +932,7 @@ Assuming code in another module declares two fresh type variables
 Any type (`_`) that in known to _behave_ `as` a `Stack` is a member of the
 type family `S1`; thus `S1` can be used as `Stack` of elements of type `E1`. 
 The fresh type variable `E1` is substituted for the earlier captured variable `E`.
-That mean `E1` must be sufficient to satify `E` but can be more specialised.
+Here `E1` must be sufficient to satisfy `E` but can be more specialised.
 
 On the basis of `S1` and `E1` functions can be declared using the `Stack` 
 operations.
@@ -918,13 +941,13 @@ operations.
 			stack peek is-nothing? : stack push e
 			                       : stack
 
-The function `push?` just pushes the element `e` to the `stack` if the stack is 
+The function `push?` only pushes the element `e` to the `stack` if the stack is 
 empty, otherwise the stack is left unchanged. `S1` is known to have the `Stack`
-`behaviour` so `push` and `peek` can be used as if they were function declared
+`behaviour` so `push` and `peek` can be used as if they were functions declared
 on type `S1`.
 
 Practically any type that has matching functions can get the behaviour of a 
-`Stack`. This is thou (as always) declared explicitly for a module or library:
+`Stack`. This is thou (as always) declared explicitly for a particular context:
 
 		(`auto Stack { 
 			array-push => push, 
@@ -932,14 +955,15 @@ Practically any type that has matching functions can get the behaviour of a
 			array-pop  => pop })
 
 The `` `auto`` -matic specialisation to `Stack` is declared by mapping the
-actual function (here `array-*`) to the operation from the `Stack` behaviour.
+actual function (here `array-*`) to the matching operation from the `Stack` 
+behaviour.
 
 The actual types that can be specialised to a `Stack` depend on the type(s)
-stated in the mapped functions. If multiple function of same name are in the
+stated in the mapped functions. If multiple functions of same name are in the
 name-space the function is qualified with the containing module or library name.
 
-A behaviour's actual implementation consists of functions. 
-Here `push` on basis of an array:
+A behaviour's implementation consists of usual functions. 
+Here `push` is implemented on basis of an array:
 
 		family E :: _
 		fn array-push :: E[] stack -> E e -> E[]
@@ -950,11 +974,21 @@ The `array-push` function has a compatible signature to the operation `push`.
 As `array-push` is equivalent to `prepand` the mapping could very well also 
 used `prepand` directly. 
 
-
+		(`auto Stack { 
+			prepand => push, ... }
+		)
 
 ## Errors _(Error-Handling)_
 TODO
 
+### Faults
+
+### Exceptions
+
+<!--
+are a VM thing, these occur loosely related to the operation. Like disk full, out of heap space, etc. 
+its not the the operation was wrong but physical limitations were reached at that point - the idealised machine illusion cannot be hold up any longer.
+-->
 
 
 ## Effects _(a.k.a. Side Effects)_
@@ -962,7 +996,7 @@ TODO
 ### Transients
 Transient types are _mutable_ specialisations of the in general _immutable_ 
 data types. This does not say that transient values can be mutated freely. 
-A transient value has just one owner at any point in time so that a modification
+A transient value has only one owner at any point in time so that a modification
 _in place_ is conceptually indistinguishable from creating a new value as there
 in no other reference to that place that would expect to see the old value.
 
@@ -994,7 +1028,7 @@ owned within the calling context; the ownership is transferred into `rotate90`.
 To rotate a matrix by 180 degrees `rotate90` is used twice. The first call 
 `(m rotate90)` transfers the ownership of `m` from within `rotate180` into 
 `rotate90`. Its return value is again owned by `rotate180` before the 
-ownership is transfers into `rotate90` for the second rotation. 
+ownership is transfered into `rotate90` for the second rotation. 
 Effectively the input matrix `m` has been mutated in place twice.
 
 A disallowed use is illustrated by the following function:
@@ -1028,8 +1062,8 @@ an input `[<]` end or an output `[>]` end.
 		Message[>] output
 
 Usually channels are of fixed length and block on send or receive if the channel
-if full or respectively empty. The second type of channel is non-blocking 
-indicate by square brackets that are open to the outside.
+is full or respectively empty. The second type of channel is non-blocking 
+indicated by square brackets that are open to the outside.
 
 		Message]<[ non-blocking-input
 		Message]>[ non-blocking-output
@@ -1043,8 +1077,8 @@ in line with the arrow.
 
 The different types of channels allow to write functions that work just for
 blocking (`M[>]`,`M[<]`) or non-blocking (`M]>[`,`M]<[`) channels or both of 
-them (`M]>]`,`M[<[`) and with particular value types or wide range (possibly any)
-type using a type variable like `M` would be one.
+them (`M]>]`,`M[<[`) and with particular value types or a wide range 
+(possibly any) type using a type variable like `M` would be one.
 
 #### Cross-Channel-Synchronisation
 As channels could block a situation naturally arises where a value should be
@@ -1076,7 +1110,7 @@ operator `|=` is used as well:
 			|= value >> channel-c
 
 The _select_ tries to send a `value` in the order given, top to bottom.
-In non of the channels directly accepts the value (they all blocked waiting)
+If non of the channels directly accepts the value (they all blocked waiting)
 the `value` is send to the first channel accepting it with no particular priority
 should multiple channels accept a value _simultaneously_.
 In any case the operation returns the channel that accepted the value.
@@ -1106,7 +1140,7 @@ involve a channel.
 				|= default
 
 The _select_ operation will try to receive a `value` in order of given
-alternatives and return the result of the first path that offers a value.
+alternatives and returns the result of the first path that offers a value.
 As the last alternative does not involve potentially blocking constructs the
 `default` value will be the result in case the `channel` did not offer a value
 directly. 
@@ -1114,18 +1148,18 @@ directly.
 #### (A)synchronous Interconnections
 In general channels decouple processes. In principle the connection between a 
 consuming and a producing process can be seen as an asynchronous connection 
-where the producer can send as message without waiting for the receiver or where
+where the producer can send a message without waiting for the receiver or where
 the receiver can receive a message without waiting for the sender. 
 Depending on the kind of channel used this might change to a synchronous 
 connection for sending messages if the queue is full or for receiving messages
 if the queue is empty. This means, to emulate a direct synchronous _call_ 
-between processes as caller and callee those can just be connected using 
+between processes as caller and callee those are connected using 
 a blocking queue with a fixed length of 1.
 
 #### Order of Messages
 While it is obvious for the most channel implementations that they will 
 keep the order of messages the general contract of channels does not implicate 
-a guarantee as channels are also used to communicate with remote systems.
+an order-guarantee as channels are also used to communicate with remote systems.
 
 Secondly any process should be as self-contained as possible what includes 
 not to expect a certain behaviour from the process surrounding in which it is
@@ -1133,7 +1167,7 @@ embedded through channels. The order of messages is such an expectation that
 might be necessary in some cases but should not be in general.
 
 In the future the language might even distinguish channels that guarantee to
-keep order as a specialisation type of a channel that does not.
+keep order as a specialisation type of channels that do not.
 
 ### Processes
 A process is a isolated lightweight thread of execution exclusively connected 
@@ -1191,9 +1225,9 @@ is the concrete process.
 
 		fn start! :: HttpServer server -> PID = server spawn!
 
-To `start!` a `HttpServer` value as process `spawn!` is called that returns
-the ID of the created process (`PID`). The `spawn!` function itself
-is implemented by the virtual machine instruction `` `spawn! ``:
+To `start!` a `HttpServer` value as process `spawn!` is called. 
+The `spawn!` function itself is implemented by the virtual machine instruction 
+`` `spawn! `` that returns the ID of the created process (`PID`).
 
 		family P :: (,)
 		fn spawn! :: P process -> PID = (`spawn! ?process)
@@ -1218,12 +1252,13 @@ processes or fragile daemons with task specific tear-down behaviour.
 For a generic error handling the actual `error` could also be passed to the 
 state transition by adding it as an extra argument.
 
-		when _! :: HttpServer server -> E! error -> HttpServer?
+		family E :: _!
+		when E! :: HttpServer server -> E! error -> HttpServer?
 
 Any error `_!` is handled by the `when` transition that might result in a
 successor state `HttpServer?` or _nothing_ depending on the actual `error`.
-The optional type `HttpServer?` indicates on type level that termination might
-be the outcome of the transition.
+On type level the optional type `HttpServer?` models the possibility of 
+process termination.
 
 #### System Ports and Interfaces
 In a system composed out of processes and channels input devices like mouse and
@@ -1234,7 +1269,7 @@ For a program that is composed out of processes there are just channels and
 streams to affect the _outside world_. 
 
 This achieves uniformity and technical decoupling from high levels of expression 
-down till low level facilities. 
+down to low level facilities. 
 It becomes natural and trivial to emulate hardware as no actual coupling to the 
 hardware exists (except within a _driver_ process that might be on the other 
 end of a channel). 
@@ -1248,10 +1283,10 @@ Processes in bruno use a form of cooperative concurrency closest to
 In contrast to an [actor](http://en.wikipedia.org/wiki/Actor_model) a process 
 does not respond to messages but represents a state machine that decides when 
 to pull input from channels or push output to channels. 
-The state transitions it undergoes start as control is transfered from the 
+The state transitions it undergoes start as control is transferred from the 
 scheduler to the process and end or pause whenever a process interacts with 
 channels or changes over to another state. 
-Then control is transfered back to the scheduler carrying along a resume state. 
+Then control is transferred back to the scheduler carrying along a resume state. 
 At this point the stack is empty so that the scheduler can continue any other 
 process until that again returns control back to the scheduler and so forth.
 So processes never actually interact with channels themselves but express their
@@ -1275,9 +1310,9 @@ as an organism.
 ### Source Code
 Source code is contained in files with the ending `.bruno`. 
 Each file is said to be a module. 
-It contains a sequence of declaration with no requirements regarding order 
+It contains a sequence of declarations with no requirements regarding order 
 or limitations to the types of declarations as each declaration states
-a fact that is universally true or given regardless of where it appears. 
+a fact that should universally hold regardless where it appears. 
 
 There are no _headers_ or other accessory parts in source files. A file
 could literally just contain a single declaration like this:
@@ -1336,8 +1371,8 @@ an abstract path or canonical name in such a way that code that is located in
 physically different locations can be part of the same library. 
 
 #### Benefits of a Constraint Layout
-This layout and the equivalence between directories and libraries has been 
-chosen because it provides very important chracteristics. Code can always be
+The layout and the equivalence between directories and libraries has been 
+chosen because it provides very important characteristics. Code can always be
 compiled from the _root_ directory downwards. With each step down in the 
 directory tree the compilation can be parallelised as all dependencies must 
 have been compiled already. Partial compilation is simpler and more efficient 
@@ -1354,7 +1389,42 @@ a library.
 TODO everything that happens in libraries...
 
 ## Types _(Type System)_
+
 TODO
+
+### Primitives
+Five primitives are distinguished on the VM level:
+
+`Int` _(eger)_
+: integer number with arbitrary-precision and range. The actual representation
+  is up to the VM. Derived integer number types with fixed range use a suitable
+  representation (with [two's complement](http://en.wikipedia.org/wiki/Two%27s_complement)) 
+  for the number of bits needed.
+
+		dimension Int ::
+
+`Dec` _(imal)_
+: 64-bit decimal floating point number ([dec64](http://dec64.org/)).
+
+		dimension Coefficient :: Int : #(Bit[56])
+		dimension Exponent :: Int : #(Bit[8])
+		dimension Dec :: : #(Coefficient Exponent)
+
+`Frac` _(tion)_
+: fraction number with 32-bit numerator and denominator ([frac64](http://frac64.github.io/)).
+
+`Char` _(acter)_
+: a [none](http://non-encoding.github.io/) encoded character.
+
+`()` _(unit)_
+: used as base type for enumerations (0-tuples). The unit value also represents 
+  _nothing_ for optional types.
+
+The language defines the following core types based on the primitives. 
+
+		dimension Bool :: () = [ False, True ]
+
+### Type Constructors
 <!--
 (list sorts of types here - type constructors)
 - we don#t go and look what something is. its known or dispatched
@@ -1636,9 +1706,44 @@ Two keys are consequently equal if they are the same constant.
 - sandboxing (a process just has access to channels it got as long as it cannot aquire channels from keys)
 -->
 
-### Bootstrapping Scripts
+### The Self-Aware System
 
-### System Sense
+### Bootstrapping Scripts
+Imagine a VM that does not run on top of an OS but that also takes over
+responsibility of the OS and BIOS layers providing the bare minimum needed to 
+program everything but the VM in terms of the virtual machine instructions that 
+the VM will directly translate into machine code. Starting the (computer) system 
+means to start the VM that has a _hard coded_ initialisation logic to get ready
+up to the point where it can provide processes and channels. 
+
+To _boot_ into the user configured system the VM would run a bootstrapping 
+_script_ detected by conventions. Such a script is a sequence of messages that 
+should be pushed to different channels identified by a key.
+
+		@keyboard.config =>
+			(`layout `QWERTZ)
+
+		@monitor.config =>
+			(`frequency '75Hz) 
+
+For example, the keyboard should use `` `QWERTZ `` layout, the monitor run at `'75Hz`. 
+_Scripts_ are written in the same language with same type safety guarantees and
+tools. They don't directly _do_ something but assemble data structures that 
+describe what should be done. Booting becomes sending messages to channels, 
+something that is not different from a running system.
+This ensures a _working_ system at any point in time that the _booting_ process
+tries to bring to a particular configuration by playing-back messages that take 
+the role of commands. 
+Should some of them fail the system is still usable without the failed adaptation. 
+
+This makes is easy to control the fundamental configuration of a system that
+essentially cannot _crash_ when playing around with settings. A user can
+tweak the system by sending messages from a console. When a satisfactory
+change is found it is added to the bootstrapping script so that the system
+also gets into that state on next start up.
+
+### Sandboxing
+
 
 ## Epilogue
 <!--
