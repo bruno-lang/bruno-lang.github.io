@@ -66,7 +66,7 @@ In this section the concepts learned about in preceding sections are applied
 and composed to little programs.
 The 6th section continues with the modularisation strategy of the language
 before the 7th gives a in depth description of the type system itself. 
-In the 8th section a handful of more advanced topics are briefly touched. 
+In the 8th section a handful of implementation techniques are briefly touched. 
 The final 9th section closes with thoughts on systems design and the qualities
 of the approach taken by the bruno programming system.
 
@@ -1447,12 +1447,19 @@ Fundamentally four kinds of types are to be distinguished:
 * Value Types
 * Function Types
 * Effect Types
-* Abstraction Types
+* Virtual Types
 
 For simplicity the following explanations should be associated with value types
 that are the basis for everything else. 
 The semantics of function types are a consequence of value type semantics.
 Effect- and abstraction types have mostly slightly modified value semantics.
+
+It could be said that types _carry_ static properties of values. A value that 
+has been proven to conform to the properties of a type can be specialised to
+that type. Type conversion however is only allowed between values of related
+types that are structurally compatible. That means a specialisation can be
+tried for any two types that have a common generalisation type and are not
+known to have mutual exclusive value sets.
 
 Two (value) types can be related in such a way that 
 a value of a _subtype_ is also usable as a value of the _supertype_.
@@ -1470,7 +1477,7 @@ is derived from is said to be the generalisation of of that type.
 The fundamental difference is well illustrated by the observation that types are 
 related in a _hierarchy_ (more precisely in a 
 [DAG](http://en.wikipedia.org/wiki/Directed_acyclic_graph)) while values
-(actual instances) do not have such relations. A value of formal type `A` is 
+(actual instances) do not have such a relation. A value of formal type `A` is 
 always an instance of actual type `A`. Consequently formal and actual value 
 types are always identical, a distinction is unnecessary.
 
@@ -1491,20 +1498,13 @@ more limited specification of `B` before it can be passed along as a `B`.
 Actual allocation or instantiation of a new value is not necessary as values do
 not need or have a reference to their type since it is statically known from 
 the formal type declaration.
-So while any `B` can become a `A` it is unclear if a `A` can become a `B`. 
+So while any `B` can become an `A` it is unclear if an `A` can become a `B`. 
 Therefore a generalisation from `B` to `A` is a implicit _noop_ but 
 a specialisation from `A` to `B` has to be _demanded_ explicitly as it could 
 fail at runtime. 
 
-It could be said that types _carry_ static properties of values. A value that 
-has been proven to conform to the properties of a type can be specialised to
-that type. Type conversion however is only allowed between values of related
-types that are structurally compatible. That means a specialisation can be
-tried for any two types that have a common generalisation type and are not
-known to have mutual exclusive value sets.
-
 Similar to nominal subtyping a type relation is explicitly declared. 
-While declared types are always named types a _abstract_ generalisation of 
+While declared types are always named types an _abstract_ generalisation of 
 any named type is its _anonymous_ structure that can be expressed as a 
 structural type as well.
 
@@ -1513,7 +1513,7 @@ structures. Data structures of the same form can be meaningful in different
 ways what is reflected through different, often related types. 
 
 A _universal_ top type does not and cannot exist as it would have to be
-structurally compatible with all other, structurally different types.
+structurally compatible with all other (structurally different) types.
 
 <!--
 - strictly speaking it is wrong to say that one type can be assigned to another
@@ -1542,15 +1542,15 @@ this should not be confused with dependent typing.
 ### Aspects
 TODO
 
-## Advanced Techniques
+## Implementation Techniques
 
 ### Abstract Syntax Tree
 So far everything has been described in terms of the surface syntax. This syntax 
 builds upon the logical constructs of the language and allows to encode them
 more readable and concise. The language is however defined in terms of its 
 abstract syntax tree[^why-ast], a general `data`-structure. As such the AST is 
-vice versa expressed in the surface syntax in the form of usual expressions.
-Tagged forms are used to keep type safety as we will shortly see.
+vice versa expressed in a subset of the surface syntax in the form of usual 
+expressions. Tagged forms are used to keep type safety as we will shortly see.
 
 [^why-ast]: The AST and why it is the _model_ of the language deserves an article on its own. Digest: It enables better tooling and allows the surface syntax to focus on expressing the usual well as the _unusual_ doesn't need to be possible to express as one always can escape to the AST. 
 
@@ -1569,11 +1569,11 @@ that also comes with a lot of the flexibility of a lisp like language. The most
 important one might be that it allows to implement almost everything in the 
 language itself. Only the transformation to actual machine code or another 
 intermediate representation has to deal with _"native"_ (foreign language) code.
-This allows to share bruno code very target platform and VM independent.
+This allows to share bruno code mostly target platform and VM independent.
 
 
 #### Tagged Forms _(Runtime Type Annotations)_
-By convention any expression from with an [atom](#atoms) as its first tuple 
+By convention any expression form with an [atom](#atoms) as its first tuple 
 element is understood as (type) tagged form. The atom _tag_ is similar to an 
 explicit type _annotation_ for that form: 
 
@@ -1581,7 +1581,7 @@ explicit type _annotation_ for that form:
 
 The form is tagged as a `` `date ``, followed by a date value in three components. 
 The tag hints what types are expected/checked for the following elements. The 
-binding between tag and type is done itself as a tagged form in the library or 
+binding between tag and type is done itself as a tagged form in the library: 
 
 		(`use `date Date)
 
@@ -1615,7 +1615,7 @@ the pair `(K, V)`. When called, for example to add an entry to a map
 the compiler will expand the implementation of the procedure's AST with the 
 actual arguments for each usage.
 Note that functions passed to a procedure will not come at the expense of a
-virtual function call as the actual function is substituted by the compiler.
+function call as the actual function is substituted by the compiler.
 
 #### Call-Site Inlining
 Any function call to a non-recursive function can be inlined at the call-site
