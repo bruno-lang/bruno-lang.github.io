@@ -1388,60 +1388,51 @@ a library.
 
 TODO everything that happens in libraries...
 
+
+
+
 ## Types _(Type System)_
 
-TODO
+The fundamental idea of the type system and types in bruno is that types are
+not attached to values at runtime. 
+Types are statically defined or decidable properties of values in a certain context. 
+In case of type variables actual types are passed as additional, implicit value 
+arguments. 
+Consequently types are never _inspected_ - they are either known statically or
+reconstituted by a language level dispatch selecting the case with type(s) that
+fit the value representation.
 
-### Primitives
-Five primitives are distinguished on the VM level:
+Values are represented to be convenient for the machine to compute without
+any meta information attached. 
+All values of the same machine _form_ are technically compatible -- here the 
+compiler uses a type relation called generalisation--specialisation to decide if 
+compatibility is wanted by the programmer or should result in a type-error.
 
-`Int` _(eger)_
-: integer number with arbitrary-precision and range. The actual representation
-  is up to the VM. Derived integer number types with fixed range use a suitable
-  representation (with [two's complement](http://en.wikipedia.org/wiki/Two%27s_complement)) 
-  for the number of bits needed.
+The purpose of types is to ease reasoning, aid formal correctness checking and
+allow to derive the optimal machine representation based on the qualities of 
+a type. The additional concepts of shapes and aspects allow to encode more 
+static knowledge within types and constants. 
 
-		dimension Int ::
+In some sense types _carry_ static properties of values. A value that has been 
+proven to conform to the qualities of a certain type can be treated as a value
+of that type. 
+But type conversion is only allowed between values of related types that 
+are structurally compatible. This is to say that the static knowledge about 
+the value may not conflict with the target type. 
+It follows that a _universal_ top type does not and cannot exist as it would 
+have to be structurally compatible with all other (structurally different) types.
 
-`Dec` _(imal)_
-: 64-bit decimal floating point number ([dec64](http://dec64.org/)).
-
-		dimension Coefficient :: Int : #(Bit[56])
-		dimension Exponent :: Int : #(Bit[8])
-		dimension Dec :: : #(Coefficient Exponent)
-
-`Frac` _(tion)_
-: fraction number with 32-bit numerator and denominator ([frac64](http://frac64.github.io/)).
-
-`Char` _(acter)_
-: a [none](http://non-encoding.github.io/) encoded character.
-
-`()` _(unit)_
-: used as base type for enumerations (0-tuples). The unit value also represents 
-  _nothing_ for optional types.
-
-The language defines the following core types based on the primitives. 
-
-		dimension Bool :: () = [ False, True ]
-
-### Type Constructors
-<!--
-(list sorts of types here - type constructors)
-- we don#t go and look what something is. its known or dispatched
-- introspection/reflection
-the fundamental idea or feature is that most type information is not attached
-to values at runtime. a value has the machine form where all of the same form
-are technically compatible - generalisation--specialisation just checks at
-compile time if this compatibility is given and wanted.
--->
+Simply speaking types give meaning to bits and bytes of data structures, 
+structures that can be meaningful in different ways what is reflected through 
+different, often related types. 
 
 ### Specialisation -- Generalisation _(Type Polymorphism)_
-The bruno type system uses a type polymorphism that is crucially different
-from textbook subtyping (interface inheritance) or OO like inheritance 
-(implementation inheritance). 
-Therefore it is important not to think in these familiar terms/semantics but to 
-develop an new, independent understanding. 
+Specialisation--generalisation is a type relation that models a type 
+polymorphism different from textbook subtyping (interface inheritance) or OO-like 
+inheritance (implementation inheritance). 
 
+
+<!-- where?
 Fundamentally four kinds of types are to be distinguished:
 
 * Value Types
@@ -1453,13 +1444,9 @@ For simplicity the following explanations should be associated with value types
 that are the basis for everything else. 
 The semantics of function types are a consequence of value type semantics.
 Effect- and abstraction types have mostly slightly modified value semantics.
+-->
 
-It could be said that types _carry_ static properties of values. A value that 
-has been proven to conform to the properties of a type can be specialised to
-that type. Type conversion however is only allowed between values of related
-types that are structurally compatible. That means a specialisation can be
-tried for any two types that have a common generalisation type and are not
-known to have mutual exclusive value sets.
+<!-- remove?
 
 Two (value) types can be related in such a way that 
 a value of a _subtype_ is also usable as a value of the _supertype_.
@@ -1470,56 +1457,62 @@ literally _becomes_ such a value.
 
 As this is different from the semantics usually associated with the terms 
 _subtype_ and _supertype_ this novel kind of relation is called 
-_specialisation_ / _generalisation_. A _derived_ type is said to be a 
-specialisation of a more general type - or vice versa - any type another type
-is derived from is said to be the generalisation of of that type. 
+_specialisation_ / _generalisation_.
+
+-->
 
 The fundamental difference is well illustrated by the observation that types are 
-related in a _hierarchy_ (more precisely in a 
+related in a graph-like hierarchy (more precisely a 
 [DAG](http://en.wikipedia.org/wiki/Directed_acyclic_graph)) while values
 (actual instances) do not have such a relation. A value of formal type `A` is 
-always an instance of actual type `A`. Consequently formal and actual value 
-types are always identical, a distinction is unnecessary.
+always of actual type `A`. This stands to reason considering that a type is only 
+associated with a variable in a static context but never attached to the value 
+at runtime. A value treated as `A` _is_ an `A`. Consequently formal and 
+actual value types are always identical, a distinction subsequently unnecessary. 
+
+A type that is _derived_ from a _base type_ is said to be a specialisation of 
+the more general type -- and vice versa -- the _base type_ is said to be the 
+generalisation of more special _derived_ type. 
 
 In contrast to implementation inheritance a specialisation is a strictly more 
-_limited_ type than its generalisation. It can neither add state nor can it 
-widen the range or change the nature of possible values. 
-The set of all possible values of a specialisation `B` is a strict subset of 
-the set of possible values of a generalisation `A`. 
-Yet any value in the set the of more special type `B` can appear (at least) in 
+_limited_ type than its generalisation. It can neither add fields nor can it 
+widen the range or type of possible values. 
+The set of all possible values of a specialisation `B` (of `A`) is a strict 
+subset of the set of possible values of the generalisation type `A`. 
+Yet, any value in the set the of more special type `B` can appear (at least) in 
 two flavours, that of `A` and that of `B`. The data of such a value however 
-is indistinguishable for `A` and `B` but it might be typed as `A` in one context 
-and as `B` in another as given by a program. 
+is indistinguishable for `A` and `B` using inspection -- by declaration it is 
+typed as `A` in one context and as `B` in another as stated in a program. 
 
+#### Type Conversion
 When `B` is generalised to `A` its value (instance) is simply passed along as 
 `A`. It effectively _became_ an `A` and will be treated as such from then on. 
 Whereas a specialisation from `A` to `B` the value needs to be checked for the 
 more limited specification of `B` before it can be passed along as a `B`. 
 Actual allocation or instantiation of a new value is not necessary as values do
-not need or have a reference to their type since it is statically known from 
-the formal type declaration.
+not have a reference to their type.
 So while any `B` can become an `A` it is unclear if an `A` can become a `B`. 
 Therefore a generalisation from `B` to `A` is a implicit _noop_ but 
 a specialisation from `A` to `B` has to be _demanded_ explicitly as it could 
 fail at runtime. 
 
-Similar to nominal subtyping a type relation is explicitly declared. 
-While declared types are always named types an _abstract_ generalisation of 
-any named type is its _anonymous_ structure that can be expressed as a 
-structural type as well.
+The fact that types aren't attached to values does not mean that type 
+conformance cannot or is not checked at runtime when necessary. 
+The type (value) to use is simply known statically or, in case of type variables,
+passed as implicit additional argument to the function scope.
 
-To put it yet another way, types give meaning to bits and bytes of data
-structures. Data structures of the same form can be meaningful in different
-ways what is reflected through different, often related types. 
+Note that strictly speaking it is wrong to say that one type can be _assigned_ 
+to another as only values of the exact same type are _assignable_; but, values 
+of other types maybe can be converted into the required type.
 
-A _universal_ top type does not and cannot exist as it would have to be
-structurally compatible with all other (structurally different) types.
+#### Structural Generalisation
+Similar to nominal subtyping type relations are declared explicitly. 
+In addition a named `data` type can implicitly be generalised to an _anonymous_ 
+_structural_ tuple type. This is nothing else than a type conversion for 
+a tuple type where the target has no name for the composite but each field
+is converted as usual.
 
 <!--
-- strictly speaking it is wrong to say that one type can be assigned to another
-  as one values of the exact same type are compatible; but other types might be
-  possible to be converted into the demanded type.
-
 ### Type Inference
 - mandatory type annotations, inference where unambiguous
 #### Variance (some notes on that)
@@ -1527,6 +1520,8 @@ structurally compatible with all other (structurally different) types.
 -->
 
 
+### Aspects
+TODO
 
 ### Shapes
 TODO
@@ -1539,8 +1534,70 @@ this should not be confused with dependent typing.
 (a form of latent typing but only for constants or more general statically decidable properties)
 -->
 
-### Aspects
-TODO
+
+### Primitives
+Five primitives are distinguished on the VM level:
+
+`()` _(unit)_
+: used as base type for enumerations (0-tuples). The unit value also represents 
+  _nothing_ for optional types.
+
+`Int` _(eger)_
+: integer number with arbitrary-precision and range. The actual representation
+  is up to the VM. Derived integer number types with fixed range use a suitable
+  representation (with [two's complement](http://en.wikipedia.org/wiki/Two%27s_complement)) 
+  for the number of bits needed.
+
+		dimension Int ::
+
+The language defines the following core types based on the primitives. 
+
+`Dec` _(imal)_
+: 64-bit decimal floating point number ([dec64](http://dec64.org/)).
+
+		dimension Coefficient :: Int : #(Bit[56])
+		dimension Exponent :: Int : #(Bit[8])
+		dimension Dec :: : #(Coefficient Exponent)
+
+`Frac` _(tion)_
+: fraction number with 32-bit numerator and denominator ([frac64](http://frac64.github.io/)).
+		
+		dimension Numerator :: Int : #(Bit[32])
+		dimension Denominator :: Int '0.. : #(Bit[32])
+		dimension Frac :: : #(Numerator Denominator)
+
+`Char` _(acter)_
+: a [none](http://non-encoding.github.io/) encoded character.
+
+		dimension Char :: Int #0 .. #xFFFF 
+
+`Bool` _(ean)_
+: the logic of `True` and `False`.
+
+		dimension Bool :: () = [ False, True ]
+
+
+### Type Constructors
+
+| Type Constructor      | Type Components      | Syntax                   |
+|-----------------------|----------------------|--------------------------|
+| `dimension` <i>X</i>  | <i>T<sub>g</sub></i> | `dimension` <i>X</i> `::` <i>T<sub>g</sub></i> |
+| `unit` <i>X</i>       | <i>T<sub>g</sub></i> | `unit` <i>X</i> `::` <i>T<sub>g</sub></i> |
+| `data` <i>X</i>       | <i>T<sub>g</sub></i> | `data` <i>X</i> `::` <i>T<sub>g</sub></i> |
+| `data` <i>X</i>       | <i>&lt;Tuple&gt;</i>         | `data` <i>X</i> `::` <i>&lt;Tuple&gt;</i> |
+| `op` <i>x</i>         | <i>&lt;Function&gt;</i>      | `op` <i>x</i> `::` <i>&lt;Function&gt;</i> |
+| `behaviour` <i>X</i>  | <i>T<sub>o<sub>0</sub></sub></i>&#8230;<i>T<sub>o<sub>n</sub></sub></i> | `behaviour` <i>X</i> `::` `=` `{` <i>T</i> (`,` <i>T</i>)* `}` |
+| `process` <i>X</i>    | | `process` <i>X</i> |
+|-----------------------|-----------------|--------------------------|
+| Function              | &#8854;<i>T<sub>p<sub>0</sub></sub></i>&#8230;&#8854;<i>T<sub>p<sub>n</sub></sub></i> &#8853;<i>T<sub>r</sub></i> | `(` <i>T</i> (`->` <i>T</i>)* `->` <i>T</i> `)` |
+| Tuple                 | &#8853;<i>T<sub>0</sub></i>&#8230;&#8853;<i>T<sub>n</sub></i> | `(` [ <i>T</i>(`,`<i>T</i>) ] `)` |
+| Length                | <i>L</i> | (`0`&#8230;`9`)+ |
+| Array                 | <i>T<sub>e</sub></i> | <i>T</i>`[` <i>L</i> `]` |
+|-----------------------|-----------------|--------------------------|
+| List                  | <i>T<sub>e</sub></i> | `[` <i>T</i> `]` |
+| Set                   | <i>T<sub>e</sub></i> | `{` <i>T</i> `}` |
+
+
 
 ## Implementation Techniques
 

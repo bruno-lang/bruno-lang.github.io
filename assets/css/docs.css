@@ -62,6 +62,12 @@ footer {
 	font-family: "Source Sans Pro";
 }
 
+table { border: 1px solid black; border-spacing: 0; width: 100%; border-collapse: collapse; }
+table tbody { border-top: 1px solid black; } 
+table th { border-right: 1px solid black; }
+table td { padding: 1px 0.3em; border-right: 1px solid black; }
+table code { font-weight: bold; }
+
 content {
 	display: block;
 	padding: 0em;
