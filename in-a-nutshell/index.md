@@ -1431,36 +1431,6 @@ Specialisation--generalisation is a type relation that models a type
 polymorphism different from textbook subtyping (interface inheritance) or OO-like 
 inheritance (implementation inheritance). 
 
-
-<!-- where?
-Fundamentally four kinds of types are to be distinguished:
-
-* Value Types
-* Function Types
-* Effect Types
-* Virtual Types
-
-For simplicity the following explanations should be associated with value types
-that are the basis for everything else. 
-The semantics of function types are a consequence of value type semantics.
-Effect- and abstraction types have mostly slightly modified value semantics.
--->
-
-<!-- remove?
-
-Two (value) types can be related in such a way that 
-a value of a _subtype_ is also usable as a value of the _supertype_.
-When a value of a _subtype_ is used as a value of its _supertype_ it is 
-conceptually substituted with an _equivalent_ value of the _supertype_. 
-This means a value instance never _acts_ as a value of its _supertype_ but 
-literally _becomes_ such a value.
-
-As this is different from the semantics usually associated with the terms 
-_subtype_ and _supertype_ this novel kind of relation is called 
-_specialisation_ / _generalisation_.
-
--->
-
 The fundamental difference is well illustrated by the observation that types are 
 related in a graph-like hierarchy (more precisely a 
 [DAG](http://en.wikipedia.org/wiki/Directed_acyclic_graph)) while values
@@ -1505,6 +1475,14 @@ Note that strictly speaking it is wrong to say that one type can be _assigned_
 to another as only values of the exact same type are _assignable_; but, values 
 of other types maybe can be converted into the required type.
 
+#### Type Reconstitution
+
+TODO
+
+#### Type Variance
+
+TODO (some notes on that)
+
 #### Structural Generalisation
 Similar to nominal subtyping type relations are declared explicitly. 
 In addition a named `data` type can implicitly be generalised to an _anonymous_ 
@@ -1515,8 +1493,6 @@ is converted as usual.
 <!--
 ### Type Inference
 - mandatory type annotations, inference where unambiguous
-#### Variance (some notes on that)
-#### Runtime Type Information (might be covered by other topics before)
 -->
 
 
@@ -1536,7 +1512,8 @@ this should not be confused with dependent typing.
 
 
 ### Primitives
-Five primitives are distinguished on the VM level:
+Primitives are the _base types_ a bruno VM needs to be able to make sense of.
+The most fundamental are 0-tuples and the 1-tuple of integer numbers.
 
 `()` _(unit)_
 : used as base type for enumerations (0-tuples). The unit value also represents 
@@ -1550,7 +1527,7 @@ Five primitives are distinguished on the VM level:
 
 		dimension Int ::
 
-The language defines the following core types based on the primitives. 
+Using these 2 fundamentals the language defines the following core primitives:
 
 `Dec` _(imal)_
 : 64-bit decimal floating point number ([dec64](http://dec64.org/)).
@@ -1572,7 +1549,7 @@ The language defines the following core types based on the primitives.
 		dimension Char :: Int #0 .. #xFFFF 
 
 `Bool` _(ean)_
-: the logic of `True` and `False`.
+: logic or truth values `True` and `False`.
 
 		dimension Bool :: () = [ False, True ]
 
@@ -1597,6 +1574,21 @@ The language defines the following core types based on the primitives.
 | List                  | <i>T<sub>e</sub></i> | `[` <i>T</i> `]` |
 | Set                   | <i>T<sub>e</sub></i> | `{` <i>T</i> `}` |
 
+
+
+<!-- where?
+Fundamentally four kinds of types are to be distinguished:
+
+* Value Types
+* Function Types
+* Effect Types
+* Virtual Types
+
+For simplicity the following explanations should be associated with value types
+that are the basis for everything else. 
+The semantics of function types are a consequence of value type semantics.
+Effect- and abstraction types have mostly slightly modified value semantics.
+-->
 
 
 ## Implementation Techniques
