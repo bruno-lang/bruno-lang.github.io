@@ -1555,26 +1555,71 @@ Using these 2 fundamentals the language defines the following core primitives:
 
 
 ### Type Constructors
+Many qualities of values can be expressed through types. The first group are named 
+types. These are naturally nominal typed and act as the basis of more complex 
+type constructs. <i>X</i> stands for a name starting with an upper case letter,
+<i>x</i> for a name starting with a lower case letter.
+`dimension` and `unit` are usually based on a generalisation type <i>T<sub>g</sub></i>. 
+A `data` structure is either a renamed generalisation type or expressed in terms 
+of a <i>Tuple</i> with fields. 
+Similar an operation `op` is a named virtual function described by a 
+<i>Function</i> type. 
+A `behaviour` is a set of operation types <i>T<sub>f<sub>i</sub></sub></i> referenced by name. 
+
+All but the first group build complex type variants that are structurally typed.
+That means as long as the nominal typed parts in two similar, independently
+defined types are identical the two types are identical as well.
 
 | Type Constructor      | Type Components      | Syntax                   |
 |-----------------------|----------------------|--------------------------|
-| `dimension` <i>X</i>  | <i>T<sub>g</sub></i> | `dimension` <i>X</i> `::` <i>T<sub>g</sub></i> |
-| `unit` <i>X</i>       | <i>T<sub>g</sub></i> | `unit` <i>X</i> `::` <i>T<sub>g</sub></i> |
+| `dimension` <i>X</i>  | <i>T<sub>g</sub></i> | `dimension` <i>X</i> `::` [<i>T<sub>g</sub></i>] |
+| `unit` <i>X</i>       | <i>T<sub>g</sub></i> | `unit` <i>X</i> `::` [<i>T<sub>g</sub></i>] |
 | `data` <i>X</i>       | <i>T<sub>g</sub></i> | `data` <i>X</i> `::` <i>T<sub>g</sub></i> |
 | `data` <i>X</i>       | <i>&lt;Tuple&gt;</i>         | `data` <i>X</i> `::` <i>&lt;Tuple&gt;</i> |
 | `op` <i>x</i>         | <i>&lt;Function&gt;</i>      | `op` <i>x</i> `::` <i>&lt;Function&gt;</i> |
-| `behaviour` <i>X</i>  | <i>T<sub>o<sub>0</sub></sub></i>&#8230;<i>T<sub>o<sub>n</sub></sub></i> | `behaviour` <i>X</i> `::` `=` `{` <i>T</i> (`,` <i>T</i>)* `}` |
-| `process` <i>X</i>    | | `process` <i>X</i> |
-|-----------------------|-----------------|--------------------------|
-| Function              | &#8854;<i>T<sub>p<sub>0</sub></sub></i>&#8230;&#8854;<i>T<sub>p<sub>n</sub></sub></i> &#8853;<i>T<sub>r</sub></i> | `(` <i>T</i> (`->` <i>T</i>)* `->` <i>T</i> `)` |
+| `behaviour` <i>X</i>  | <i>T<sub>f<sub>0</sub></sub></i>&#8230;<i>T<sub>f<sub>n</sub></sub></i> | `behaviour` <i>X</i> `::` `=` `{` <i>T</i> (`,` <i>T</i>)* `}` |
+| `process` <i>X</i>    |                      | `process` <i>X</i> |
+|-----------------------|----------------------|--------------------------|
 | Tuple                 | &#8853;<i>T<sub>0</sub></i>&#8230;&#8853;<i>T<sub>n</sub></i> | `(` [ <i>T</i>(`,`<i>T</i>) ] `)` |
-| Length                | <i>L</i> | (`0`&#8230;`9`)+ |
-| Array                 | <i>T<sub>e</sub></i> | <i>T</i>`[` <i>L</i> `]` |
-|-----------------------|-----------------|--------------------------|
-| List                  | <i>T<sub>e</sub></i> | `[` <i>T</i> `]` |
-| Set                   | <i>T<sub>e</sub></i> | `{` <i>T</i> `}` |
+| Function              | &#8854;<i>T<sub>p<sub>0</sub></sub></i>&#8230;&#8854;<i>T<sub>p<sub>n</sub></sub></i> &#8853;<i>T<sub>r</sub></i> | `(` <i>T</i> (`->` <i>T</i>)* `->` <i>T</i> `)` |
+|-----------------------|----------------------|--------------------------|
+| Length                |                      | (`0`&#8230;`9`)+         |
+| Range                 | <i>T<sub>l</sub></i> <i>T<sub>l</sub></i> | <i>T</i>[`-`<i>T</i>]    |
+| Array                 | <i>T<sub>e</sub></i> | <i>T</i>`[` <i>&lt;Range&gt;</i> `]` |
+|-----------------------|----------------------|--------------------------|
+| List                  | <i>T<sub>e</sub></i> | `[` <i>T</i> `]`         |
+| Set                   | <i>T<sub>e</sub></i> | `{` <i>T</i> `}`         |
+|-----------------------|----------------------|--------------------------|
+| Optional              | <i>T<sub>v</sub></i> | <i>T</i>`?`              |
+| Faulty                | <i>T<sub>v</sub></i> | <i>T</i>`!`              |
+| Transient             | <i>T<sub>v</sub></i> | <i>T</i>`*`              |
+|-----------------------|----------------------|--------------------------|
+| Type Of               | <i>T</i>             | `$`<i>T</i>              |
+| Key Of                | <i>T</i>             | `@`<i>T</i>              |
+| Lazy Of               | <i>T</i>             | `~`<i>T</i>              |
 
+A structural <i>Tuple</i> type has _covariant_ &#8853; fields 
+<i>T<sub>0</sub></i>&#8230;<i>T<sub>n</sub></i>. 
+That means a tuple-type can be generalised to another tuple-type when each of 
+its fields has a more special (or identical) type.
 
+A <i>Function</i> type is _contravariant_ &#8854; in all its parameters 
+<i>T<sub>p<sub>0</sub></sub></i>&#8230;<i>T<sub>p<sub>n</sub></sub></i> 
+and _covariant_ &#8853; in its return-type <i>T<sub>r</sub></i>. 
+Thus a function can be generalised to another function type when all its 
+parameter types are more general (or identical) and its return type is more 
+special (or identical).
+
+A <i>Range</i> type is composed of two <i>Length</i> types <i>T<sub>l</sub></i>.
+Both are used to build range specific <i>Array</i> types. The element
+type <i>T<sub>e</sub></i> of an <i>Array</i>, <i>List</i> or <i>Set</i> type
+can be any other simple or complex type. A 2-dimensional array has type 
+<i>T<sub>e</sub></i>`[][]`, a list of lists would be `[[`<i>T<sub>e</sub></i>`]]`.
+
+To build an <i>Optional</i>, <i>Faulty</i> or <i>Transient</i> variant of a
+value-type <i>T<sub>v</sub></i> the corresponding suffix is appended. 
+The <i>Type Of</i> a type is build with `$` prefix, the <i>Key Of</i> a type
+with a `@` prefix. A <i>Lazy</i> type gets the `~` prefix.
 
 <!-- where?
 Fundamentally four kinds of types are to be distinguished:

@@ -66,7 +66,7 @@ table { border: 1px solid black; border-spacing: 0; width: 100%; border-collapse
 table tbody { border-top: 1px solid black; } 
 table th { border-right: 1px solid black; }
 table td { padding: 1px 0.3em; border-right: 1px solid black; }
-table code { font-weight: bold; }
+table code { font-weight: bold; font-family: monospace; }
 
 content {
 	display: block;
