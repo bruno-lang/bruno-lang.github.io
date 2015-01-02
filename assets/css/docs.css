@@ -67,6 +67,9 @@ table tbody { border-top: 1px solid black; }
 table th { border-right: 1px solid black; }
 table td { padding: 1px 0.3em; border-right: 1px solid black; }
 table code { font-weight: bold; font-family: monospace; }
+@media print {
+	table { page-break-inside: avoid; }
+}
 
 content {
 	display: block;

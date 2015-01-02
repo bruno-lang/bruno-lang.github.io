@@ -1402,8 +1402,8 @@ Consequently types are never _inspected_ - they are either known statically or
 reconstituted by a language level dispatch selecting the case with type(s) that
 fit the value representation.
 
-Values are represented to be convenient for the machine to compute without
-any meta information attached. 
+Values are represented to be efficient and convenient for the machine to compute 
+without any meta information attached. 
 All values of the same machine _form_ are technically compatible -- here the 
 compiler uses a type relation called generalisation--specialisation to decide if 
 compatibility is wanted by the programmer or should result in a type-error.
@@ -1411,7 +1411,7 @@ compatibility is wanted by the programmer or should result in a type-error.
 The purpose of types is to ease reasoning, aid formal correctness checking and
 allow to derive the optimal machine representation based on the qualities of 
 a type. The additional concepts of shapes and aspects allow to encode more 
-static knowledge within types and constants. 
+static knowledge within types. 
 
 In some sense types _carry_ static properties of values. A value that has been 
 proven to conform to the qualities of a certain type can be treated as a value
@@ -1424,7 +1424,7 @@ have to be structurally compatible with all other (structurally different) types
 
 Simply speaking types give meaning to bits and bytes of data structures, 
 structures that can be meaningful in different ways what is reflected through 
-different, often related types. 
+different, often related types and type aspects. 
 
 ### Specialisation -- Generalisation _(Type Polymorphism)_
 Specialisation--generalisation is a type relation that models a type 
@@ -1438,7 +1438,7 @@ related in a graph-like hierarchy (more precisely a
 always of actual type `A`. This stands to reason considering that a type is only 
 associated with a variable in a static context but never attached to the value 
 at runtime. A value treated as `A` _is_ an `A`. Consequently formal and 
-actual value types are always identical, a distinction subsequently unnecessary. 
+actual value types are always identical, a distinction in practice unnecessary. 
 
 A type that is _derived_ from a _base type_ is said to be a specialisation of 
 the more general type -- and vice versa -- the _base type_ is said to be the 
@@ -1452,13 +1452,13 @@ subset of the set of possible values of the generalisation type `A`.
 Yet, any value in the set the of more special type `B` can appear (at least) in 
 two flavours, that of `A` and that of `B`. The data of such a value however 
 is indistinguishable for `A` and `B` using inspection -- by declaration it is 
-typed as `A` in one context and as `B` in another as stated in a program. 
+typed as `A` in one context and as `B` in another. 
 
 #### Type Conversion
 When `B` is generalised to `A` its value (instance) is simply passed along as 
 `A`. It effectively _became_ an `A` and will be treated as such from then on. 
-Whereas a specialisation from `A` to `B` the value needs to be checked for the 
-more limited specification of `B` before it can be passed along as a `B`. 
+Whereas for a specialisation from `A` to `B` the value needs to be checked for 
+the more limited specification of `B` before it can be passed along as a `B`. 
 Actual allocation or instantiation of a new value is not necessary as values do
 not have a reference to their type.
 So while any `B` can become an `A` it is unclear if an `A` can become a `B`. 
@@ -1469,19 +1469,40 @@ fail at runtime.
 The fact that types aren't attached to values does not mean that type 
 conformance cannot or is not checked at runtime when necessary. 
 The type (value) to use is simply known statically or, in case of type variables,
-passed as implicit additional argument to the function scope.
+passed as implicit additional argument to the scope of a function.
 
 Note that strictly speaking it is wrong to say that one type can be _assigned_ 
 to another as only values of the exact same type are _assignable_; but, values 
-of other types maybe can be converted into the required type.
+of other types might be possible to convert to the required type before an 
+assignment.
 
 #### Type Reconstitution
 
 TODO
 
 #### Type Variance
+The generalisation--specialisation type relation mostly doesn't require the
+programmer to think of variance as nominal an actual types are always identical.
+Consequently there is no distinction between an identical type and
+a _subtype_ or a _supertype_ of it. A instance declared as `A` is an `A`.
+So the most confusing part of type variance is literally simplified. 
+However, variance does occur in the type system for tuple- and function-types 
+even though this might not be obvious as it is fairly intuitive. 
 
-TODO (some notes on that)
+Given `B` is a specialisation of `A` a tuple of `(B, B)`, `(B, A)` or `(A, B)` 
+is generalisable to `(A, A)` as all fields can be generalised to the 
+corresponding target fields. Therefore it can be said that the components types
+of a tuple are covariant.
+
+For a function the situation sounds more difficult than it actually is. 
+A function `(A -> A -> B)` or `(B -> A -> B)` can be generalised to 
+`(B -> B -> B)` but not to `(B -> B -> A)`
+as all parameters can be more general but the return type must be more special 
+(or identical) to the corresponding target type. So it can be said that parameter-
+types are contravariant and the return type is covariant. 
+Simply put a function can take the place of another function if it accepts 
+parameters that are less specific and returns a value that is more specific
+than the target function. 
 
 #### Structural Generalisation
 Similar to nominal subtyping type relations are declared explicitly. 
@@ -1497,9 +1518,11 @@ is converted as usual.
 
 
 ### Aspects
+
 TODO
 
 ### Shapes
+
 TODO
 
 <!--
@@ -1512,7 +1535,7 @@ this should not be confused with dependent typing.
 
 
 ### Primitives
-Primitives are the _base types_ a bruno VM needs to be able to make sense of.
+Primitives are the _base types_ of a bruno VM.
 The most fundamental are 0-tuples and the 1-tuple of integer numbers.
 
 `()` _(unit)_
@@ -1529,6 +1552,16 @@ The most fundamental are 0-tuples and the 1-tuple of integer numbers.
 
 Using these 2 fundamentals the language defines the following core primitives:
 
+`Char` _(acter)_
+: a [none](http://non-encoding.github.io/) encoded character.
+
+		dimension Char :: Int #0 .. #xFFFF 
+
+`Bool` _(ean)_
+: logic or truth values `True` and `False`.
+
+		dimension Bool :: () = [ False, True ]
+
 `Dec` _(imal)_
 : 64-bit decimal floating point number ([dec64](http://dec64.org/)).
 
@@ -1543,21 +1576,12 @@ Using these 2 fundamentals the language defines the following core primitives:
 		dimension Denominator :: Int '0.. : #(Bit[32])
 		dimension Frac :: : #(Numerator Denominator)
 
-`Char` _(acter)_
-: a [none](http://non-encoding.github.io/) encoded character.
-
-		dimension Char :: Int #0 .. #xFFFF 
-
-`Bool` _(ean)_
-: logic or truth values `True` and `False`.
-
-		dimension Bool :: () = [ False, True ]
-
 
 ### Type Constructors
-Many qualities of values can be expressed through types. The first group are named 
-types. These are naturally nominal typed and act as the basis of more complex 
-type constructs. <i>X</i> stands for a name starting with an upper case letter,
+Many qualities of values can be expressed through types. The first group (in 
+the below table) are named types. 
+These are naturally nominal typed and act as the basis of more complex type 
+constructs. <i>X</i> stands for a name starting with an upper case letter,
 <i>x</i> for a name starting with a lower case letter.
 `dimension` and `unit` are usually based on a generalisation type <i>T<sub>g</sub></i>. 
 A `data` structure is either a renamed generalisation type or expressed in terms 
