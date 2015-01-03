@@ -30,7 +30,7 @@ function highlight(_, html) {
 	.replace(/"([^"]*)"/g, '<lit><ind>\"</ind>$1<ind>\"</ind></lit>')
 	.replace(/'([^,. \)\]\t\n\r]+(\.[^,. \)\]\t\n\r]+)?)/g, "<lit><ind>'</ind>$1</lit>")
 	.replace(/(#[xdob]?)([A-F0-9]+)/g, "<lit><ind>$1</ind>$2</lit>")
-	.replace(/(`[^\s]+)/g, "<atom>$1</atom>")
+	.replace(/(`[^\s,]+)/g, "<atom>$1</atom>")
 	.replace(/(@[^\s,A-Z][^\s,]*)/g, "<key>$1</key>")
 	.replace(/(\?[a-z0-9]+)/g, "<var>$1</var>")
 	.replace(/(\~)([a-z]|$)/g, "<op>$1</op>$2")
@@ -57,9 +57,9 @@ function toc(_, html) {
 	$("toc ol").append("<li class='toc-"+html.tagName+"'><a href='#"+html.id+"'>"+html.innerHTML+"</a></li>");
 }
 
-$("content pre code").html(highlight);
-
 $("content p code").html(highlight);
+$("content dl code").html(highlight);
+$("content pre code").html(highlight);
 
 $(":header").each(toc);
 

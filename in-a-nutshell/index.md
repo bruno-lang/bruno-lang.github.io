@@ -322,7 +322,7 @@ way humans are used to write them:
 		Date imagine = "1971-10-11"
 
 The `Point` and `Date` example illustrate that textual literals can be used for 
-any composite type (when these declare a text-[aspect](#aspects)). 
+any composite type (when these are declared [polyvalent](#type-polyvalence)). 
 The type of textual literals is inferred from the 
 context, such as the variable, parameter or return type.
 
@@ -348,7 +348,7 @@ Atoms are dimensionless values, conceptually zero-tuples of type `Atom`.
 Different constants are defined by `` ` `` followed by any sequence of 
 characters except white-space.
 
-		[`a `atom `+ `/ `-> ]
+		[`a `atom `+ `/ `-> `0 ]
 		
 The above is a list of valid atoms. Any two atoms are logically equal if their 
 sequence of characters are. 
@@ -1395,12 +1395,13 @@ TODO everything that happens in libraries...
 
 The fundamental idea of the type system and types in bruno is that types are
 not attached to values at runtime. 
-Types are statically defined or decidable properties of values in a certain context. 
+Types are statically defined or decidable properties of values in a certain 
+static context. 
 In case of type variables actual types are passed as additional, implicit value 
 arguments. 
 Consequently types are never _inspected_ - they are either known statically or
-reconstituted by a language level dispatch selecting the case with type(s) that
-fit the value representation.
+reconstituted by a language level dispatch selecting the case with the type(s) 
+that fit(s) the value representation.
 
 Values are represented to be efficient and convenient for the machine to compute 
 without any meta information attached. 
@@ -1410,13 +1411,13 @@ compatibility is wanted by the programmer or should result in a type-error.
 
 The purpose of types is to ease reasoning, aid formal correctness checking and
 allow to derive the optimal machine representation based on the qualities of 
-a type. The additional concepts of shapes and aspects allow to encode more 
-static knowledge within types. 
+a type. Through type polyvalence and shapes more such properties can be encoded 
+within types. 
 
 In some sense types _carry_ static properties of values. A value that has been 
 proven to conform to the qualities of a certain type can be treated as a value
 of that type. 
-But type conversion is only allowed between values of related types that 
+Yet, type conversion is only allowed between values of related types that 
 are structurally compatible. This is to say that the static knowledge about 
 the value may not conflict with the target type. 
 It follows that a _universal_ top type does not and cannot exist as it would 
@@ -1424,7 +1425,7 @@ have to be structurally compatible with all other (structurally different) types
 
 Simply speaking types give meaning to bits and bytes of data structures, 
 structures that can be meaningful in different ways what is reflected through 
-different, often related types and type aspects. 
+different (often related) types. 
 
 ### Specialisation -- Generalisation _(Type Polymorphism)_
 Specialisation--generalisation is a type relation that models a type 
@@ -1440,13 +1441,13 @@ associated with a variable in a static context but never attached to the value
 at runtime. A value treated as `A` _is_ an `A`. Consequently formal and 
 actual value types are always identical, a distinction in practice unnecessary. 
 
-A type that is _derived_ from a _base type_ is said to be a specialisation of 
-the more general type -- and vice versa -- the _base type_ is said to be the 
-generalisation of more special _derived_ type. 
+> A type that is derived from a base type is said to be a specialisation of 
+> the more general type -- and vice versa -- the base type is said to be the 
+> generalisation of more special derived type. 
 
 In contrast to implementation inheritance a specialisation is a strictly more 
 _limited_ type than its generalisation. It can neither add fields nor can it 
-widen the range or type of possible values. 
+widen the range or change the type of possible values. 
 The set of all possible values of a specialisation `B` (of `A`) is a strict 
 subset of the set of possible values of the generalisation type `A`. 
 Yet, any value in the set the of more special type `B` can appear (at least) in 
@@ -1464,35 +1465,41 @@ not have a reference to their type.
 So while any `B` can become an `A` it is unclear if an `A` can become a `B`. 
 Therefore a generalisation from `B` to `A` is a implicit _noop_ but 
 a specialisation from `A` to `B` has to be _demanded_ explicitly as it could 
-fail at runtime. 
+fail at runtime depending on the actual value. 
 
-The fact that types aren't attached to values does not mean that type 
-conformance cannot or is not checked at runtime when necessary. 
+However, that types aren't attached to values does not mean that 
+type conformance cannot or is not checked at runtime when necessary. 
 The type (value) to use is simply known statically or, in case of type variables,
 passed as implicit additional argument to the scope of a function.
 
-Note that strictly speaking it is wrong to say that one type can be _assigned_ 
-to another as only values of the exact same type are _assignable_; but, values 
-of other types might be possible to convert to the required type before an 
-assignment.
+Remarkably enough it is, strictly speaking, wrong to say that one type can be 
+_assigned_ to another as only values of the exact same type are _assignable_; 
+but, values of other types might be possible to convert to the required type 
+before they are asigned.
 
 #### Type Reconstitution
 
 TODO
 
+<!--
+### Type Inference
+- mandatory type annotations, inference where unambiguous
+-->
+
 #### Type Variance
 The generalisation--specialisation type relation mostly doesn't require the
-programmer to think of variance as nominal an actual types are always identical.
-Consequently there is no distinction between an identical type and
+programmer to think of variance as formal an actual types are always identical.
+Consequently there is no distinction between _the same_ type and
 a _subtype_ or a _supertype_ of it. A instance declared as `A` is an `A`.
-So the most confusing part of type variance is literally simplified. 
+So the most confusing part of type variance is literally simplified: Values
+are of the type declared.
 However, variance does occur in the type system for tuple- and function-types 
 even though this might not be obvious as it is fairly intuitive. 
 
 Given `B` is a specialisation of `A` a tuple of `(B, B)`, `(B, A)` or `(A, B)` 
 is generalisable to `(A, A)` as all fields can be generalised to the 
 corresponding target fields. Therefore it can be said that the components types
-of a tuple are covariant.
+of a tuple are covariant when it comes to generalisation of a tuple type. 
 
 For a function the situation sounds more difficult than it actually is. 
 A function `(A -> A -> B)` or `(B -> A -> B)` can be generalised to 
@@ -1500,7 +1507,7 @@ A function `(A -> A -> B)` or `(B -> A -> B)` can be generalised to
 as all parameters can be more general but the return type must be more special 
 (or identical) to the corresponding target type. So it can be said that parameter-
 types are contravariant and the return type is covariant. 
-Simply put a function can take the place of another function if it accepts 
+Broadly speaking a function can take the place of another function if it accepts 
 parameters that are less specific and returns a value that is more specific
 than the target function. 
 
@@ -1511,13 +1518,22 @@ _structural_ tuple type. This is nothing else than a type conversion for
 a tuple type where the target has no name for the composite but each field
 is converted as usual.
 
-<!--
-### Type Inference
-- mandatory type annotations, inference where unambiguous
--->
 
+### Type Polyvalence
+A polyvalent type has a number of different _cooperating_ forms, purposes or 
+meanings (thus types). This is based on the observation that a type is a choice
+of perspective. It either reflects how the programmer thinks about 
+something, how something is formally written down or how a machine represents
+this thoughts. Classically a choice has to be made in favour of the perspective
+that matters most for a particular use case. 
+In order to switch perspective type conversions were required for 
+a lack of expressiveness. 
 
-### Aspects
+Type polyvalence is to declare a type with or from multiple perspectives each 
+being expressed in terms of other types. 
+This continues the perception of types presented by the 
+generalisation--specialisation relation and is equally grounded in and made
+possible by the static implementation of types that detaches types from values.
 
 TODO
 
@@ -1550,7 +1566,17 @@ The most fundamental are 0-tuples and the 1-tuple of integer numbers.
 
 		dimension Int ::
 
-Using these 2 fundamentals the language defines the following core primitives:
+`Bit`
+: a bit: `` `0 `` or `` `1 ``.
+
+		dimension Bit :: = { `0, `1 }
+
+Using these 3 fundamentals the language defines the following core primitives:
+
+`Byte` 
+: a 8 `Bit` _word_
+
+		dimension Byte :: Int : #(Bit[8])
 
 `Char` _(acter)_
 : a [none](http://non-encoding.github.io/) encoded character.
@@ -1575,6 +1601,9 @@ Using these 2 fundamentals the language defines the following core primitives:
 		dimension Numerator :: Int : #(Bit[32])
 		dimension Denominator :: Int '0.. : #(Bit[32])
 		dimension Frac :: : #(Numerator Denominator)
+
+Note that `Int`, `Dec` and `Frac` do not declare a generalisation type they are 
+based upon. Thus a VM has to _understand_ their meaning by convention. 
 
 
 ### Type Constructors
@@ -1644,6 +1673,8 @@ To build an <i>Optional</i>, <i>Faulty</i> or <i>Transient</i> variant of a
 value-type <i>T<sub>v</sub></i> the corresponding suffix is appended. 
 The <i>Type Of</i> a type is build with `$` prefix, the <i>Key Of</i> a type
 with a `@` prefix. A <i>Lazy</i> type gets the `~` prefix.
+In contrast to array, list or set type variants a complex type may only 
+incorporate one prefix and/or suffix variant.
 
 <!-- where?
 Fundamentally four kinds of types are to be distinguished:
