@@ -1428,9 +1428,9 @@ structures that can be meaningful in different ways what is reflected through
 different (often related) types. 
 
 ### Specialisation -- Generalisation _(Type Polymorphism)_
-Specialisation--generalisation is a type relation that models a type 
-polymorphism different from textbook subtyping (interface inheritance) or OO-like 
-inheritance (implementation inheritance). 
+Specialisation--generalisation is a type relation with static type enforcement 
+that models a type polymorphism different from textbook subtyping 
+(interface inheritance) or OO-like inheritance (implementation inheritance). 
 
 The fundamental difference is well illustrated by the observation that types are 
 related in a graph-like hierarchy (more precisely a 
@@ -1478,13 +1478,62 @@ but, values of other types might be possible to convert to the required type
 before they are asigned.
 
 #### Type Reconstitution
+In contrast to most programming languages a value cannot be _cast_ to any
+arbitrary type. As type information is lost there is less and less that is
+possible to do with a certain value as it would require to be of an 
+appropriate type. On the flip-side of this it becomes trivial to see that
+all programs are type-safe as there is no way to subvert type correctness. 
 
-TODO
+A loss of partial type information as experienced for generalisation though is
+not as problematic as in other type systems as it is perfectly valid and safe 
+to specialise a more general type to any compatible specialisation. This does
+not contradict type safety. In the same way functions are specialised to
+operations or data types to behaviours a type can be specialised to another
+one using the specialisation operator `+>` or an `` `auto` `` declaration within
+a library.
 
-<!--
-### Type Inference
-- mandatory type annotations, inference where unambiguous
--->
+		(`auto A B)
+
+The specialisation from `A` to `B` is, however, just allowed if `B` is knowingly 
+a specialisation of `A`. 
+
+The second possibility to regain partially lost type information is to provide
+a set of functions with the same name but each with a different type for the
+first parameter that all have a common generalisation type. 
+
+A typical example is the loss of array length type information. Given a naive 
+`UTF8` representation as 1-4 `Byte`s the `code-point` is computed depending on
+the actual length. 
+
+		data UTF8 :: Byte[1-4]
+		
+		fn code-point :: Byte[1] -> Int = ...
+		fn code-point :: Byte[2] -> Int = ...
+		fn code-point :: Byte[3] -> Int = ...
+		fn code-point :: Byte[4] -> Int = ...
+
+To invoke such an overloaded function a `?` suffix is appended to indicate the
+dispatch done by the VM. 
+
+		UTF8 char = ...
+		Int cp = char code-point?
+
+As `UTF8` is known to have 1-4 `Byte`s and a version for each possibility has
+been specified it is statically established that one of the functions will work.
+In case the `code-point` should be computed from a `Byte[]` of unknown length
+another case would be demanded to cover all other possibilities.
+
+		fn code-point :: Byte[*] -> Int = '-1
+
+The above case acts as a fall-back in case non of the more specifically typed
+ones matches the value. Naturally all present cases must be mutual exclusive. 
+A dispatch can also chose to use optional type variant for the fall back case
+(even though it does not occur in the other cases):
+
+		fn code-point :: Byte[*] -> Int? = ()
+
+As a result when calling `code-point?` the dispatch will return a value of type
+`Int?`.
 
 #### Type Variance
 The generalisation--specialisation type relation mostly doesn't require the
