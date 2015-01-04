@@ -11,9 +11,10 @@
 	<page>
 		<toc>
 			<a class='toc-toggle' title='table of contents'><i class="fa fa-bars"></i></a>
-			<ol>
-				<li>Table of Contents</li>
-			</ol>
+			<div id="toc-page">
+				<div id="toc-header">Table Of Contents</div>
+				<table id="toc"></table>
+			</div>
 		</toc>			
 		<content>{{content}}</content>
 		<footer>
@@ -54,19 +55,22 @@ function highlight(_, html) {
 }
 
 function toc(_, html) {
-	$("toc ol").append("<li class='toc-"+html.tagName+"'><a href='#"+html.id+"'>"+html.innerHTML+"</a></li>");
+	$("toc table").append("<tr class='toc-"+html.tagName+"'><td><a href='#"+html.id+"'>"+html.innerHTML+"</a></td></tr>");
 }
 
 $("content p code").html(highlight);
 $("content dl code").html(highlight);
 $("content pre code").html(highlight);
+$("toc").insertBefore($("content h2").first());
 
+/* appending all headers to the TOC */
 $(":header").each(toc);
 
 $("toc a.toc-toggle").click(function() {
 	$("toc").toggleClass("toc-down");
 });
 
+/* switching footnotes to sidenodes */
 if ($(window).width() > $("page content").get(0).offsetWidth + 230 + 140) { 
 	$(".footnotes li").each(function(n, e) { $("#"+e.id.replace("fn", "fnref\\")).before($("<ol class='sidenote'></ol>").html(e)); });
 	$(".sidenote li p").each(function(n, e) { 

@@ -765,7 +765,7 @@ certain conditions).
 
 Lastly there are different indirections to base types that can be combined with 
 all of the above mentioned kinds to build other kinds. 
-A indirection is build by prepanding a indirection symbol to the base type.
+A indirection is build by prepending a indirection symbol to the base type.
 
 		family T :: $_
 		family L :: ~_
@@ -967,15 +967,15 @@ Here `push` is implemented on basis of an array:
 
 		family E :: _
 		fn array-push :: E[] stack -> E e -> E[]
-			= stack prepand e
+			= stack prepend e
 
 The `array-push` function has a compatible signature to the operation `push`.
 `S` becomes the actual type `E[]`, the actual `E` is still any (`_`) type.
-As `array-push` is equivalent to `prepand` the mapping could very well also 
-used `prepand` directly. 
+As `array-push` is equivalent to `prepend` the mapping could very well also 
+used `prepend` directly. 
 
 		(`auto Stack { 
-			prepand => push, ... }
+			prepend => push, ... }
 		)
 
 ## Errors _(Error-Handling)_
@@ -1489,8 +1489,7 @@ not as problematic as in other type systems as it is perfectly valid and safe
 to specialise a more general type to any compatible specialisation. This does
 not contradict type safety. In the same way functions are specialised to
 operations or data types to behaviours a type can be specialised to another
-one using the specialisation operator `+>` or an `` `auto` `` declaration within
-a library.
+one using the specialisation operator `+>` or a library `` `auto` `` declaration.
 
 		(`auto A B)
 
@@ -1499,7 +1498,9 @@ a specialisation of `A`.
 
 The second possibility to regain partially lost type information is to provide
 a set of functions with the same name but each with a different type for the
-first parameter that all have a common generalisation type. 
+first parameter that all have a common generalisation type. A special function
+invocation does a dispatch by reading the actual value property that is 
+otherwise statically known through the the type.
 
 A typical example is the loss of array length type information. Given a naive 
 `UTF8` representation as 1-4 `Byte`s the `code-point` is computed depending on
