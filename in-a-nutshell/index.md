@@ -66,7 +66,7 @@ In this section the concepts learned about in preceding sections are applied
 and composed to little programs.
 The 6th section continues with the modularisation strategy of the language
 before the 7th gives a in depth description of the type system itself. 
-In the 8th section a handful of implementation techniques are briefly touched. 
+In the 8th section a handful of quirks are briefly touched. 
 The final 9th section closes with thoughts on systems design and the qualities
 of the approach taken by the bruno programming system.
 
@@ -1526,16 +1526,107 @@ of perspective. It either reflects how the programmer thinks about
 something, how something is formally written down or how a machine represents
 this thoughts. Classically a choice has to be made in favour of the perspective
 that matters most for a particular use case. 
-In order to switch perspective type conversions were required for 
-a lack of expressiveness. 
+In order to switch perspective type conversions were required for a lack of 
+expressiveness. 
 
 Type polyvalence is to declare a type with or from multiple perspectives each 
 being expressed in terms of other types. 
 This continues the perception of types presented by the 
 generalisation--specialisation relation and is equally grounded in and made
-possible by the static implementation of types that detaches types from values.
+possible by the static conception of types that detaches types from values.
 
-TODO
+The implementation of polyvalent types in bruno distinguishes four classes of
+perspectives: a conceptual, a textual, a binary and an array perspective. 
+A declared type may (in principle) have multiple of each of these as long as 
+they do not conflict with each other. This means the static properties that can 
+be derived from the perspectives may not disagree with each other.
+
+To give an example: A `Point` type might be defined as:
+
+		dimension Coordinate :: Int 
+		data Point :: (Coordinate x, Coordinate y)
+
+#### Binary Perspectives
+In order to effect e.g. the memory layout (how the machine represents the 
+conceptual types) binary perspectives are added (note the `: #( )` parts):
+		
+		dimension Coordinate :: Int : #(Bit[32])
+		data Point :: (Coordinate x, Coordinate y) : #(Bit[64])
+
+A `Coordinate` is not only an `Int` but also an array of `Bit`s. This implicitly
+limits the range to a 32-bit integer. Similarly a `Point` is also a 64-`Bit`
+wide value. So instead of a tuple (that would be represented on behalf of the VM) 
+the refined types explicitly demand a layout where a point is a single 64-bit 
+integer with `x` stored in the upper 32 bits and `y` in the lower ones. 
+Both `Coordinate` and `Point` now have two types each that are not in conflict
+with each other but take a different perspective on the underlying value. 
+
+#### Textual Perspectives
+To allow the use of `Point` literals (as suggested earlier) a textual 
+perspective is added to the type definition (note the `: "( )"` part). 
+
+		data Point :: (Coordinate x, Coordinate y) 
+		           : #(Bit[64])
+		           : "('(' Coordinate ':' Coordinate ')')"
+
+A `Point` literal consists of the sequence `'('`, `x`-`Coordinate`, `':'`, 
+`y`-`Coordinate` and `')'`. Strikingly literals can be used in the definition
+of types ([shapes](#shapes) explain this soon). Nevertheless, now it is possible 
+to write:
+
+		Point p = "(2:3)"
+
+Values of type `Point` are now also printed and parsed as described by the 
+textual perspective. Naturally it is hard or impossible to have two textual
+perspectives that do not conflict with each other. 
+
+#### Array Perspectives
+A special binary perspective is concerned with the machine representation of
+arrays of a type. Values can be represented differently in an array using
+an array perspective (note the `: #( )[]` part).
+
+		data Point :: (Coordinate x, Coordinate y) 
+		           : #(Bit[64])
+		           : "('(' Coordinate ':' Coordinate ')')"
+		           : #(Coordinate[],  Coordinate[])[] 
+
+The last perspective describes a `Point[]` as a tuple of two `Coordinate[]` 
+fields, one for the `x` and one for the `y` values. 
+
+#### Conceptual Perspectives
+All perspectives that aren't binary or textual perspectives are considered a
+conceptual perspective. This is how a programmer usually thinks about a data.
+The generalisation of a type is the main conceptual perspective but sometimes
+it is useful to add further ones.
+
+		dimension BCD :: Int '0..'9 : Nibble : #(Bit[4])
+
+`BCD` encodes numbers from zero to nine using 4 `Bit`s, what is also called a
+`Nibble`. 
+
+#### Use-Site Mixins
+Like a type can define multiple perspectives on declaration-site further 
+perspectives can be added on a use-site what could also be seen as a _mixin_
+defined on the use-site and therewith in a certain context.
+
+
+Assuming the `BCD` type had not been declared with the `Nibble` type,
+
+		dimension BCD :: Int '0..'9 : #(Bit[4])
+
+but a library should be used that provides the `Nibble` type together with some
+utilities for it.
+
+		dimension Nibble :: #(Bit[4])
+
+`Nibble` can be mixed-in the `BCD` type for a particular module or library, by:
+
+		(`auto BCD Nibble)
+
+With the implicit specialisation from `BCD` to `Nibble` any `BCD` value now can
+be used as if it had been declared as a `Nibble` from the beginning. 
+
+		
 
 ### Shapes
 
@@ -1691,7 +1782,7 @@ Effect- and abstraction types have mostly slightly modified value semantics.
 -->
 
 
-## Implementation Techniques
+## Quirks
 
 ### Abstract Syntax Tree
 So far everything has been described in terms of the surface syntax. This syntax 
@@ -1843,6 +1934,12 @@ The list shows kinds of different valid _keys_. In contrast to atoms keys are
 declared as `val` constants where the declared type is the type of the value the
 key leads to. 
 Two keys are consequently equal if they are the same constant.
+
+
+### Checks
+
+TODO
+
 
 
 ## A System of Systems
