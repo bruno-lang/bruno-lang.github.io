@@ -115,37 +115,39 @@ There are two kinds of simple values, independent `dimension`s and dependent
 `unit`s. A dimension is the basis of a new sort of values whereas a unit is
 a form of expressing the same sort of value differently. 
 
-		dimension Time :: Int '0..
+		dimension Time :: Int{0:}
 
-`Time` is a _specialisation_ of a integral number larger than or equal to `'0`.
+`Time` is a _specialisation_ of a integral number larger than or equal to `0`.
 While the dimension `Time` describes a kind of value, _time_ is more of a concept 
 than a measurable thing itself. Therefore some _time_ `unit`s are introduced:
 
-		unit Minutes [min] :: Time
-		unit Seconds [sec] :: Time
+		unit Minutes :: Time : (Minutes 'min')
+		unit Seconds :: Time : (Seconds 'sec')
 
 Both `Minutes` and `Seconds` are units within `Time` dimension measured in `min`s
-and `sec`s. Units of the same dimension can be related using `ratio`s:
+and `sec`s (for now the part after the `:` is just a specification of the unit 
+of measure; [variants](#variants) will later explain why this works). 
+Units of the same dimension can be related using `ratio`s:
 
 		ratio Time :: SI = {
-			'1min = '60sec,
-			'1sec = '1000ms 
+			1min = 60sec,
+			1sec = 1000ms 
 		}
 
 		dimension SI :: ()
 
-A `Time` `ratio` within the unit system `SI` declares a  minute `'1min` as 
-`'60sec`, a second `'1sec` as `'1000ms` (and so forth). 
+A `Time` `ratio` within the unit system `SI` declares a  minute `1min` as 
+`60sec`, a second `1sec` as `1000ms` (and so forth). 
 The `SI` dimension models a unit system used as a fix point to group ratios
 within the same system.
-Literals use a `'` prefix and are typed through their unit of measure suffix.
+Simple value literals are typed through their unit of measure suffix.
 
 The presence of a unit system with `ratio`s makes it unnecessary to declare or 
 explicitly apply conversions between values within the same system.
 
-		Milliseconds three-minutes = '2min + '60sec
+		Milliseconds three-minutes = 2min + 60sec
 
-The duration of `'2min` and `'60sec`, values of type `Minutes` and `Seconds` can 
+The duration of `2min` and `60sec`, values of type `Minutes` and `Seconds` can 
 directly be used where e.g. `Milliseconds` are needed as the ratio between these 
 is known.
 
@@ -206,10 +208,10 @@ A `Dict` is a set of `(Word, Translation)` twin-tuples (pairs).
 ### Views
 Slicing an array of type `T[*]` creates a slice of type `T[:*]`. 
 
-		Char[:2] he = "hello world" slice '0 '2 
+		Char[:2] he = "hello world" slice 0 2 
 
 By `slice`ing a section of the string `"hello world"` starting at positon
-`'0` with a length of `'2` the varibale `he`, that is a slice of two
+`0` with a length of `2` the varibale `he`, that is a slice of two
 characters `Char[:2]`, refers to the first two characters of that string,
 namely `"he"`.
 
@@ -230,8 +232,8 @@ possible values to model enumerations. Classic enumerations are 0-tuples:
 		dimension Bool :: () = [ False, True ]
 
 `Bool`eans are derived from unit `()`, allowing for two values: `True` and 
-`False` where in case of a list `False` will also be associated with index `'0` 
-and `True` with index `'1`. Dimensions based on unit can also omit the `()` as in:
+`False` where in case of a list `False` will also be associated with index `0` 
+and `True` with index `1`. Dimensions based on unit can also omit the `()` as in:
 
 		dimension Fruits :: = { Apples, Pears }
 
@@ -249,14 +251,14 @@ A `Sign` is either the `Char` `Plus` (what is the value `'+'`) or `Minus`.
 Composite types can be restricted to an enumeration in a similar way:
 
 		data Planet :: (Kilograms weight, Meters radius) = { 
-			Mercury ('3.303e+23kg, '2.4397e6m),
-			Venus   ('4.869e+24kg, '6.0518e6m),
-			Earth   ('5.976e+24kg, '6.37814e6m),
-			Mars    ('6.421e+23kg, '3.3972e6m),
-			Jupiter ('1.9e+27kg,   '7.1492e7m),
-			Saturn  ('5.688e+26kg, '6.0268e7m),
-			Uranus  ('8.686e+25kg, '2.5559e7m),
-			Neptune ('1.024e+26kg, '2.4746e7m)
+			Mercury (3.303e+23kg, 2.4397e6m),
+			Venus   (4.869e+24kg, 6.0518e6m),
+			Earth   (5.976e+24kg, 6.37814e6m),
+			Mars    (6.421e+23kg, 3.3972e6m),
+			Jupiter (1.9e+27kg,   7.1492e7m),
+			Saturn  (5.688e+26kg, 6.0268e7m),
+			Uranus  (8.686e+25kg, 2.5559e7m),
+			Neptune (1.024e+26kg, 2.4746e7m)
 		}
 
 All the `Planet`s in our solar system are given as a _set_ of possible values 
@@ -274,9 +276,9 @@ and uses a function (`at`) like all other operations.
 ### Constants
 A constant is a _specialised_ named `val`ue.
 
-		val Pi :: Float = '3.14159265359
+		val Pi :: Float = 3.14159265359
 
-`Pi` is a scalar number of type `Float` having the value `'3.14159265359`. Of 
+`Pi` is a scalar number of type `Float` having the value `3.14159265359`. Of 
 course constants can be of any type initialised with any statically resolvable
 expression using functions and any type of literals.
 
@@ -287,19 +289,18 @@ expression using functions and any type of literals.
 There are three types of value literals; the mostly used conceptual value 
 literals for simple values as scalars, characters and user defined units:
 
-		Int scalar = '42
-		Float real = '-0.42
+		Int scalar = 42
+		Float real = -0.42
 		Char letter = 'a'
-		Mass weight = '10kg
-		Teaspoon salt = '1/2tsp
+		Mass weight = 10kg
+		Teaspoon salt = 1/2tsp
 
-Conceptual literals start with a `'` followed by a number or symbol and the unit
-of measure, like `kg` or `tsp`. 
+Conceptual literals start with a `'` or a number and end with next white-space 
+or a couple of symbols like bracket and punctuation symbols. This includes 
+potential unit of measure, like `kg` or `tsp`. 
 `Char`acters have `'` as their _unit_. Scalar numbers have no unit of measure. 
 When a unit of measure is present the type of a literal is derived form it as 
 it has to be unambiguous in any scope.
-Numbers without a leading `'` on the other hand are no value literals but 
-length types. 
 
 #### Binary Literals
 Secondly binary oriented literals typically used for simple numerical values:
@@ -323,21 +324,21 @@ way humans are used to write them:
 
 The `Point` and `Date` example illustrate that textual literals can be used for 
 any composite type (when these are declared [polyvalent](#type-polyvalence)). 
-The type of textual literals is inferred from the 
-context, such as the variable, parameter or return type.
+The type of textual literals is inferred from the context, such as the variable, 
+parameter or return type.
 
 #### Collection Literals
 In accordance with collection types there are three sorts of collection literals:
 
-		Int[] array = [ '1, '2, '3, '5 ]
-		[Int] list = [ '1, '2, '3, '5 ]
-		{Int} set = { '1, '2, '3, '5 }
+		Int[] array = [ 1, 2, 3, 5 ]
+		[Int] list = [ 1, 2, 3, 5 ]
+		{Int} set = { 1, 2, 3, 5 }
 
 Whether a sequence literal `[ ... ]` becomes an `array` or a `list` depends on 
 the type is it assigned to. Sets use curly braces `{ ... }`. Like the _map_ type
 is a set of pairs the _map_ literals are created as sets of pairs:
 
-		{(Int, Char)} map = { '1 => 'a', '2 => 'b' }
+		{(Int, Char)} map = { 1 => 'a', 2 => 'b' }
 
 A set literal is used to simulate a _map_ through a set of pairs. Each pair
 is the result of the _associate_ `=>` procedure available for any value type. 
@@ -371,6 +372,9 @@ explicit by using the optional type _variant_ `?` build into the formalism:
 
 A _optional_ `Point?` is either a `Point` or _nothing_.
 
+
+
+
 ## Functions
 [^purity]: Strictly speaking, there are _types_ that have effects and functions upon 
       those consequently have as well - but as this is explicitly in the types 
@@ -380,9 +384,9 @@ Functions are functions, thus pure, statically resolved and referentially transp
 All functions are understood as _extension functions_ on the type of the 1st 
 parameter.
 
-		fn double :: Int a -> Int = a * '2
+		fn double :: Int a -> Int = a * 2
 
-The `double` of the _instance_ `a` of type `Int` is `'2` times `a`, what is again 
+The `double` of the _instance_ `a` of type `Int` is `2` times `a`, what is again 
 an `Int`. Now when using `double` to compute the `quad`
 
 		fn quad :: Int a -> Int = a double double
@@ -405,10 +409,10 @@ operators are short hands for function calls.
 The `plus` function is bound to `+` operator, the `mul` function to `*`
 (within each module this operator _alias_ has to be unambiguous).
 
-		'1 + '2 * '3 == ('1 + '2) * '3
+		1 + 2 * 3 == (1 + 2) * 3
 		
-If not set in parentheses `'1 + '2 * '3` will be evaluated left to right resulting
-in `'9`, not `'7`.[^operator-alias]
+If not set in parentheses `1 + 2 * 3` will be evaluated left to right resulting
+in `9`, not `7`.[^operator-alias]
 
 [^operator-alias]: Instead of dealing with operator precedence (what is hard and 
      most of all ineffectual to memorise) only parentheses have to be applied correctly 
@@ -469,15 +473,15 @@ matching. Case-matching however is a straight value comparison that
 helps to avoid reoccurring comparisons in the conditions of cases.
 
 		fn name :: Point p -> String =
-			a. '0 , '0 : "ORIGIN"
-			b. '1 , '1 : "ONE"
-			c.         : p to-string
+			a. 0 , 0 : "ORIGIN"
+			b. 1 , 1 : "ONE"
+			c.       : p to-string
 		where
 			?. p x == _, p y == _ :
 
 The cases `a.`, `b.` and `c.` match the wild-cards `_` in the comparison 
 pattern described by `?. <expr> :`. So case `a.` is equivalent to 
-`p x == '0, p y == '0` and so forth. Wild-cards are matched in order of
+`p x == 0, p y == 0` and so forth. Wild-cards are matched in order of
  appearance. 
 
 ### Loops
@@ -490,13 +494,13 @@ languages like [K](http://en.wikipedia.org/wiki/K_%28programming_language%29)
 The secondary way to _loop_ is to use recursive functions:
 
 		fn factorial :: Int n -> Int =
-			n == '0 : '1
-			        : n * factorial (n - '1)
+			n == 0 : 1
+			       : n * factorial (n - 1)
 
 All tail recursive functions will use tail call elimination, thus not create/use
 stack frames. Due to referential transparency and _annotated_ commutativity of 
 appropriate functions the multiplication in the above example could also be 
-written vice versa `factorial (n - '1) * n` and still be executed without 
+written vice versa `factorial (n - 1) * n` and still be executed without 
 consuming stack frames as `*` is such an _annotated_ operation.
 
 <!-- 
@@ -511,7 +515,7 @@ functions are _anonymous_ in the sense that their original name is _lost_.
 For example, a function that takes an `Int` and computes a `Bool` has a type 
 of `(Int -> Bool)`.
 
-		fn even :: (Int n -> Bool) = n mod '2 == '0
+		fn even :: (Int n -> Bool) = n mod 2 == 0
 
 The `even` function has this type and could be passed as an argument to another
 function:
@@ -521,7 +525,7 @@ function:
 `is` might not be very useful in practice but illustrates well how functions can 
 be used as arguments, like in the following expression:
 
-		'1 is even
+		1 is even
 
 Function types can be seen as a way to _abstract_ over functions and see it as
 a member of a _function family_. This kind of abstraction can also be made 
@@ -532,7 +536,7 @@ Another situation that results in function types is partial application of
 function arguments. 
 Each not applied parameter is indicated by the underscore `_` _wild-card_.
 
-		(Int -> Int) inc = '1 + _
+		(Int -> Int) inc = 1 + _
 
 [^plus]: given `fn plus [+] ::` `Int a -> Int b -> Int`
 
@@ -595,8 +599,8 @@ without having to specify any particular type or requiring value _factories_.
 When used the type variable is conceptually substituted with the actual type 
 that satisfies the constraints of the family.
 
-		unit Mass [kg] :: Int '0..
-		Mass m = '1kg + '2kg 
+		unit Mass [kg] :: Int{0:}
+		Mass m = 1kg + 2kg 
 
 As `Mass` is a specialisation of `Int` -- its values can be added using the `plus`
 function, resulting in a value of type `Mass`. If `plus` would have been 
@@ -607,7 +611,7 @@ declared in terms of `Int`s, like
 the function would still be usable for `Mass` values (as they would be
 generalised to `Int`) but it would result in an `Int` instead of a `Mass`:
 
-		Int mass = '1kg + '2kg 
+		Int mass = 1kg + 2kg 
 
 That way using functions would generalise the type of the return value what 
 often isn't intended for calculations on values of one type. 
@@ -647,16 +651,16 @@ types can be used just as well.
 In addition to base type a value range is given that a type must satisfy at
 the minimum. 
 
-		family N :: Int '0..
+		family N :: Int{0:}
 
-All types based on `Int` that have a value range that covers `'0` and higher
+All types based on `Int` that have a value range that covers `0` and higher
 is a member of the family `N`.
 
-		family M :: Int '0..'1023
+		family M :: Int{0:1023}
 
-Similar types are members of the family `M` if their range covers zero to `'1023`.
+Similar types are members of the family `M` if their range covers zero to `1023`.
 Note that most numbers would satisfy this qualification. Just types with a 
-smaller range or a range starting higher than `'0` would not satisfy it.
+smaller range or a range starting higher than `0` would not satisfy it.
 
 ##### Qualifying Shape
 In this context the shape of a type refers to the structure of tuples or
@@ -853,7 +857,7 @@ declared specialisation for a particular library or module context.
 
 		(`auto equal-ints eq [Int])
 
-The [tagged form](#tagged-forms) `` `auto `` declares the automatic (implicit)
+The [variant](#variants) `` `auto `` declares the automatic (implicit)
 specialisation of the function `equal-ints` to the operation `eq` where the 
 _type variable_ `T` is of actual type `Int`. 
 In this example `equal-ints` has to be similar to:
@@ -879,7 +883,7 @@ in usage context is a member of the type family `E`.
 		fn index-of :: E[*] arr -> E sample -> Int pos -> Int? =
 			pos >= arr length    : ()
 			arr at pos eq sample : pos
-			                     : arr index-of (e, pos + '1)
+			                     : arr index-of (e, pos + 1)
 
 The function `index-of` is implemented using the operation `eq` to compare the
 `sample` with the actual element `e`. Because `E` is constraint to types for
@@ -888,7 +892,7 @@ like a usual function of `E`. When using `index-of` the actual comparison
 can be chosen by the function bound to the operation in the caller's context.
 
 		fn contains :: Char[*] arr -> Char sample -> Bool 
-			= arr index-of (sample, '0) exists?
+			= arr index-of (sample, 0) exists?
 		where
 			equals-ignore-case +> eq Char
 
@@ -1122,9 +1126,9 @@ a type of channel that accepts/offers a value after a certain time.
 
 		Int value
 			|= channel <<
-			|= '7 after '5ms
+			|= 7 after 5ms
 
-The `after` procedure creates an ad hoc channel that offers `'7` after `'5ms`.
+The `after` procedure creates an ad hoc channel that offers `7` after `5ms`.
 To synchronise time-outs for multiple parallel processes a common _time-out_
 channel is used as alternative for all of them. 
 
@@ -1524,7 +1528,7 @@ been specified it is statically established that one of the functions will work.
 In case the `code-point` should be computed from a `Byte[]` of unknown length
 another case would be demanded to cover all other possibilities.
 
-		fn code-point :: Byte[*] -> Int = '-1
+		fn code-point :: Byte[*] -> Int = -1
 
 The above case acts as a fall-back in case non of the more specifically typed
 ones matches the value. Naturally all present cases must be mutual exclusive. 
@@ -1534,7 +1538,15 @@ A dispatch can also chose to use optional type variant for the fall back case
 		fn code-point :: Byte[*] -> Int? = ()
 
 As a result when calling `code-point?` the dispatch will return a value of type
-`Int?`.
+`Int?`. Similarly the fall-back behaviour can use fault types to handle the
+default case.
+
+		fault Not-A-Code-Point! :: Int
+		fn code-point :: Byte[*] -> Int! = Not-A-Code-Point!
+
+Now when calling `code-point?` the dispatch would return a value of type `Int!`
+that becomes the `Not-A-Code-Point!` fault in the default case.
+
 
 #### Type Variance
 The generalisation--specialisation type relation mostly doesn't require the
@@ -1598,10 +1610,11 @@ To give an example: A `Point` type might be defined as:
 
 #### Binary Perspectives
 In order to effect e.g. the memory layout (how the machine represents the 
-conceptual types) binary perspectives are added (note the `: #( )` parts):
+conceptual types) binary perspectives are added (note the `:` parts):
 		
-		dimension Coordinate :: Int : #(Bit[32])
-		data Point :: (Coordinate x, Coordinate y) : #(Bit[64])
+		dimension Coordinate :: Int : Bit[32]
+		data Point :: (Coordinate x, Coordinate y) 
+		            : (Coordinate..Coordinate)
 
 A `Coordinate` is not only an `Int` but also an array of `Bit`s. This implicitly
 limits the range to a 32-bit integer. Similarly a `Point` is also a 64-`Bit`
@@ -1613,11 +1626,11 @@ with each other but take a different perspective on the underlying value.
 
 #### Textual Perspectives
 To allow the use of `Point` literals (as suggested earlier) a textual 
-perspective is added to the type definition (note the `: "( )"` part). 
+perspective is added to the type definition (note the last `:` part). 
 
 		data Point :: (Coordinate x, Coordinate y) 
-		           : #(Bit[64])
-		           : "('(' Coordinate ':' Coordinate ')')"
+		            : (Coordinate..Coordinate)
+		            : ('(' Coordinate ':' Coordinate ')')
 
 A `Point` literal consists of the sequence `'('`, `x`-`Coordinate`, `':'`, 
 `y`-`Coordinate` and `')'`. Strikingly literals can be used in the definition
@@ -1633,12 +1646,12 @@ perspectives that do not conflict with each other.
 #### Array Perspectives
 A special binary perspective is concerned with the machine representation of
 arrays of a type. Values can be represented differently in an array using
-an array perspective (note the `: #( )[]` part).
+an array perspective (note the `: ( )[*]` part).
 
 		data Point :: (Coordinate x, Coordinate y) 
-		           : #(Bit[64])
-		           : "('(' Coordinate ':' Coordinate ')')"
-		           : #(Coordinate[],  Coordinate[])[] 
+		            : (Coordinate..Coordinate)
+		            : ('(' Coordinate ':' Coordinate ')')
+		            : (Coordinate[],  Coordinate[])[] 
 
 The last perspective describes a `Point[]` as a tuple of two `Coordinate[]` 
 fields, one for the `x` and one for the `y` values. 
@@ -1649,7 +1662,7 @@ conceptual perspective. This is how a programmer usually thinks about a data.
 The generalisation of a type is the main conceptual perspective but sometimes
 it is useful to add further ones.
 
-		dimension BCD :: Int '0..'9 : Nibble : #(Bit[4])
+		dimension BCD :: Int{0:9} : Nibble : Bit[4]
 
 `BCD` encodes numbers from zero to nine using 4 `Bit`s, what is also called a
 `Nibble`. 
@@ -1662,12 +1675,12 @@ defined on the use-site and therewith in a certain context.
 
 Assuming the `BCD` type had not been declared with the `Nibble` type,
 
-		dimension BCD :: Int '0..'9 : #(Bit[4])
+		dimension BCD :: Int{0:9} : Bit[4]
 
 but a library should be used that provides the `Nibble` type together with some
 utilities for it.
 
-		dimension Nibble :: #(Bit[4])
+		dimension Nibble :: Bit[4]
 
 `Nibble` can be mixed-in the `BCD` type for a particular module or library, by:
 
@@ -1717,12 +1730,12 @@ Using these 3 fundamentals the language defines the following core primitives:
 `Byte` 
 : a 8 `Bit` _word_
 
-		dimension Byte :: Int : #(Bit[8])
+		dimension Byte :: Int : Bit[8]
 
 `Char` _(acter)_
 : a [none](http://non-encoding.github.io/) encoded character.
 
-		dimension Char :: Int #0 .. #xFFFF 
+		dimension Char :: Int{#0:#xFFFF} : (''' Char ''')
 
 `Bool` _(ean)_
 : logic or truth values `True` and `False`.
@@ -1732,16 +1745,16 @@ Using these 3 fundamentals the language defines the following core primitives:
 `Dec` _(imal)_
 : 64-bit decimal floating point number ([dec64](http://dec64.org/)).
 
-		dimension Coefficient :: Int : #(Bit[56])
-		dimension Exponent :: Int : #(Bit[8])
-		dimension Dec :: : #(Coefficient Exponent)
+		dimension Coefficient :: Int : Bit[56]
+		dimension Exponent :: Int : Bit[8]
+		dimension Dec :: : (Coefficient Exponent)
 
 `Frac` _(tion)_
 : fraction number with 32-bit numerator and denominator ([frac64](http://frac64.github.io/)).
 		
-		dimension Numerator :: Int : #(Bit[32])
-		dimension Denominator :: Int '0.. : #(Bit[32])
-		dimension Frac :: : #(Numerator Denominator)
+		dimension Numerator :: Int : Bit[32]
+		dimension Denominator :: Int{0:} : Bit[32]
+		dimension Frac :: : (Numerator Denominator)
 
 Note that `Int`, `Dec` and `Frac` do not declare a generalisation type they are 
 based upon. Thus a VM has to _understand_ their meaning by convention. 
@@ -1778,11 +1791,13 @@ defined types are identical the two types are identical as well.
 | Function              | &#8854;<i>T<sub>p<sub>0</sub></sub></i>&#8230;&#8854;<i>T<sub>p<sub>n</sub></sub></i> &#8853;<i>T<sub>r</sub></i> | `(` <i>T</i> (`->` <i>T</i>)* `->` <i>T</i> `)` |
 |-----------------------|----------------------|--------------------------|
 | Length                |                      | (`0`&#8230;`9`)+         |
-| Range                 | <i>T<sub>l</sub></i> <i>T<sub>l</sub></i> | <i>T</i>[`-`<i>T</i>]    |
-| Array                 | <i>T<sub>e</sub></i> | <i>T</i>`[` <i>&lt;Range&gt;</i> `]` |
+| Span                  | <i>T<sub>l</sub></i> <i>T<sub>l</sub></i> | <i>T</i>[`-`<i>T</i>]    |
+| Array                 | <i>T<sub>e</sub></i> | <i>T</i>`[` <i>&lt;Span&gt;</i> `]` |
 |-----------------------|----------------------|--------------------------|
 | List                  | <i>T<sub>e</sub></i> | `[` <i>T</i> `]`         |
 | Set                   | <i>T<sub>e</sub></i> | `{` <i>T</i> `}`         |
+|-----------------------|----------------------|--------------------------|
+| Range                 | <i>T<sub>v</sub></i> | <i>T</i>`{`&lt;Min&gt;`:`&lt;Max&gt;`}` |
 |-----------------------|----------------------|--------------------------|
 | Optional              | <i>T<sub>v</sub></i> | <i>T</i>`?`              |
 | Faulty                | <i>T<sub>v</sub></i> | <i>T</i>`!`              |
@@ -1804,7 +1819,7 @@ Thus a function can be generalised to another function type when all its
 parameter types are more general (or identical) and its return type is more 
 special (or identical).
 
-A <i>Range</i> type is composed of two <i>Length</i> types <i>T<sub>l</sub></i>.
+A <i>Span</i> type is composed of two <i>Length</i> types <i>T<sub>l</sub></i>.
 Both are used to build range specific <i>Array</i> types. The element
 type <i>T<sub>e</sub></i> of an <i>Array</i>, <i>List</i> or <i>Set</i> type
 can be any other simple or complex type. A 2-dimensional array has type 
@@ -1840,7 +1855,7 @@ builds upon the logical constructs of the language and allows to encode them
 more readable and concise. The language is however defined in terms of its 
 abstract syntax tree[^why-ast], a general `data`-structure. As such the AST is 
 vice versa expressed in a subset of the surface syntax in the form of usual 
-expressions. Tagged forms are used to keep type safety as we will shortly see.
+expressions. Tagged unions are used to keep type safety as we will shortly see.
 
 [^why-ast]: The AST and why it is the _model_ of the language deserves an article on its own. Digest: It enables better tooling and allows the surface syntax to focus on expressing the usual well as the _unusual_ doesn't need to be possible to express as one always can escape to the AST. 
 
@@ -1851,10 +1866,10 @@ with the atom `` `ast ``. The `plus` function could be implemented as:
 			= (`ast (`+ ?a ?b))
 
 The `` `ast `` tag instructs the compiler to treat the 2nd element of the outer
-form as an AST element. Here this is again a tagged form implementing addition 
+form as an AST element. Here this is again a tagged union implementing addition 
 as the operation `` `+ `` bound to the variables `?a` and `?b`. 
 
-The tagged form notations gives AST implementations a lisp like appearance 
+The tagged union notations gives AST implementations a lisp like appearance 
 that also comes with a lot of the flexibility of a lisp like language. The most 
 important one might be that it allows to implement almost everything in the 
 language itself. Only the transformation to actual machine code or another 
@@ -1862,31 +1877,30 @@ intermediate representation has to deal with _"native"_ (foreign language) code.
 This allows to share bruno code mostly target platform and VM independent.
 
 
-#### Tagged Forms _(Runtime Type Annotations)_
+#### Variants  _(Tagged Union)_
 By convention any expression form with an [atom](#atoms) as its first tuple 
-element is understood as (type) tagged form. The atom _tag_ is similar to an 
-explicit type _annotation_ for that form: 
+element is understood as (type) tagged form called variant or tagged union. 
+The atom _tag_ is similar to an explicit type _annotation_ for that form: 
 
-		(`date '2014 '06 '01)
+		(`date 2014 06 01)
 
 The form is tagged as a `` `date ``, followed by a date value in three components. 
 The tag hints what types are expected/checked for the following elements. The 
-binding between tag and type is done itself as a tagged form in the library: 
+binding between tag and type is done itself as a variant in the library: 
 
 		(`use `date Date)
 
-A form _annotated_ with `` `date `` is of type `Date`, that e.g. could be:
+A variant _annotated_ with `` `date `` is of type `Date`, that e.g. could be:
 
 		data Date :: (Year y, Month m, Day d)
 		
 Given the declarations above the compiler is aware of the types in the expression
-form ``(`date '2014 '06 '01)`` and treats/checks `'2014` as a `Year`, `'06` as 
+form ``(`date 2014 06 01)`` and treats/checks `2014` as a `Year`, `06` as 
 the `Month` and so forth.
 
-The technique of tagged forms is used to type generic data structures like the 
-AST. As all created tagged forms will be type checked it is
-valid to expect any tagged form value encountered to be well-typed according to 
-the bound type.
+The technique of tagged unions is used for typed generic data structures like 
+the AST. As all created variants will be type checked it is valid to expect 
+any variant value encountered to be well-typed according to the bound type.
 				
 
 ### Procedures _("Hygienic Macros", Compile-Time Expansion)_
@@ -1900,7 +1914,7 @@ frames and are therefore limited to non-recursive implementations. Otherwise a
 Any type `K` has a procedure `assoc` (or `=>`) that, given a `value` produces 
 the pair `(K, V)`. When called, for example to add an entry to a map
 
-		{ 'p' => '3, 'i' => '0.17 }
+		{ 'p' => 3, 'i' => 0.17 }
 
 the compiler will expand the implementation of the procedure's AST with the 
 actual arguments for each usage.
@@ -1932,14 +1946,14 @@ Statically computable expressions can be evaluated at compile-time. Instead of
 normal grouping parentheses the expression is embedded into an evaluation
 group `(:= ` _expr_ `)`. For example `Pi` can be calculated through an algorithm:
 
-		val Pi :: Float = (:= '0.000001 pi-gauss-legendre)
+		val Pi :: Float = (:= 0.000001 pi-gauss-legendre)
 
 The constant `Pi` of type `Float` is computed by the `pi-gauss-legendre` method
-using a precision of `'0.000001`. The evaluation of the _eager expression_ 
+using a precision of `0.000001`. The evaluation of the _eager expression_ 
 `(:= ... )` happens at compile-time, the result is inserted as a constant similar
 to a declaration like (maybe more or less digits):
 
-		val Pi :: Float = '3.14159265358979323846
+		val Pi :: Float = 3.14159265358979323846
 
 Eager expressions can be used for all pure function computations based on
 any form of literal(s). In other words, it works as long as no abstractions
@@ -2020,9 +2034,9 @@ should be pushed to different channels identified by a key.
 			(`layout `QWERTZ)
 
 		@monitor.config =>
-			(`frequency '75Hz) 
+			(`frequency 75Hz) 
 
-For example, the keyboard should use `` `QWERTZ `` layout, the monitor run at `'75Hz`. 
+For example, the keyboard should use `` `QWERTZ `` layout, the monitor run at `75Hz`. 
 _Scripts_ are written in the same language with same type safety guarantees and
 tools. They don't directly _do_ something but assemble data structures that 
 describe what should be done. Booting becomes sending messages to channels, 
