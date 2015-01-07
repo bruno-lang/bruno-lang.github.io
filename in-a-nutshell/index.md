@@ -115,7 +115,7 @@ There are two kinds of simple values, independent `dimension`s and dependent
 `unit`s. A dimension is the basis of a new sort of values whereas a unit is
 a form of expressing the same sort of value differently. 
 
-		dimension Time :: Int{0:}
+		dimension Time :: Int{0..}
 
 `Time` is a _specialisation_ of a integral number larger than or equal to `0`.
 While the dimension `Time` describes a kind of value, _time_ is more of a concept 
@@ -206,13 +206,13 @@ A `Team` is a _set_ of `Member`s. Maps are nothing else than sets of tuples:
 A `Dict` is a set of `(Word, Translation)` twin-tuples (pairs).
 
 ### Views
-Slicing an array of type `T[*]` creates a slice of type `T[:*]`. 
+Slicing an array of type `T[*]` creates a slice of type `T[<*>]`. 
 
-		Char[:2] he = "hello world" slice 0 2 
+		Char[<2>] he = "hello world" slice 0 2 
 
-By `slice`ing a section of the string `"hello world"` starting at positon
-`0` with a length of `2` the varibale `he`, that is a slice of two
-characters `Char[:2]`, refers to the first two characters of that string,
+By `slice`ing a section of the string `"hello world"` starting at position
+`0` with a length of `2` the variable `he`, that is a slice of two
+characters `Char[<2>]`, refers to the first two characters of that string,
 namely `"he"`.
 
 A slice is a view upon a section of an already immutable underlying array
@@ -220,7 +220,7 @@ extended with information about the position of the slice within the
 originating array and the ability derive slices upon the same underlying array
 that are moved or changed in length.
 
-		Char[:2] ld = he shift-to-end
+		Char[<2>] ld = he shift-to-end
 
 For example `he` could be moved to the end of the underlying array resulting in
 the slice `ld` referring to the sequence `"ld"`.
@@ -599,7 +599,7 @@ without having to specify any particular type or requiring value _factories_.
 When used the type variable is conceptually substituted with the actual type 
 that satisfies the constraints of the family.
 
-		unit Mass [kg] :: Int{0:}
+		unit Mass :: Int{0..} : (Mass 'kg')
 		Mass m = 1kg + 2kg 
 
 As `Mass` is a specialisation of `Int` -- its values can be added using the `plus`
@@ -651,12 +651,12 @@ types can be used just as well.
 In addition to base type a value range is given that a type must satisfy at
 the minimum. 
 
-		family N :: Int{0:}
+		family N :: Int{0..}
 
 All types based on `Int` that have a value range that covers `0` and higher
 is a member of the family `N`.
 
-		family M :: Int{0:1023}
+		family M :: Int{0..1023}
 
 Similar types are members of the family `M` if their range covers zero to `1023`.
 Note that most numbers would satisfy this qualification. Just types with a 
@@ -723,7 +723,7 @@ expected.
 		family T :: (,)
 		family F :: (->)
 		family A :: _[]
-		family V :: _[:]
+		family V :: _[<>]
 		family L :: [_]
 		family S :: {_}
 		family D :: *
@@ -1630,14 +1630,14 @@ perspective is added to the type definition (note the last `:` part).
 
 		data Point :: (Coordinate x, Coordinate y) 
 		            : (Coordinate..Coordinate)
-		            : ('(' Coordinate ':' Coordinate ')')
+		            : (Coordinate ':' Coordinate)
 
-A `Point` literal consists of the sequence `'('`, `x`-`Coordinate`, `':'`, 
-`y`-`Coordinate` and `')'`. Strikingly literals can be used in the definition
+A `Point` literal consists of the sequence `x`-`Coordinate`, `':'` and
+`y`-`Coordinate`. Strikingly literals can be used in the definition
 of types ([shapes](#shapes) explain this soon). Nevertheless, now it is possible 
 to write:
 
-		Point p = "(2:3)"
+		Point p = 2:3
 
 Values of type `Point` are now also printed and parsed as described by the 
 textual perspective. Naturally it is hard or impossible to have two textual
@@ -1650,7 +1650,7 @@ an array perspective (note the `: ( )[*]` part).
 
 		data Point :: (Coordinate x, Coordinate y) 
 		            : (Coordinate..Coordinate)
-		            : ('(' Coordinate ':' Coordinate ')')
+		            : (Coordinate ':' Coordinate)
 		            : (Coordinate[],  Coordinate[])[] 
 
 The last perspective describes a `Point[]` as a tuple of two `Coordinate[]` 
@@ -1662,7 +1662,7 @@ conceptual perspective. This is how a programmer usually thinks about a data.
 The generalisation of a type is the main conceptual perspective but sometimes
 it is useful to add further ones.
 
-		dimension BCD :: Int{0:9} : Nibble : Bit[4]
+		dimension BCD :: Int{0..9} : Nibble : Bit[4]
 
 `BCD` encodes numbers from zero to nine using 4 `Bit`s, what is also called a
 `Nibble`. 
@@ -1675,7 +1675,7 @@ defined on the use-site and therewith in a certain context.
 
 Assuming the `BCD` type had not been declared with the `Nibble` type,
 
-		dimension BCD :: Int{0:9} : Bit[4]
+		dimension BCD :: Int{0..9} : Bit[4]
 
 but a library should be used that provides the `Nibble` type together with some
 utilities for it.
@@ -1735,7 +1735,7 @@ Using these 3 fundamentals the language defines the following core primitives:
 `Char` _(acter)_
 : a [none](http://non-encoding.github.io/) encoded character.
 
-		dimension Char :: Int{#0:#xFFFF} : (''' Char ''')
+		dimension Char :: Int{#0..#xFFFF}
 
 `Bool` _(ean)_
 : logic or truth values `True` and `False`.
@@ -1747,14 +1747,14 @@ Using these 3 fundamentals the language defines the following core primitives:
 
 		dimension Coefficient :: Int : Bit[56]
 		dimension Exponent :: Int : Bit[8]
-		dimension Dec :: : (Coefficient Exponent)
+		dimension Dec :: : (Coefficient..Exponent)
 
 `Frac` _(tion)_
 : fraction number with 32-bit numerator and denominator ([frac64](http://frac64.github.io/)).
 		
 		dimension Numerator :: Int : Bit[32]
-		dimension Denominator :: Int{0:} : Bit[32]
-		dimension Frac :: : (Numerator Denominator)
+		dimension Denominator :: Int{0..} : Bit[32]
+		dimension Frac :: : (Numerator..Denominator)
 
 Note that `Int`, `Dec` and `Frac` do not declare a generalisation type they are 
 based upon. Thus a VM has to _understand_ their meaning by convention. 
@@ -1793,6 +1793,7 @@ defined types are identical the two types are identical as well.
 | Length                |                      | (`0`&#8230;`9`)+         |
 | Span                  | <i>T<sub>l</sub></i> <i>T<sub>l</sub></i> | <i>T</i>[`-`<i>T</i>]    |
 | Array                 | <i>T<sub>e</sub></i> | <i>T</i>`[` <i>&lt;Span&gt;</i> `]` |
+| Slice                 | <i>T<sub>e</sub></i> | <i>T</i>`[<` <i>&lt;Span&gt;</i> `>]` |
 |-----------------------|----------------------|--------------------------|
 | List                  | <i>T<sub>e</sub></i> | `[` <i>T</i> `]`         |
 | Set                   | <i>T<sub>e</sub></i> | `{` <i>T</i> `}`         |
@@ -1821,9 +1822,10 @@ special (or identical).
 
 A <i>Span</i> type is composed of two <i>Length</i> types <i>T<sub>l</sub></i>.
 Both are used to build range specific <i>Array</i> types. The element
-type <i>T<sub>e</sub></i> of an <i>Array</i>, <i>List</i> or <i>Set</i> type
-can be any other simple or complex type. A 2-dimensional array has type 
-<i>T<sub>e</sub></i>`[][]`, a list of lists would be `[[`<i>T<sub>e</sub></i>`]]`.
+type <i>T<sub>e</sub></i> of an <i>Array</i>, <i>Slice</i>, <i>List</i> or 
+<i>Set</i> type can be any other simple or complex type. A 2-dimensional array 
+has type <i>T<sub>e</sub></i>`[][]`, a list of lists would be 
+`[[`<i>T<sub>e</sub></i>`]]`.
 
 To build an <i>Optional</i>, <i>Faulty</i> or <i>Transient</i> variant of a
 value-type <i>T<sub>v</sub></i> the corresponding suffix is appended. 
