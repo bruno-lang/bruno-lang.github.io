@@ -1925,13 +1925,13 @@ function call as the actual function is substituted by the compiler.
 
 #### Call-Site Inlining
 Any function call to a non-recursive function can be inlined at the call-site
-using the _inlining_ prefix `~` in front of the called function's name:
+using the _inlining_ prefix `\` in front of the called function's name:
 
-		fn starts-equally :: E.. one -> E.. other -> Bool
-			= one ~first == other ~first
+		fn starts-equally :: E[1-*] one -> E[1-*] other -> Bool
+			= one \first == other \first
 
 To receive the `first` element of each of the lists `one` and `other` the call
-is inlined using `~`. Instead of a function call the body of `first` is expanded
+is inlined using `\`. Instead of a function call the body of `first` is expanded
 into the AST of the body of `starts-equally`. This is in particular useful when
 a function is called in a _loop_. 
 
