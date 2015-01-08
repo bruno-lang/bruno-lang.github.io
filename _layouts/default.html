@@ -26,7 +26,7 @@ function highlight(_, html) {
    return html
 	.replace(/([a-z]+\s+)([-a-zA-Z0-9]+[!?]?)(\s*(\[[^\]]+\]\s*)?::)/g, "$1<def>$2</def>$3")
 	.replace(/([a-z]+\s+)([-a-zA-Z0-9]+)(\s*\<def\>[A-Z][0-9]?\<\/def\>\s*(\[[^\]]+\]\s*)?::)/g, "$1<def>$2</def>$3")
-	.replace(/(^\s*|\n\s*)(unit|dimension|data|fn|op|protocol|notation|where|ratio|family|system|machine|behaviour|val|proc|when|process|keyword|with|as)(\s|$)/g, '$1<kw>$2</kw>$3')
+	.replace(/(^|\s)(unit|dimension|data|fn|op|protocol|notation|where|ratio|family|system|machine|behaviour|val|proc|when|process|keyword|as|with)(\s|$)/g, '$1<kw>$2</kw>$3')
 
 	.replace(/(`[^\s,]+)/g, "<atom>$1</atom>")
 	.replace(/(@[^\s,A-Z][^\s,]*)/g, "<key>$1</key>")
@@ -42,16 +42,18 @@ function highlight(_, html) {
 	.replace(/(\s|^)([a-z?]\.)/g, "$1<op>$2</op>")
 	.replace(/([\s])([0-9]\. )/g, "$1<op>$2</op> ")
 	.replace(/([^:]|^)(:)([ \]\)\}*\n]|$)/g, "$1<op>$2</op>$3")
+	
 
 	.replace(/"([^"]*)"/g, '<lit><ind>\"</ind>$1<ind>\"</ind></lit>')
 	.replace(/(#[xdob]?)([A-F0-9]+)/g, "<lit><ind>$1</ind>$2</lit>")
-	.replace(/'(.[^,;*?#"=><&\|\s\.\)\}\]]*)/g, "<lit><ind>'</ind>$1</lit>")
-	.replace(/(^|[\s\(\[\{,;:])([-+]?[0-9]+(?:[\.,][0-9]+)*(?:[-+]?[0-9]+(?:[\.,][0-9]+)*|[^,;*?#"=><&\|\s\.\)\}\]])*)/g, "$1<lit>$2</lit>")
+	.replace(/'(.[^,;*?#"=><&\\\|\s\.\)\}\]]*)/g, "<lit><ind>'</ind>$1</lit>")
+	.replace(/(^|[\s\(\[\{,;:])([-+]?[0-9]+(?:[\.,][0-9]+)*(?:[-+]?[0-9]+(?:[\.,][0-9]+)*|[^,;*?#"=><&\\\|\s\.\)\}\]])*)/g, "$1<lit>$2</lit>")
 	.replace(/([0-9.e+-]+)([a-zA-Z]+)<\/lit>/g, "$1<uom>$2</uom></lit>")
 
 	.replace(/(::)/g, "<as>$1</as>")
 	.replace(/([, \[\]\(\n\t]|^)((?:&gt;|&lt;|[-=\|&/+*<>]){1,3})([, \[\]\)\n\t]|$)/g, "$1<uop>$2</uop>$3")
 	.replace(/(,)/g, "<sep>$1</sep>")
+	.replace(/([a-zA-Z])(\\)([A-Z])/g, "$1<sep>$2</sep>$3")
 	.replace(/(\[|\])/g, "<dim>$1</dim>")
 	.replace(/(\{|\})/g, "<set>$1</set>")
 	.replace(/(\(\))/g, "<unit>$1</unit>")

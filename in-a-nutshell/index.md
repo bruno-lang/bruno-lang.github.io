@@ -1614,7 +1614,7 @@ conceptual types) binary perspectives are added (note the `:` parts):
 		
 		dimension Coordinate :: Int : Bit[32]
 		data Point :: (Coordinate x, Coordinate y) 
-		            : (Coordinate..Coordinate)
+		            : (Coordinate\Coordinate)
 
 A `Coordinate` is not only an `Int` but also an array of `Bit`s. This implicitly
 limits the range to a 32-bit integer. Similarly a `Point` is also a 64-`Bit`
@@ -1629,7 +1629,7 @@ To allow the use of `Point` literals (as suggested earlier) a textual
 perspective is added to the type definition (note the last `:` part). 
 
 		data Point :: (Coordinate x, Coordinate y) 
-		            : (Coordinate..Coordinate)
+		            : (Coordinate\Coordinate)
 		            : (Coordinate ':' Coordinate)
 
 A `Point` literal consists of the sequence `x`-`Coordinate`, `':'` and
@@ -1649,7 +1649,7 @@ arrays of a type. Values can be represented differently in an array using
 an array perspective (note the `: ( )[*]` part).
 
 		data Point :: (Coordinate x, Coordinate y) 
-		            : (Coordinate..Coordinate)
+		            : (Coordinate\Coordinate)
 		            : (Coordinate ':' Coordinate)
 		            : (Coordinate[],  Coordinate[])[] 
 
@@ -1684,7 +1684,7 @@ utilities for it.
 
 `Nibble` can be mixed-in the `BCD` type for a particular module or library, by:
 
-		(`auto BCD Nibble)
+		(`mixin BCD Nibble)
 
 With the implicit specialisation from `BCD` to `Nibble` any `BCD` value now can
 be used as if it had been declared as a `Nibble` from the beginning. 
@@ -1747,14 +1747,14 @@ Using these 3 fundamentals the language defines the following core primitives:
 
 		dimension Coefficient :: Int : Bit[56]
 		dimension Exponent :: Int : Bit[8]
-		dimension Dec :: : (Coefficient..Exponent)
+		dimension Dec :: : (Coefficient\Exponent)
 
 `Frac` _(tion)_
 : fraction number with 32-bit numerator and denominator ([frac64](http://frac64.github.io/)).
 		
 		dimension Numerator :: Int : Bit[32]
 		dimension Denominator :: Int{0..} : Bit[32]
-		dimension Frac :: : (Numerator..Denominator)
+		dimension Frac :: : (Numerator\Denominator)
 
 Note that `Int`, `Dec` and `Frac` do not declare a generalisation type they are 
 based upon. Thus a VM has to _understand_ their meaning by convention. 
@@ -1798,7 +1798,7 @@ defined types are identical the two types are identical as well.
 | List                  | <i>T<sub>e</sub></i> | `[` <i>T</i> `]`         |
 | Set                   | <i>T<sub>e</sub></i> | `{` <i>T</i> `}`         |
 |-----------------------|----------------------|--------------------------|
-| Range                 | <i>T<sub>v</sub></i> | <i>T</i>`{`&lt;Min&gt;`:`&lt;Max&gt;`}` |
+| Range                 | <i>T<sub>s</sub></i> | <i>T</i>`{`&lt;Min&gt;`..`&lt;Max&gt;`}` |
 |-----------------------|----------------------|--------------------------|
 | Optional              | <i>T<sub>v</sub></i> | <i>T</i>`?`              |
 | Faulty                | <i>T<sub>v</sub></i> | <i>T</i>`!`              |
@@ -1826,6 +1826,10 @@ type <i>T<sub>e</sub></i> of an <i>Array</i>, <i>Slice</i>, <i>List</i> or
 <i>Set</i> type can be any other simple or complex type. A 2-dimensional array 
 has type <i>T<sub>e</sub></i>`[][]`, a list of lists would be 
 `[[`<i>T<sub>e</sub></i>`]]`.
+
+A <i>Range</i> is used to narrow the possible value range of a simple data type
+<i>T<sub>s</sub></i> (1-tuple). <i>Min</i> and <i>Max</i> values are specified by a literal 
+or <i>Length</i> type.
 
 To build an <i>Optional</i>, <i>Faulty</i> or <i>Transient</i> variant of a
 value-type <i>T<sub>v</sub></i> the corresponding suffix is appended. 
