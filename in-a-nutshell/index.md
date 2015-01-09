@@ -188,7 +188,7 @@ An array is `Nonempty` when it has at least `1` up to any `*` number of elements
 
 #### Collections
 Two collection types are supported with special syntax although conceptually 
-they aren't specific data types but abstract data [behaviours](#behaviours).
+they aren't specific data types but abstract data [concepts](#concepts).
 In contrast to the fix length of arrays collection are of a variable length 
 (the length is not reflected on type level).
 
@@ -780,15 +780,15 @@ A indirection is build by prepending a indirection symbol to the base type.
 explain in more detail what those are. Key take-away here is that those exist 
 so it is possible to express code on this level of abstraction. 
 
-##### Qualifying the Existence of Functions or Behaviours
+##### Qualifying the Existence of Functions or Concepts
 In addition to the qualities of the type itself a family can also be qualified
 by the kind of function(s) that should exist (in the scope) for that type.
 These constraints are given in the form of operations (abstract functions) 
-and/or behaviours (sets of abstract functions) for which there should exist
+and/or concepts (sets of abstract functions) for which there should exist
 a known implementation (actual functions) for the actual type. 
 
 This is further illustrated in detail shortly in connection with operations and 
-behaviours but the principle is this:
+concepts but the principle is this:
 
 		family A :: _ with plus
 
@@ -804,21 +804,21 @@ itself.
 
 		family C :: Int with plus, minus
 
-Likewise the existence of one or more behaviours can be added as a qualification.
+Likewise the existence of one or more concepts can be added as a qualification.
 
 		family D :: _ as Stack
 
 Any type that can act `as` a `Stack` (that means an implementation for a 
 particular set of operations exists) is a member of the family `D`. Again,
-this can be extended to multiple behaviours.
+this can be extended to multiple concepts.
 
 		family E :: _ as Stack, Collection
 
 Only types that have an actual implementation for the operations of both the 
-`Stack` and the `Collection` behaviour are members of the family `E`. 
+`Stack` and the `Collection` concept are members of the family `E`. 
 
 Lastly a type can be qualified by the existence of both operations and 
-behaviours (and if required by the type itself).
+concepts (and if required by the type itself).
 
 		family F :: _ as Stack with plus
 
@@ -900,31 +900,32 @@ can be chosen by the function bound to the operation in the caller's context.
 functions that takes the role of `eq` operations for `Char` values so that it is
 used as implicit argument when `index-of` is called.
 
-### Behaviours _(abstract over data)_
-Like operations give meaning to functions a `behaviour` gives meaning to a group
-of functions that have particular interaction semantics. The behaviour describes
-an abstract data type (ADT) by the set of supported operations.
-While this abstracts their behaviour the actual data types still are persistent 
-data structures.
+### Concepts _(abstract over data)_
+Like operations give meaning to functions a `concept` gives meaning to a group
+of functions that have particular interaction semantics. Thus a concept 
+describes an abstract data type (ADT) by the set of supported operations.
+Actual implementations will consist of persistent data structures so `concept`s
+are not used to model mutable state. Their API:s are liable to the 
+principles that immutability brings about.
 
-Given the three operations `push`, `peek` and `pop`, 
+Given the three operations `push`, `pop` and `top`, 
 
 		op push :: S stack -> E e -> S
-		op peek :: S stack -> E?
 		op pop  :: S stack -> S
+		op top  :: S stack -> E?
 
-where both the _stack_ `S` as well as its _elements_ `E` can be of any type 
-(`_`),
+where both the _stack_ `S` as well as its _elements_ `E` in principle can be 
+of any (`_`) type,
 
 		family S :: _
 		family E :: _
 
-a `Stack` is declared as a `behaviour` having the three operations.
+a `Stack` is declared as a `concept` having the three operations:
 
-		behaviour Stack E :: = { push, peek, pop }
+		concept Stack E :: = { push, pop, top }
 		
-The `Stack` captures the type variable of the _elements_ `E` so that it can
-be parametrised and thereby further specialised when used. 
+The `Stack` captures the type variable of the stack _elements_ `E` so that it 
+can be parametrised and thereby further specialised when used. 
 
 With the behavioural _contract_ in place a `Stack` is used through type families. 
 Assuming code in another module declares two fresh type variables 
@@ -941,32 +942,32 @@ Here `E1` must be sufficient to satisfy `E` but can be more specialised.
 On the basis of `S1` and `E1` functions can be declared using the `Stack` 
 operations.
 
-		fn push? :: S1 stack -> E1 e -> S1 =
-			stack peek is-nothing? : stack push e
-			                       : stack
+		fn init :: S1 stack -> E1 e -> S1 =
+			stack top is-nothing? : stack push e
+			                      : stack
 
-The function `push?` only pushes the element `e` to the `stack` if the stack is 
-empty, otherwise the stack is left unchanged. `S1` is known to have the `Stack`
-`behaviour` so `push` and `peek` can be used as if they were functions declared
+The `init` function only pushes the element `e` to the `stack` if the stack is 
+empty, otherwise the stack is left unchanged. `S1` is known to follow the `Stack`
+`concept` so `push` and `top` can be used as if they were functions declared
 on type `S1`.
 
-Practically any type that has matching functions can get the behaviour of a 
+Practically any type that has matching functions can implement the concept of a 
 `Stack`. This is thou (as always) declared explicitly for a particular context:
 
 		(`auto Stack { 
 			array-push => push, 
-			array-peek => peek,
+			array-top  => top,
 			array-pop  => pop })
 
 The `` `auto`` -matic specialisation to `Stack` is declared by mapping the
 actual function (here `array-*`) to the matching operation from the `Stack` 
-behaviour.
+concept.
 
 The actual types that can be specialised to a `Stack` depend on the type(s)
 stated in the mapped functions. If multiple functions of same name are in the
 name-space the function is qualified with the containing module or library name.
 
-A behaviour's implementation consists of usual functions. 
+A concept's implementation consists of usual functions. 
 Here `push` is implemented on basis of an array:
 
 		family E :: _
@@ -1050,11 +1051,11 @@ execution of `rotate90` as it has been mutated _in place_ to some other value.
 ### Channels _(Message Passing)_
 A channel is a typed queue of fix or variable length. Each channel transports
 values of a particular simple or composite data type. Implementation-wise a
-channel is a behaviour that can be implemented in various ways. 
+channel is a concept that can be implemented in various ways. 
 
 		op send! [>>] :: C channel -> E element -> C
 		op receive! [<<] :: C channel -> E
-		behaviour Channel :: { send!, receive! }
+		concept Channel :: { send!, receive! }
 
 The usual way is use a (fixed length) array so that the overall system
 features reasonable [back pressure](http://en.wikipedia.org/wiki/Backpressure_routing). 
@@ -1191,12 +1192,13 @@ A `process` is declared in terms of the possible state transitions.
 
 A `Server` process has one state `Ready` that only can transit to itself.
 Any other (error) state (`_`) transits to `Ready` as well except for the
-`Out-Of-Heap-Space!` fault that transits to no other state what indicates
+`Out-Of-Heap-Space!` exception that transits to no other state what indicates
 process termination.
 
-So a `process` declaration encapsulate a behavioural pattern that can be used 
-for many concrete automata. This contract includes even the error behaviour.
-The compiler makes sure all transitions of actual implementations are following
+So a `process` declaration encapsulate a behavioural pattern (described through 
+data) that can be used for many concrete automata. 
+This contract includes even the error behaviour.
+The compiler makes sure all transitions of actual implementations follow
 this specification. 
 
 The state `data` of a concrete process could look like the structure `HttpServer`.
@@ -1492,7 +1494,7 @@ A loss of partial type information as experienced for generalisation though is
 not as problematic as in other type systems as it is perfectly valid and safe 
 to specialise a more general type to any compatible specialisation. This does
 not contradict type safety. In the same way functions are specialised to
-operations or data types to behaviours a type can be specialised to another
+operations or data types to concepts a type can be specialised to another
 one using the specialisation operator `+>` or a library `` `auto` `` declaration.
 
 		(`auto A B)
@@ -1771,7 +1773,7 @@ A `data` structure is either a renamed generalisation type or expressed in terms
 of a <i>Tuple</i> with fields. 
 Similar an operation `op` is a named virtual function described by a 
 <i>Function</i> type. 
-A `behaviour` is a set of operation types <i>T<sub>f<sub>i</sub></sub></i> referenced by name. 
+A `concept` is a set of operation types <i>T<sub>f<sub>i</sub></sub></i> referenced by name. 
 
 All but the first group build complex type variants that are structurally typed.
 That means as long as the nominal typed parts in two similar, independently
@@ -1784,7 +1786,7 @@ defined types are identical the two types are identical as well.
 | `data` <i>X</i>       | <i>T<sub>g</sub></i> | `data` <i>X</i> `::` <i>T<sub>g</sub></i> |
 | `data` <i>X</i>       | <i>&lt;Tuple&gt;</i>         | `data` <i>X</i> `::` <i>&lt;Tuple&gt;</i> |
 | `op` <i>x</i>         | <i>&lt;Function&gt;</i>      | `op` <i>x</i> `::` <i>&lt;Function&gt;</i> |
-| `behaviour` <i>X</i>  | <i>T<sub>f<sub>0</sub></sub></i>&#8230;<i>T<sub>f<sub>n</sub></sub></i> | `behaviour` <i>X</i> `::` `=` `{` <i>T</i> (`,` <i>T</i>)* `}` |
+| `concept` <i>X</i>  | <i>T<sub>f<sub>0</sub></sub></i>&#8230;<i>T<sub>f<sub>n</sub></sub></i> | `concept` <i>X</i> `::` `=` `{` <i>T</i> (`,` <i>T</i>)* `}` |
 | `process` <i>X</i>    |                      | `process` <i>X</i> |
 |-----------------------|----------------------|--------------------------|
 | Tuple                 | &#8853;<i>T<sub>0</sub></i>&#8230;&#8853;<i>T<sub>n</sub></i> | `(` [ <i>T</i>(`,`<i>T</i>) ] `)` |
