@@ -49,15 +49,19 @@ function highlight(_, html) {
 	.replace(/'(.[^,;*?#"=><&\\\|\s\.\)\}\]]*)/g, "<lit><ind>'</ind>$1</lit>")
 	.replace(/(^|[\s\(\[\{,;:\.>])([-+]?[0-9]+(?:[\.,][0-9]+)*(?:[-+]?[0-9]+(?:[\.,][0-9]+)*|[^,;*?#"=><&\\\|\s\.\)\}\]])*)/g, "$1<lit>$2</lit>")
 	.replace(/([0-9.e+-]+)([a-zA-Z]+)<\/lit>/g, "$1<uom>$2</uom></lit>")
+	.replace(/(')<\/lit>/g, "<uom>$1</uom></lit>")
+
+	.replace(/(\s)(\|)(\s)/g, "$1<or>$2</or>$3")
 
 	.replace(/(::)/g, "<as>$1</as>")
 	.replace(/([, \[\]\(\n\t]|^)((?:&gt;|&lt;|[-=\|&/+*<>]){1,3})([, \[\]\)\n\t]|$)/g, "$1<uop>$2</uop>$3")
 	.replace(/(,)/g, "<sep>$1</sep>")
 	.replace(/([a-zA-Z])(\\)([A-Z])/g, "$1<sep>$2</sep>$3")
-	.replace(/(\[|\])/g, "<dim>$1</dim>")
-	.replace(/(\{|\})/g, "<set>$1</set>")
+	.replace(/(\s)(\[|\])(\s)/g, "$1<dim>$2</dim>$3")
+	.replace(/(\s)(\{|\})(\s)/g, "$1<set>$2</set>$3")
 	.replace(/(\(\))/g, "<unit>$1</unit>")
 	.replace(/(\(|\))/g, "<g>$1</g>")
+
    	;
 }
 

@@ -194,9 +194,9 @@ content h2 em { font-family: Lora; text-transform: none; font-size: 60%; }
 	code def { text-decoration: underline; }
 }
 @media screen {
-	code kw { color: #859900; }
+	code kw, code or { color: #859900; }
 	code lit { color: #268bd2; }
-	code lit ind { color: #565A9D; }
+	code lit ind { color: #839496; }
 	code lit uom {color: #839496; }
 	code op, code op lit { color: #cb4b16; }
 	code uop { color: #b58900; }
@@ -204,10 +204,11 @@ content h2 em { font-family: Lora; text-transform: none; font-size: 60%; }
 	code as { color: #dc322f; }
 	code atom { color: #d33682; }
 	code var { font-style: normal; color: #b58900; }
-	code key, code key dim { color: #d33682; }
-	code set, code sep, code dim { color: #565A9D; }
+	code key, code key dim { color: #859900; }
+	code set, code dim { color: #859900; }
 	code g { color: #2aa198; }
-	code unit, code unit g { color: #565A9D; };
+	code unit, code unit g { color: #565A9D; }
+	code sep { color: #565A9D; }
 }
 @media print {
 	toc { display: none; }

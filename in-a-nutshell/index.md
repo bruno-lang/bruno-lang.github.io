@@ -111,39 +111,38 @@ Data is always represented by values, thus it is immutable with value equality
 and no presence of identity.
 
 ### Simple Values
-There are two kinds of simple values, independent `dimension`s and dependent 
-`unit`s. A dimension is the basis of a new sort of values whereas a unit is
-a form of expressing the same sort of value differently. 
+A simple value `data` type is based on a 1-tuple number or character or on the 
+0-tuple also called unit `()`.
 
-		dimension Time :: Int{0..}
+		data Time :: Int{0..}
 
 `Time` is a _specialisation_ of a integral number larger than or equal to `0`.
 While the dimension `Time` describes a kind of value, _time_ is more of a concept 
-than a measurable thing itself. Therefore some _time_ `unit`s are introduced:
+than a measurable thing itself. Therefore some time units are introduced:
 
-		unit Minutes :: Time : (Minutes 'min')
-		unit Seconds :: Time : (Seconds 'sec')
+		data Minutes :: Time : (Minutes 'min')
+		data Seconds :: Time : (Seconds 'sec')
 
-Both `Minutes` and `Seconds` are units within `Time` dimension measured in `min`s
-and `sec`s (for now the part after the `:` is just a specification of the unit 
-of measure; [variants](#variants) will later explain why this works). 
-Units of the same dimension can be related using `ratio`s:
+Both `Minutes` and `Seconds` are _units_ within the `Time` _dimension_ 
+measured in `min`utes and `sec`onds (for now the part after the `:` is just a 
+specification of the unit of measure; [variants](#variants) will later explain 
+why this works). Units of the same _dimension_ can be related using `ratio`s:
 
 		ratio Time :: SI = {
 			1min = 60sec,
 			1sec = 1000ms 
 		}
 
-		dimension SI :: ()
+		data SI :: ()
 
-A `Time` `ratio` within the unit system `SI` declares a  minute `1min` as 
+A `Time` `ratio` within the unit system `SI` declares a minute `1min` as 
 `60sec`, a second `1sec` as `1000ms` (and so forth). 
-The `SI` dimension models a unit system used as a fix point to group ratios
+The `SI` _dimension_ models a unit system used as a fix point to group ratios
 within the same system.
 Simple value literals are typed through their unit of measure suffix.
 
 The presence of a unit system with `ratio`s makes it unnecessary to declare or 
-explicitly apply conversions between values within the same system.
+explicitly apply conversions between values of the system:
 
 		Milliseconds three-minutes = 2min + 60sec
 
@@ -155,28 +154,27 @@ is known.
 
 #### Tuples _(Product Types)_
 Composite values (often loosely equated with records or structs) are declared as 
-`data` types.
+n-tuple `data` types with named fields:
 
 		data Rect :: (Length width, Length height)
 
 A `Rect` is a tuple with two `Length` fields, `width` and `height`. While `data` 
 types are nominal typed they can be used as (structurally typed) tuples. 
-A `Rect` can be _generalised_ to a tuple of type `(Length, Length)`.
+`Rect` can be _generalised_ to a tuple of type `(Length, Length)`.
 
 #### Arrays
-Secondly there is the composite type of fixed length arrays (or vectors) of 
-elements of identical type:
+Arrays are sequences of fixed length with elements of identical type:
 
 		data Code :: Char[8]
 		data RGB :: Colour[3]
 
-A `Code` is a vector of `8` `Char`acters. A `RGB` colour one of `3` `Colour`s,
+A `Code` is an array of `8` `Char`acters. A `RGB` colour one of `3` `Colour`s,
 where the length is part of the array's type. A length can also be within a
-range.
+span.
 
 		data UTF8CodePoint :: Byte[1-4]
 
-A UTF-8 code point has `1-4` `Byte`s. Length or range furthermore allow the use 
+A UTF-8 code point has `1-4` `Byte`s. Length or span furthermore allow the use 
 of a wild-card `*` to indicate _any unknown_ length.
 
 		data Nonempty :: Int[1-*]
@@ -229,42 +227,52 @@ the slice `ld` referring to the sequence `"ld"`.
 Both simple and composite value types can be initialised with a list or set of
 possible values to model enumerations. Classic enumerations are 0-tuples:
 
-		dimension Bool :: () = [ False, True ]
+		data Bool :: () [ False | True ]
 
 `Bool`eans are derived from unit `()`, allowing for two values: `True` and 
 `False` where in case of a list `False` will also be associated with index `0` 
-and `True` with index `1`. Dimensions based on unit can also omit the `()` as in:
+and `True` with index `1`.
 
-		dimension Fruits :: = { Apples, Pears }
+		data Fruits :: () { Apples | Pears }
 
 The possible `Fruits` are `Apples` and `Pears`, this time with _set_ semantics.
-Equally any simple type (one-tuple) can be initialised with a fixed set or
-list of possible values.
-
-		dimension Sign :: Char = { 
-			Plus '+', 
-			Minus '-' 
-		}
-
-A `Sign` is either the `Char` `Plus` (what is the value `'+'`) or `Minus`.
-
 Composite types can be restricted to an enumeration in a similar way:
 
-		data Planet :: (Kilograms weight, Meters radius) = { 
-			Mercury (3.303e+23kg, 2.4397e6m),
-			Venus   (4.869e+24kg, 6.0518e6m),
-			Earth   (5.976e+24kg, 6.37814e6m),
-			Mars    (6.421e+23kg, 3.3972e6m),
-			Jupiter (1.9e+27kg,   7.1492e7m),
-			Saturn  (5.688e+26kg, 6.0268e7m),
-			Uranus  (8.686e+25kg, 2.5559e7m),
-			Neptune (1.024e+26kg, 2.4746e7m)
-		}
+		data Planet :: (Kilograms weight, Meters radius) 
+			{  Mercury = (3.303e+23kg, 2.4397e6m)
+			|  Venus   = (4.869e+24kg, 6.0518e6m)
+			|  Earth   = (5.976e+24kg, 6.37814e6m)
+			|  Mars    = (6.421e+23kg, 3.3972e6m)
+			|  Jupiter = (1.9e+27kg,   7.1492e7m)
+			|  Saturn  = (5.688e+26kg, 6.0268e7m)
+			|  Uranus  = (8.686e+25kg, 2.5559e7m)
+			|  Neptune = (1.024e+26kg, 2.4746e7m) }
 
 All the `Planet`s in our solar system are given as a _set_ of possible values 
 with their `weight` and `radius`.
 
-Enumerations can also be used as dimension type of arrays.
+Equally any simple type (1-tuple) can be initialised with a fixed set or
+list of possible values.
+
+		data Sign :: Char 
+			[  Plus  = '+'
+			|  Minus = '-' ]
+
+A `Sign` is either the `Char` `Plus` (what is the value `'+'`) or `Minus`.
+This is often better modelled by specialising the type for each enumeration 
+constant:
+
+		data Sign :: 
+			[  Plus  : Char{'+'}
+			|  Minus : Char{'-'} ]
+
+`Plus` is a specialisation shape of `Sign` and restricted to the `Char` in range
+of only the `'+'` value. Similar `Minus` is a specialisation shape restricted to
+the value `'-'`. If constants in an enumeration use type specialisation their
+types must be mutual exclusive but have a common generalisation type. In case
+of range types the ranges are exclusive but the base type is the same.
+
+Ordered enumerations can also be used as dimension type of arrays.
 
 		data Menu :: Meal[Weekday]
 
@@ -274,13 +282,16 @@ constants: `Meal on-monday = menu at Monday`. Index access has no special syntax
 and uses a function (`at`) like all other operations.
 
 ### Constants
-A constant is a _specialised_ named `val`ue.
+Constant are enumeration `data` types with a single value.
 
-		val Pi :: Float = 3.14159265359
+		data Pi :: Float = 3.14159265359
 
-`Pi` is a scalar number of type `Float` having the value `3.14159265359`. Of 
-course constants can be of any type initialised with any statically resolvable
-expression using functions and any type of literals.
+`Pi` is a scalar number based on `Float` having the value `3.14159265359`. 
+The _constant_ `Pi` itself has a shape that is more special than `Float`.
+As a consequence a function can expect or result in a particular constant.
+
+Of course constants can be of any type initialised with any statically 
+resolvable expression using functions and any type of literals.
 
 
 ### Literals
@@ -349,7 +360,7 @@ Atoms are dimensionless values, conceptually zero-tuples of type `Atom`.
 Different constants are defined by `` ` `` followed by any sequence of 
 characters except white-space.
 
-		[`a `atom `+ `/ `-> `0 ]
+		[ `a `atom `+ `/ `-> `0 ]
 		
 The above is a list of valid atoms. Any two atoms are logically equal if their 
 sequence of characters are. 
