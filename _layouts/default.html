@@ -35,12 +35,12 @@ function highlight(_, html) {
 	.replace(/(\\)([a-z]|$)/g, "<op>$1</op>$2")
 	.replace(/(\()(:=)/g, "$1<op>$2</op>")
 	.replace(/(^|\s|\()(\+&gt;)(\s|$|\)|,)/g, "$1<op>$2</op>$3")
-	.replace(/(\.\.)([^\.])/g, "<op>$1</op>$2")
+	.replace(/([^\.])(\.\.)([^\.])/g, "$1<op>$2</op>$3")
 	.replace(/(_)/g, "<op>$1</op>")
 	.replace(/(\s|^|\()(-&gt;)(\s|$|\))/g, "$1<op>$2</op>$3")
 	.replace(/(\s|^)(=|\|=)(\s|$)/g, "$1<op>$2</op>$3")
 	.replace(/(\s|^)([a-z?]\.)/g, "$1<op>$2</op>")
-	.replace(/([\s])([0-9]\. )/g, "$1<op>$2</op> ")
+	.replace(/([\s])([0-9]\.) /g, "$1<op>$2</op> ")
 	.replace(/([^:]|^)(:)([ \]\)\}*\n]|$)/g, "$1<op>$2</op>$3")
 	
 
@@ -55,12 +55,12 @@ function highlight(_, html) {
 
 	.replace(/(::)/g, "<as>$1</as>")
 	.replace(/([, \[\]\(\n\t]|^)((?:&gt;|&lt;|[-=\|&/+*<>]){1,3})([, \[\]\)\n\t]|$)/g, "$1<uop>$2</uop>$3")
-	.replace(/(,)/g, "<sep>$1</sep>")
 	.replace(/([a-zA-Z])(\\)([A-Z])/g, "$1<sep>$2</sep>$3")
-	.replace(/(\s)(\[|\])(\s)/g, "$1<dim>$2</dim>$3")
-	.replace(/(\s)(\{|\})(\s)/g, "$1<set>$2</set>$3")
+	.replace(/(\s)(\[|\])(\s|,)/g, "$1<dim>$2</dim>$3")
+	.replace(/(\s)(\{|\})(\s|,)/g, "$1<set>$2</set>$3")
 	.replace(/(\(\))/g, "<unit>$1</unit>")
 	.replace(/(\(|\))/g, "<g>$1</g>")
+	.replace(/(,)/g, "<sep>$1</sep>")
 
    	;
 }

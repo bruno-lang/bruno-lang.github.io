@@ -63,18 +63,17 @@ section before the 4th section explains error handling.
 The 5th section discusses how (side) effects occur and systems are composed 
 using processes and channels. 
 In this section the concepts learned about in preceding sections are applied 
-and composed to little programs.
+and composed.
 The 6th section continues with the modularisation strategy of the language
-before the 7th gives a in depth description of the type system itself. 
-In the 8th section a handful of quirks are briefly touched. 
+before the 7th gives a in depth description of the type system. 
+In the 8th section a handful of quirks are touched very briefly. 
 The final 9th section closes with thoughts on systems design and the qualities
 of the approach taken by the bruno programming system.
 
 #### Notes on Examples
 Note that the code examples given are exemplary and use mostly fictional 
 types or functions to be more descriptive and familiar to the reader.
-The section on [types](#types) goes into the details of the actual build-in 
-language base.
+The section on [types](#types) introduces the actual build-in types.
 Often the example code isn't even idiomatic in that it often uses very general
 types (like `Int` would be) to not overwhelm the reader with details that are
 not important to exemplify a concept. In practice general types like `Int`
@@ -86,11 +85,10 @@ and usage.
 #### Notes on Syntax
 The language uses sets of more or less independent declarations of the form:
 
-		keyword name [unit] :: declaration-body
+		keyword name :: declaration-body
 
 * `keyword` : what kind of thing is declared?
 * `name` . what is the identity of the declared thing?
-* `unit` : how to identify values of this particular thing?
 * `::` (_is declared as_-operator)
 * `declaration-body` : how does the thing relate to other things?
 
@@ -99,7 +97,7 @@ In the declaration body however any valid identifier (including these words)
 can be used. There are no reserved words in the classical sense. 
 
 The syntax has no statements or ending marks (like a semicolon) but predefined
-sets of character used for operators, literals and forms of expressions. 
+sets of character used for operators, literal borders and expressions structure.
 
 A single `=` usually stands for: _has the value_ (where value could also refer to
 the expression that implements a function).
@@ -108,7 +106,7 @@ the expression that implements a function).
 
 ## Data
 Data is always represented by values, thus it is immutable with value equality 
-and no presence of identity.
+and no notion of identity.
 
 ### Simple Values
 A simple value `data` type is based on a 1-tuple number or character or on the 
@@ -137,9 +135,9 @@ why this works). Units of the same _dimension_ can be related using `ratio`s:
 
 A `Time` `ratio` within the unit system `SI` declares a minute `1min` as 
 `60sec`, a second `1sec` as `1000ms` (and so forth). 
+Simple value literals are typed through their unit of measure suffix.
 The `SI` _dimension_ models a unit system used as a fix point to group ratios
 within the same system.
-Simple value literals are typed through their unit of measure suffix.
 
 The presence of a unit system with `ratio`s makes it unnecessary to declare or 
 explicitly apply conversions between values of the system:
@@ -188,12 +186,12 @@ An array is `Nonempty` when it has at least `1` up to any `*` number of elements
 Two collection types are supported with special syntax although conceptually 
 they aren't specific data types but abstract data [concepts](#concepts).
 In contrast to the fix length of arrays collection are of a variable length 
-(the length is not reflected on type level).
+(wherefore the length is not reflected on type level).
 
 		data Sentence :: [Word]
 
-A `Sentence` is a _list_ of `Word`s of variable length. 
-Furthermore sets are supported with special syntax.
+A `Sentence` is a variable length _list_ of `Word`s. 
+Furthermore _sets_ are supported with special syntax.
 
 		data Team :: {Member}
 
@@ -204,7 +202,7 @@ A `Team` is a _set_ of `Member`s. Maps are nothing else than sets of tuples:
 A `Dict` is a set of `(Word, Translation)` twin-tuples (pairs).
 
 ### Views
-Slicing an array of type `T[*]` creates a slice of type `T[<*>]`. 
+Slicing an array of type `T[E]` creates a slice of type `T[<E>]`. 
 
 		Char[<2>] he = "hello world" slice 0 2 
 
@@ -213,10 +211,10 @@ By `slice`ing a section of the string `"hello world"` starting at position
 characters `Char[<2>]`, refers to the first two characters of that string,
 namely `"he"`.
 
-A slice is a view upon a section of an already immutable underlying array
-extended with information about the position of the slice within the 
-originating array and the ability derive slices upon the same underlying array
-that are moved or changed in length.
+A slice is a view upon a section of an immutable underlying array extended with 
+information about the position of the slice within the originating array and 
+the ability derive slices upon the same underlying array that are moved or 
+changed in length.
 
 		Char[<2>] ld = he shift-to-end
 
@@ -224,18 +222,39 @@ For example `he` could be moved to the end of the underlying array resulting in
 the slice `ld` referring to the sequence `"ld"`.
 
 ### Enumerations
-Both simple and composite value types can be initialised with a list or set of
-possible values to model enumerations. Classic enumerations are 0-tuples:
+Classic enumerations are 0-tuples `()` listing 2 or more constants:
 
 		data Bool :: () [ False | True ]
 
-`Bool`eans are derived from unit `()`, allowing for two values: `True` and 
-`False` where in case of a list `False` will also be associated with index `0` 
-and `True` with index `1`.
+`Bool`eans specialise unit `()` allowing for two values: `True` and `False`.
+As the constants are declared as a list `[ | ]` `False` will also be associated 
+with index `0` and `True` with index `1`.
 
 		data Fruits :: () { Apples | Pears }
 
 The possible `Fruits` are `Apples` and `Pears`, this time with _set_ semantics.
+
+For an enumeration of a simple type (1-tuple) a value can be assigned to each
+constant.
+
+		data Sign :: Char 
+			[  Plus  = '+'
+			|  Minus = '-' ]
+
+A `Sign` is either `Plus` (what is the `Char` value `'+'`) or `Minus`.
+This, however, is often better modelled by specialising the type for each 
+enumeration constant instead:
+
+		data Sign :: 
+			[  Plus  : Char{'+'}
+			|  Minus : Char{'-'} ]
+
+`Plus` is a specialisation shape of `Sign` and restricted to the `Char` in range
+of only the `'+'` value. Similar `Minus` is a specialisation shape restricted to
+the value `'-'`. If constants in an enumeration use type specialisation their
+types must be mutual exclusive but have a common generalisation type. In case
+of range types the ranges are exclusive but the base type is the same.
+
 Composite types can be restricted to an enumeration in a similar way:
 
 		data Planet :: (Kilograms weight, Meters radius) 
@@ -251,27 +270,6 @@ Composite types can be restricted to an enumeration in a similar way:
 All the `Planet`s in our solar system are given as a _set_ of possible values 
 with their `weight` and `radius`.
 
-Equally any simple type (1-tuple) can be initialised with a fixed set or
-list of possible values.
-
-		data Sign :: Char 
-			[  Plus  = '+'
-			|  Minus = '-' ]
-
-A `Sign` is either the `Char` `Plus` (what is the value `'+'`) or `Minus`.
-This is often better modelled by specialising the type for each enumeration 
-constant:
-
-		data Sign :: 
-			[  Plus  : Char{'+'}
-			|  Minus : Char{'-'} ]
-
-`Plus` is a specialisation shape of `Sign` and restricted to the `Char` in range
-of only the `'+'` value. Similar `Minus` is a specialisation shape restricted to
-the value `'-'`. If constants in an enumeration use type specialisation their
-types must be mutual exclusive but have a common generalisation type. In case
-of range types the ranges are exclusive but the base type is the same.
-
 Ordered enumerations can also be used as dimension type of arrays.
 
 		data Menu :: Meal[Weekday]
@@ -282,7 +280,7 @@ constants: `Meal on-monday = menu at Monday`. Index access has no special syntax
 and uses a function (`at`) like all other operations.
 
 ### Constants
-Constant are enumeration `data` types with a single value.
+Constants are enumeration `data` types with a single value.
 
 		data Pi :: Float = 3.14159265359
 
@@ -564,8 +562,8 @@ A function on the other hand can have any number of parameters. However, another
 way to look at it is to assume that all functions just have one parameter being 
 a n-tuple of the multiple elements. 
 
-		fn multi :: Int a -> Int b -> Int c -> Int
-		fn uni :: (Int, Int, Int) abc -> Int 
+		fn multi :: Int a -> Int b -> Int c -> Int = ...
+		fn uni   :: (Int, Int, Int) abc -> Int     = ...
 
 Both `multi` and `uni` compute an `Int` from three inputs of type `Int`.
 They have a functionally identical signature. This does not mean that everything
@@ -573,7 +571,15 @@ is normalised to one (multiple simple parameters) or the other (one tuple
 parameter) but that an variable amount of parameters can be expressed through
 its tuple equivalent. 
 
+### Not Yet Implemented Functions
+When fleshing out an implementation a function's body can be left out marked as
+_not yet implemented_ by a `?` as body:
 
+		fn not-yet-implemented :: (Foo f -> Bar) = ?
+
+The `?` is just a hint for the compiler that the body is missing but will be
+added later one so the signature can be used to implement other functions on
+top of that before returning and implementing this function. 
 
 ## Abstractions
 
@@ -610,7 +616,7 @@ without having to specify any particular type or requiring value _factories_.
 When used the type variable is conceptually substituted with the actual type 
 that satisfies the constraints of the family.
 
-		unit Mass :: Int{0..} : (Mass 'kg')
+		data Mass :: Int{0..} : (Mass 'kg')
 		Mass m = 1kg + 2kg 
 
 As `Mass` is a specialisation of `Int` -- its values can be added using the `plus`
@@ -1193,21 +1199,22 @@ The state of a process is always local to that process.
 Each process is a state machine that decides when to receive from or send 
 messages to channels. 
 
-A `process` is declared in terms of the possible state transitions. 
+A `process` is declared in terms of the possible state transitions between
+states that are declared enumeration-like together with the process:
 
-		process Server :: = { 
-			Ready => [ Ready ],
-			    _ => [ Ready ],
-			Out-Of-Heap-Space! => []
-		}
+		process Server :: 
+			{ Ready = [ Ready ] 
+			| _     = [ Ready ] }
+			{ Out-Of-Heap-Space! = [] }
 
 A `Server` process has one state `Ready` that only can transit to itself.
-Any other (error) state (`_`) transits to `Ready` as well except for the
-`Out-Of-Heap-Space!` exception that transits to no other state what indicates
-process termination.
+Any other (error) state (`_`) transits to `Ready` as well. 
+Should, however, an `Out-Of-Heap-Space!` exception occur the process transits 
+to no other state, what indicates process termination. Such error transitions
+are specified in a second mapping as they map faults or exceptions to states.
 
-So a `process` declaration encapsulate a behavioural pattern (described through 
-data) that can be used for many concrete automata. 
+So a `process` declaration encapsulate a behavioural pattern that can be used 
+for many concrete automata. 
 This contract includes even the error behaviour.
 The compiler makes sure all transitions of actual implementations follow
 this specification. 
@@ -1227,7 +1234,7 @@ of the step and the data).
 
 		when Ready :: HttpServer server -> HttpServer
 		1. server responses >> 
-			(server app (server requests <<))
+			   (server app (server requests <<))
 		.. Ready: server
 
 The body of a process function enumerates the steps of the transition. 
@@ -1247,9 +1254,11 @@ The `spawn!` function itself is implemented by the virtual machine instruction
 `` `spawn! `` that returns the ID of the created process (`PID`).
 
 		family P :: (,)
-		fn spawn! :: P process -> PID = (`spawn! ?process)
+		fn spawn! :: P a-process -> PID = (`spawn! ?process)
 
-Any value type `(,)` can be a process `P`.
+Any value type `(,)` can be a process `P`. The relevant `process` declaration 
+is identified via `when` transitions in scope that use the process type `P` in
+question.
 
 #### Error Handlers
 Faults or Exceptions that occur during a state transition automatically 
@@ -1731,43 +1740,43 @@ The most fundamental are 0-tuples and the 1-tuple of integer numbers.
   representation (with [two's complement](http://en.wikipedia.org/wiki/Two%27s_complement)) 
   for the number of bits needed.
 
-		dimension Int ::
+		data Int ::
 
 `Bit`
 : a bit: `` `0 `` or `` `1 ``.
 
-		dimension Bit :: = { `0, `1 }
+		data Bit :: () { `0 | `1 }
 
 Using these 3 fundamentals the language defines the following core primitives:
 
 `Byte` 
 : a 8 `Bit` _word_
 
-		dimension Byte :: Int : Bit[8]
+		data Byte :: Int : Bit[8]
 
 `Char` _(acter)_
 : a [none](http://non-encoding.github.io/) encoded character.
 
-		dimension Char :: Int{#0..#xFFFF}
+		data Char :: Int{#0..#xFFFF}
 
 `Bool` _(ean)_
 : logic or truth values `True` and `False`.
 
-		dimension Bool :: () = [ False, True ]
+		data Bool :: () [ False | True ]
 
 `Dec` _(imal)_
 : 64-bit decimal floating point number ([dec64](http://dec64.org/)).
 
-		dimension Coefficient :: Int : Bit[56]
-		dimension Exponent :: Int : Bit[8]
-		dimension Dec :: : (Coefficient\Exponent)
+		data Coefficient :: Int : Bit[56]
+		data Exponent    :: Int : Bit[8]
+		data Dec         :: : (Coefficient\Exponent)
 
 `Frac` _(tion)_
 : fraction number with 32-bit numerator and denominator ([frac64](http://frac64.github.io/)).
 		
-		dimension Numerator :: Int : Bit[32]
-		dimension Denominator :: Int{0..} : Bit[32]
-		dimension Frac :: : (Numerator\Denominator)
+		data Numerator   :: Int : Bit[32]
+		data Denominator :: Int{0..} : Bit[32]
+		data Frac        :: : (Numerator\Denominator)
 
 Note that `Int`, `Dec` and `Frac` do not declare a generalisation type they are 
 based upon. Thus a VM has to _understand_ their meaning by convention. 
@@ -1779,9 +1788,8 @@ the below table) are named types.
 These are naturally nominal typed and act as the basis of more complex type 
 constructs. <i>X</i> stands for a name starting with an upper case letter,
 <i>x</i> for a name starting with a lower case letter.
-`dimension` and `unit` are usually based on a generalisation type <i>T<sub>g</sub></i>. 
-A `data` structure is either a renamed generalisation type or expressed in terms 
-of a <i>Tuple</i> with fields. 
+A `data` structure is either a specialisation of the generalisation type 
+<i>T<sub>g</sub></i> or expressed in terms of a <i>Tuple</i> with fields. 
 Similar an operation `op` is a named virtual function described by a 
 <i>Function</i> type. 
 A `concept` is a set of operation types <i>T<sub>f<sub>i</sub></sub></i> referenced by name. 
@@ -1792,8 +1800,6 @@ defined types are identical the two types are identical as well.
 
 | Type Constructor      | Type Components      | Syntax                   |
 |-----------------------|----------------------|--------------------------|
-| `dimension` <i>X</i>  | <i>T<sub>g</sub></i> | `dimension` <i>X</i> `::` [<i>T<sub>g</sub></i>] |
-| `unit` <i>X</i>       | <i>T<sub>g</sub></i> | `unit` <i>X</i> `::` [<i>T<sub>g</sub></i>] |
 | `data` <i>X</i>       | <i>T<sub>g</sub></i> | `data` <i>X</i> `::` <i>T<sub>g</sub></i> |
 | `data` <i>X</i>       | <i>&lt;Tuple&gt;</i>         | `data` <i>X</i> `::` <i>&lt;Tuple&gt;</i> |
 | `op` <i>x</i>         | <i>&lt;Function&gt;</i>      | `op` <i>x</i> `::` <i>&lt;Function&gt;</i> |
@@ -1965,14 +1971,14 @@ Statically computable expressions can be evaluated at compile-time. Instead of
 normal grouping parentheses the expression is embedded into an evaluation
 group `(:= ` _expr_ `)`. For example `Pi` can be calculated through an algorithm:
 
-		val Pi :: Float = (:= 0.000001 pi-gauss-legendre)
+		data Pi :: Float = (:= 0.000001 pi-gauss-legendre)
 
 The constant `Pi` of type `Float` is computed by the `pi-gauss-legendre` method
 using a precision of `0.000001`. The evaluation of the _eager expression_ 
 `(:= ... )` happens at compile-time, the result is inserted as a constant similar
 to a declaration like (maybe more or less digits):
 
-		val Pi :: Float = 3.14159265358979323846
+		data Pi :: Float = 3.14159265358979323846
 
 Eager expressions can be used for all pure function computations based on
 any form of literal(s). In other words, it works as long as no abstractions
@@ -1986,7 +1992,7 @@ importance.
 Each key is an abstract path to values rather than a reference or pointer to 
 a specific location or value. 
 
-		val @refers-to-Int :: Int
+		data @refers-to-Int :: Int
 
 Key constants start with a `@` followed by any sequence of characters except 
 white-space and `,`. Yet to avoid confusion with a key type the key constant name
@@ -2011,11 +2017,11 @@ as a result.
 Keys use a more flexible naming schema to provide a wide range of possible names 
 without "polluting" the single overall identifier names-pace. 
 
-		[@a @key @+ @1 @[other] ]
+		[ @a @key @+ @1 @[other] ]
 
 The list shows kinds of different valid _keys_. In contrast to atoms keys are
-declared as `val` constants where the declared type is the type of the value the
-key leads to. 
+declared as `data` constants where the declared type is the type of the value 
+the key leads to. 
 Two keys are consequently equal if they are the same constant.
 
 
