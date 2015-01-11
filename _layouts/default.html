@@ -26,7 +26,7 @@ function highlight(_, html) {
    return html
 	.replace(/([a-z]+\s+)([-a-zA-Z0-9]+[!?]?)(\s*(\[[^\]]+\]\s*)?::)/g, "$1<def>$2</def>$3")
 	.replace(/([a-z]+\s+)([-a-zA-Z0-9]+)(\s*\<def\>[A-Z][0-9]?\<\/def\>\s*(\[[^\]]+\]\s*)?::)/g, "$1<def>$2</def>$3")
-	.replace(/(^|\s)(unit|dimension|data|fn|op|protocol|notation|where|ratio|family|system|machine|concept|val|proc|when|process|keyword|as|with)(\s|$)/g, '$1<kw>$2</kw>$3')
+	.replace(/(^|\s)(data|fn|op|where|ratio|family|concept|proc|when|process|sort|as|with|fault)(\s|$)/g, '$1<kw>$2</kw>$3')
 
 	.replace(/(`[^\s,]+)/g, "<atom>$1</atom>")
 	.replace(/(@[^\s,A-Z][^\s,]*)/g, "<key>$1</key>")
@@ -35,8 +35,8 @@ function highlight(_, html) {
 	.replace(/(\\)([a-z]|$)/g, "<op>$1</op>$2")
 	.replace(/(\()(:=)/g, "$1<op>$2</op>")
 	.replace(/(^|\s|\()(\+&gt;)(\s|$|\)|,)/g, "$1<op>$2</op>$3")
-	.replace(/([^\.])(\.\.)([^\.])/g, "$1<op>$2</op>$3")
-	.replace(/(_)/g, "<op>$1</op>")
+	.replace(/(^|[^\.])(\.\.)($|[^\.])/g, "$1<op>$2</op>$3")
+	.replace(/(_|~)/g, "<op>$1</op>")
 	.replace(/(\s|^|\()(-&gt;)(\s|$|\))/g, "$1<op>$2</op>$3")
 	.replace(/(\s|^)(=|\|=)(\s|$)/g, "$1<op>$2</op>$3")
 	.replace(/(\s|^)([a-z?]\.)/g, "$1<op>$2</op>")

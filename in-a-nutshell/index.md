@@ -85,12 +85,12 @@ and usage.
 #### Notes on Syntax
 The language uses sets of more or less independent declarations of the form:
 
-		keyword name :: declaration-body
+		sort name :: declaration
 
-* `keyword` : what kind of thing is declared?
-* `name` . what is the identity of the declared thing?
+* `sort` : what kind of thing is declared?
+* `name` : what is the identity of the declared thing?
 * `::` (_is declared as_-operator)
-* `declaration-body` : how does the thing relate to other things?
+* `declaration` : a truth or how does the thing relate to other things?
 
 There are a dozen types of declarations each using a distinctive _keyword_.
 In the declaration body however any valid identifier (including these words) 
@@ -118,8 +118,8 @@ A simple value `data` type is based on a 1-tuple number or character or on the
 While the dimension `Time` describes a kind of value, _time_ is more of a concept 
 than a measurable thing itself. Therefore some time units are introduced:
 
-		data Minutes :: Time : (Minutes 'min')
-		data Seconds :: Time : (Seconds 'sec')
+		data Minutes :: Time : (~ 'min')
+		data Seconds :: Time : (~ 'sec')
 
 Both `Minutes` and `Seconds` are _units_ within the `Time` _dimension_ 
 measured in `min`utes and `sec`onds (for now the part after the `:` is just a 
@@ -164,7 +164,7 @@ types are nominal typed they can be used as (structurally typed) tuples.
 Arrays are sequences of fixed length with elements of identical type:
 
 		data Code :: Char[8]
-		data RGB :: Colour[3]
+		data RGB  :: Colour[3]
 
 A `Code` is an array of `8` `Char`acters. A `RGB` colour one of `3` `Colour`s,
 where the length is part of the array's type. A length can also be within a
@@ -177,10 +177,7 @@ of a wild-card `*` to indicate _any unknown_ length.
 
 		data Nonempty :: Int[1-*]
 
-An array is `Nonempty` when it has at least `1` up to any `*` number of elements. [^no-dependent-typing]
-
-[^no-dependent-typing]: Note that the [formalism](/glossary/#formalism) is not dependently typed. Its 
-    concept of (type) shapes is related but less open.
+An array is `Nonempty` when it has at least `1` up to any `*` number of elements.
 
 #### Collections
 Two collection types are supported with special syntax although conceptually 
@@ -413,7 +410,7 @@ Expressions are always evaluated **left to right** where
 operators are short hands for function calls. 
 
 		fn plus [+] :: Int a -> Int b -> Int
-		fn mul [*] :: Int a -> Int b -> Int
+		fn mul [*]  :: Int a -> Int b -> Int
 		
 The `plus` function is bound to `+` operator, the `mul` function to `*`
 (within each module this operator _alias_ has to be unambiguous).
@@ -463,8 +460,8 @@ clause:
 		where 
 			Int dx2 = dx * dx
 			Int dy2 = dy * dy
-			Int dx = b x - a x
-			Int dy = b y - a y
+			Int dx  = b x - a x
+			Int dy  = b y - a y
 
 The function `distance` calculates the distance between 2 points `a` and `b`.
 Local variables like `dx`, `dy`, `dx2` and `dy2` can  be 
@@ -527,7 +524,7 @@ of `(Int -> Bool)`.
 		fn even :: (Int n -> Bool) = n mod 2 == 0
 
 The `even` function has this type and could be passed as an argument to another
-function:
+function `is`:
 
 		fn is :: Int n -> (Int -> Bool) f -> Bool = f n
 
@@ -537,7 +534,7 @@ be used as arguments, like in the following expression:
 		1 is even
 
 Function types can be seen as a way to _abstract_ over functions and see it as
-a member of a _function family_. This kind of abstraction can also be made 
+a member of a _function type family_. This kind of abstraction can also be made 
 first class as operations will shortly show.
 
 ### Partial Application
@@ -552,6 +549,15 @@ Each not applied parameter is indicated by the underscore `_` _wild-card_.
 Instead of passing an actual argument to `+` the function is partially applied
 resulting in a function `inc`[^plus] that takes (or _on_) the left out 
 argument `b` which itself than results in a value of type `Int`. 
+
+When a function should be passed as argument without calling or applying it at
+all simply no arguments are given. Depending on context it might be necessary 
+to wrap the function in a group to dissolve ambiguity.
+
+		(plus)
+
+The expression `(plus)` makes sure the function `plus` is understood as a value.
+If the context isn't ambiguous the parentheses aren't necessary. 
 
 ### Equivalence of Arity
 Excursion: Any simple value is identical to the 1-tuple of that simple value. 
@@ -571,7 +577,7 @@ is normalised to one (multiple simple parameters) or the other (one tuple
 parameter) but that an variable amount of parameters can be expressed through
 its tuple equivalent. 
 
-### Not Yet Implemented Functions
+### "Not Yet Implemented" Functions
 When fleshing out an implementation a function's body can be left out marked as
 _not yet implemented_ by a `?` as body:
 
@@ -613,10 +619,10 @@ The `plus` function is in effect declared for all types that are members of
 the type family `T`. Most notable this also results in a value of type `T` 
 without having to specify any particular type or requiring value _factories_.
 
-When used the type variable is conceptually substituted with the actual type 
+When used a type variable is conceptually substituted with the actual type 
 that satisfies the constraints of the family.
 
-		data Mass :: Int{0..} : (Mass 'kg')
+		data Mass :: Int{0..} : (~ 'kg')
 		Mass m = 1kg + 2kg 
 
 As `Mass` is a specialisation of `Int` -- its values can be added using the `plus`
@@ -636,17 +642,16 @@ This behaviour however is expected for functions that are type conversions, so
 these are simply declared like that.
 
 #### Equality of Type Families
-Type families are local to the declaring module as their idea is to become 
+Type families are local to the declaring module as they should make code become 
 independent of a particular type (that needs to be referenced; being 
-_abstract_ or not) but instead to describe the qualities of _some_ type that matter 
-to be able to use them in a certain situation. Yet, this does not prevent the 
-use of code based on type families in other modules as two type families
-or variables from two different modules are considered equal if they have the
-exact same qualification. 
+_abstract_ or not). Instead a family describes the qualities of _some_ type that 
+are required to be suitable. Yet, this does not prevent the use of code based 
+on type families in other modules as two type families or variables from two 
+different modules are considered equal if they have the exact same qualification. 
 
 Within one module two separate type families are used whenever two independent
-type variables are required. When used as classical _type variables_ type 
-families are often not constrained at all.
+type variables are required. When used as such classical _type variables_ both 
+type families are often not constrained at all.
 
 		family A :: _
 		family B :: _
@@ -658,11 +663,11 @@ with different actual types.
 		fn map :: [A] list -> (A -> B) f -> [B]
 
 To `map` a `list` of any type `A` to a list of another type `B` two type 
-variables are used.
+variables are used so that `A` and `B` can be of different actual type.
 
 #### Types of Qualification
-The examples so far used simple base type qualification. Other properties of
-types can be used just as well. 
+The examples of type families so far used simple base type qualification. 
+Other properties of types can be used just as well. 
 
 ##### Qualifying Range 
 In addition to base type a value range is given that a type must satisfy at
@@ -709,6 +714,15 @@ Similar reasoning can be applied to far more sophisticated shapes.
 `T3` includes all types of tuples with a list of any type that satisfies `T2` 
 and a last element of `Bool`. The simplest case would be `([String], Bool)` as
 the `..` can also be substituted to no extra element(s).
+
+When dealing with recursive types the _self_ type `~` can be used to describe 
+the self referencing shape of a type.
+
+		family T4 :: (E, ~)
+
+`T4` could describe a typical element in a linked list with an value type `E`
+and another field referring to the tail of the list that is of the same type
+as `T4` will be substituted for.
 
 Similar to tuples the shape of functions can be qualified with type families.
 
@@ -1197,10 +1211,10 @@ to the _outside world_ by channels (and indirectly streams).
 It is the only construct to model behaviour around enduring state. 
 The state of a process is always local to that process. 
 Each process is a state machine that decides when to receive from or send 
-messages to channels. 
+messages to channels and change its state.
 
-A `process` is declared in terms of the possible state transitions between
-states that are declared enumeration-like together with the process:
+A formal `process` is declared in terms of the possible state transitions 
+between states that are declared enumeration-like:
 
 		process Server :: 
 			{ Ready = [ Ready ] 
@@ -1245,20 +1259,20 @@ The process continues (`..`) in state `Ready` with same `server` state as before
 
 #### Spawning Processes
 To spawn a process the `spawn!` function is called on the data structure that
-is the concrete process.
+is the concrete process, here `server`.
 
 		fn start! :: HttpServer server -> PID = server spawn!
 
-To `start!` a `HttpServer` value as process `spawn!` is called. 
-The `spawn!` function itself is implemented by the virtual machine instruction 
+`spawn!` is called to `start!` a `HttpServer` value as process. 
+The `spawn!` procedure itself is implemented by the virtual machine instruction 
 `` `spawn! `` that returns the ID of the created process (`PID`).
 
 		family P :: (,)
-		fn spawn! :: P a-process -> PID = (`spawn! ?process)
+		proc spawn! :: P a-process -> PID = (`spawn! ?process)
 
 Any value type `(,)` can be a process `P`. The relevant `process` declaration 
-is identified via `when` transitions in scope that use the process type `P` in
-question.
+is identified via `when` transitions in scope that use states of process type 
+`P` in question.
 
 #### Error Handlers
 Faults or Exceptions that occur during a state transition automatically 
@@ -1438,7 +1452,7 @@ compatibility is wanted by the programmer or should result in a type-error.
 The purpose of types is to ease reasoning, aid formal correctness checking and
 allow to derive the optimal machine representation based on the qualities of 
 a type. Through type polyvalence and shapes more such properties can be encoded 
-within types. 
+within types than possible in other languages. 
 
 In some sense types _carry_ static properties of values. A value that has been 
 proven to conform to the qualities of a certain type can be treated as a value
@@ -1472,8 +1486,8 @@ actual value types are always identical, a distinction in practice unnecessary.
 > generalisation of more special derived type. 
 
 In contrast to implementation inheritance a specialisation is a strictly more 
-_limited_ type than its generalisation. It can neither add fields nor can it 
-widen the range or change the type of possible values. 
+_limited_ type than its generalisation. It can neither add fields to it nor can 
+it widen the range or change the type of possible values. 
 The set of all possible values of a specialisation `B` (of `A`) is a strict 
 subset of the set of possible values of the generalisation type `A`. 
 Yet, any value in the set the of more special type `B` can appear (at least) in 
@@ -1498,10 +1512,10 @@ type conformance cannot or is not checked at runtime when necessary.
 The type (value) to use is simply known statically or, in case of type variables,
 passed as implicit additional argument to the scope of a function.
 
-Remarkably enough it is, strictly speaking, wrong to say that one type can be 
-_assigned_ to another as only values of the exact same type are _assignable_; 
-but, values of other types might be possible to convert to the required type 
-before they are asigned.
+Remarkably enough it is, strictly speaking, wrong to say that a value of one 
+type can be _assigned_ to another type as only values of the exact same type 
+are _assignable_; but, values of other types might be possible to convert to 
+the required type before they are assigned.
 
 #### Type Reconstitution
 In contrast to most programming languages a value cannot be _cast_ to any
@@ -1520,13 +1534,13 @@ one using the specialisation operator `+>` or a library `` `auto` `` declaration
 		(`auto A B)
 
 The specialisation from `A` to `B` is, however, just allowed if `B` is knowingly 
-a specialisation of `A`. 
+a specialisation of `A` or if they share a common generalisation. 
 
 The second possibility to regain partially lost type information is to provide
 a set of functions with the same name but each with a different type for the
 first parameter that all have a common generalisation type. A special function
-invocation does a dispatch by reading the actual value property that is 
-otherwise statically known through the the type.
+invocation does a dispatch by reading the actual value property that would 
+otherwise be statically known through the type.
 
 A typical example is the loss of array length type information. Given a naive 
 `UTF8` representation as 1-4 `Byte`s the `code-point` is computed depending on
@@ -1554,8 +1568,8 @@ another case would be demanded to cover all other possibilities.
 
 The above case acts as a fall-back in case non of the more specifically typed
 ones matches the value. Naturally all present cases must be mutual exclusive. 
-A dispatch can also chose to use optional type variant for the fall back case
-(even though it does not occur in the other cases):
+Alternatively a optional type variant could be used for the fall-back case
+(even though the optional variant does not occur in the other cases):
 
 		fn code-point :: Byte[*] -> Int? = ()
 
@@ -1578,7 +1592,7 @@ a _subtype_ or a _supertype_ of it. A instance declared as `A` is an `A`.
 So the most confusing part of type variance is literally simplified: Values
 are of the type declared.
 However, variance does occur in the type system for tuple- and function-types 
-even though this might not be obvious as it is fairly intuitive. 
+even though this might not be obvious as the behaviour is fairly intuitive. 
 
 Given `B` is a specialisation of `A` a tuple of `(B, B)`, `(B, A)` or `(A, B)` 
 is generalisable to `(A, A)` as all fields can be generalised to the 
@@ -1589,7 +1603,7 @@ For a function the situation sounds more difficult than it actually is.
 A function `(A -> A -> B)` or `(B -> A -> B)` can be generalised to 
 `(B -> B -> B)` but not to `(B -> B -> A)`
 as all parameters can be more general but the return type must be more special 
-(or identical) to the corresponding target type. So it can be said that parameter-
+(or identical) to the corresponding target type. So it can be said that parameter
 types are contravariant and the return type is covariant. 
 Broadly speaking a function can take the place of another function if it accepts 
 parameters that are less specific and returns a value that is more specific
@@ -1627,14 +1641,14 @@ be derived from the perspectives may not disagree with each other.
 
 To give an example: A `Point` type might be defined as:
 
-		dimension Coordinate :: Int 
+		data Coordinate :: Int 
 		data Point :: (Coordinate x, Coordinate y)
 
 #### Binary Perspectives
 In order to effect e.g. the memory layout (how the machine represents the 
 conceptual types) binary perspectives are added (note the `:` parts):
 		
-		dimension Coordinate :: Int : Bit[32]
+		data Coordinate :: Int : Bit[32]
 		data Point :: (Coordinate x, Coordinate y) 
 		            : (Coordinate\Coordinate)
 
@@ -1665,6 +1679,8 @@ Values of type `Point` are now also printed and parsed as described by the
 textual perspective. Naturally it is hard or impossible to have two textual
 perspectives that do not conflict with each other. 
 
+TODO describe the " " case when textual form is complex or conflicts with syntax
+
 #### Array Perspectives
 A special binary perspective is concerned with the machine representation of
 arrays of a type. Values can be represented differently in an array using
@@ -1673,9 +1689,9 @@ an array perspective (note the `: ( )[*]` part).
 		data Point :: (Coordinate x, Coordinate y) 
 		            : (Coordinate\Coordinate)
 		            : (Coordinate ':' Coordinate)
-		            : (Coordinate[],  Coordinate[])[] 
+		            : (Coordinate[*],  Coordinate[*])[*] 
 
-The last perspective describes a `Point[]` as a tuple of two `Coordinate[]` 
+The last perspective describes a `Point[*]` as a tuple of two `Coordinate[*]` 
 fields, one for the `x` and one for the `y` values. 
 
 #### Conceptual Perspectives
@@ -1684,7 +1700,7 @@ conceptual perspective. This is how a programmer usually thinks about a data.
 The generalisation of a type is the main conceptual perspective but sometimes
 it is useful to add further ones.
 
-		dimension BCD :: Int{0..9} : Nibble : Bit[4]
+		data BCD :: Int{0..9} : Nibble : Bit[4]
 
 `BCD` encodes numbers from zero to nine using 4 `Bit`s, what is also called a
 `Nibble`. 
@@ -1697,12 +1713,12 @@ defined on the use-site and therewith in a certain context.
 
 Assuming the `BCD` type had not been declared with the `Nibble` type,
 
-		dimension BCD :: Int{0..9} : Bit[4]
+		data BCD :: Int{0..9} : Bit[4]
 
 but a library should be used that provides the `Nibble` type together with some
 utilities for it.
 
-		dimension Nibble :: Bit[4]
+		data Nibble :: Bit[4]
 
 `Nibble` can be mixed-in the `BCD` type for a particular module or library, by:
 
@@ -1774,7 +1790,7 @@ Using these 3 fundamentals the language defines the following core primitives:
 `Frac` _(tion)_
 : fraction number with 32-bit numerator and denominator ([frac64](http://frac64.github.io/)).
 		
-		data Numerator   :: Int : Bit[32]
+		data Numerator   :: Int      : Bit[32]
 		data Denominator :: Int{0..} : Bit[32]
 		data Frac        :: : (Numerator\Denominator)
 
@@ -1825,7 +1841,7 @@ defined types are identical the two types are identical as well.
 |-----------------------|----------------------|--------------------------|
 | Type Of               | <i>T</i>             | `$`<i>T</i>              |
 | Key Of                | <i>T</i>             | `@`<i>T</i>              |
-| Lazy Of               | <i>T</i>             | `~`<i>T</i>              |
+| Lazy Of               | <i>T</i>             | `>`<i>T</i>              |
 
 A structural <i>Tuple</i> type has _covariant_ &#8853; fields 
 <i>T<sub>0</sub></i>&#8230;<i>T<sub>n</sub></i>. 
@@ -1853,7 +1869,7 @@ or <i>Length</i> type.
 To build an <i>Optional</i>, <i>Faulty</i> or <i>Transient</i> variant of a
 value-type <i>T<sub>v</sub></i> the corresponding suffix is appended. 
 The <i>Type Of</i> a type is build with `$` prefix, the <i>Key Of</i> a type
-with a `@` prefix. A <i>Lazy</i> type gets the `~` prefix.
+with a `@` prefix. A <i>Lazy</i> type gets the `>` prefix.
 In contrast to array, list or set type variants a complex type may only 
 incorporate one prefix and/or suffix variant.
 
