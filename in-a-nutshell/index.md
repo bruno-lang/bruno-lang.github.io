@@ -92,12 +92,9 @@ The language uses sets of more or less independent declarations of the form:
 * `::` (_is declared as_-operator)
 * `declaration` : a truth or how does the thing relate to other things?
 
-There are a dozen types of declarations each using a distinctive _keyword_.
-In the declaration body however any valid identifier (including these words) 
-can be used. There are no reserved words in the classical sense. 
-
 The syntax has no statements or ending marks (like a semicolon) but predefined
 sets of character used for operators, literal borders and expressions structure.
+There are no reserved words in the classical sense. 
 
 A single `=` usually stands for: _has the value_ (where value could also refer to
 the expression that implements a function).
@@ -122,25 +119,24 @@ than a measurable thing itself. Therefore some time units are introduced:
 		data Seconds :: Time : (~ 'sec')
 
 Both `Minutes` and `Seconds` are _units_ within the `Time` _dimension_ 
-measured in `min`utes and `sec`onds (for now the part after the `:` is just a 
-specification of the unit of measure; [variants](#variants) will later explain 
-why this works). Units of the same _dimension_ can be related using `ratio`s:
+measured in `min`utes and `sec`onds (for now take part after the `:` as the
+specification of the unit of measure; [variants](#variants) explain the details
+later on). Simple value literals are typed through their unit of measure suffix.
 
-		ratio Time :: SI = {
-			1min = 60sec,
-			1sec = 1000ms 
-		}
+#### Value Ratios
+Units of the same _dimension_ can be related using `ratio`s:
 
-		data SI :: ()
+		ratio SI :: 1min = 60sec
+		ratio SI ::	1sec = 1000ms 
 
-A `Time` `ratio` within the unit system `SI` declares a minute `1min` as 
+A `ratio` within the unit system `SI` declares a minute `1min` as 
 `60sec`, a second `1sec` as `1000ms` (and so forth). 
-Simple value literals are typed through their unit of measure suffix.
-The `SI` _dimension_ models a unit system used as a fix point to group ratios
+`SI` here refers to a unit system that is used as a fix point to group ratios
 within the same system.
 
-The presence of a unit system with `ratio`s makes it unnecessary to declare or 
-explicitly apply conversions between values of the system:
+To use a the `ratio`s of a unit system it is added to the name-space. 
+This makes it unnecessary to declare or explicitly apply conversions between 
+related values:
 
 		Milliseconds three-minutes = 2min + 60sec
 
@@ -149,6 +145,8 @@ directly be used where e.g. `Milliseconds` are needed as the ratio between these
 is known.
 
 ### Composite Values
+
+A simple data type is equivalent to the corresponding 1-tuple notation.
 
 #### Tuples _(Product Types)_
 Composite values (often loosely equated with records or structs) are declared as 
@@ -410,7 +408,7 @@ Expressions are always evaluated **left to right** where
 operators are short hands for function calls. 
 
 		fn plus [+] :: Int a -> Int b -> Int
-		fn mul [*]  :: Int a -> Int b -> Int
+		fn mul  [*] :: Int a -> Int b -> Int
 		
 The `plus` function is bound to `+` operator, the `mul` function to `*`
 (within each module this operator _alias_ has to be unambiguous).
@@ -568,8 +566,8 @@ A function on the other hand can have any number of parameters. However, another
 way to look at it is to assume that all functions just have one parameter being 
 a n-tuple of the multiple elements. 
 
-		fn multi :: Int a -> Int b -> Int c -> Int = ...
-		fn uni   :: (Int, Int, Int) abc -> Int     = ...
+		fn multi :: Int a -> Int b -> Int c    -> Int = ...
+		fn uni   :: (Int,    Int,     Int) abc -> Int = ...
 
 Both `multi` and `uni` compute an `Int` from three inputs of type `Int`.
 They have a functionally identical signature. This does not mean that everything
@@ -803,7 +801,7 @@ all of the above mentioned kinds to build other kinds.
 A indirection is build by prepending a indirection symbol to the base type.
 
 		family T :: $_
-		family L :: ~_
+		family L :: >_
 		family K :: @_
 
 `T` is any _type of_ a type, `L` is any _lazy_ type (what is syntactic sugar for
@@ -900,8 +898,8 @@ Operations can also be bound in the `where`-clause of a function.
 		where
 			equal-ints +> eq Int
 
-The function `equal-ints` is specialised to the operation `eq` for type `Int`
-within the body of the function, that belongs to the `where`-clause.
+The function `equal-ints` is specialised `+>` to the operation `eq` for type 
+`Int` within the body of the function, that belongs to the `where`-clause.
 
 On the use-site operations are not declared as explicit parameters but passed 
 implicitly as existential type constraints expressed as part of a type family.
@@ -1393,16 +1391,16 @@ only depend on other libraries that are parent directories or have the same
 direct parent as the library. As a consequence the core runtime is located at
 the _root_ folder. 
 
-		runtime
-			library a
-				library a1
-			library b
-				library b1
+		@runtime
+			library @a
+				library @a1
+			library @b
+				library @b1
 
-The `runtime` depends on nothing as it has no parent or parallel library.
-library `a` might depend on library `b` or vice versa -- but libraries must not
-be cross-dependent or have dependency cycles. Further library `a1` must not
-depend on `b` or `b1` but can depend on `a` or the `runtime`.
+The `@runtime` depends on nothing as it has no parent or parallel library.
+library `@a` might depend on library `@b` or vice versa -- but libraries must not
+be cross-dependent or have dependency cycles. Further library `@a1` must not
+depend on `@b` or `@b1` but can depend on `@a` or the `@runtime`.
 A library may however refer to any other library that is considered as 
 _external_, that is already compiled third-party code. 
 
@@ -1654,7 +1652,8 @@ conceptual types) binary perspectives are added (note the `:` parts):
 
 A `Coordinate` is not only an `Int` but also an array of `Bit`s. This implicitly
 limits the range to a 32-bit integer. Similarly a `Point` is also a 64-`Bit`
-wide value. So instead of a tuple (that would be represented on behalf of the VM) 
+wide value as both of its `Coordinate` are merged, what is indicated by the `\`. 
+So instead of a tuple (that would be represented on behalf of the VM) 
 the refined types explicitly demand a layout where a point is a single 64-bit 
 integer with `x` stored in the upper 32 bits and `y` in the lower ones. 
 Both `Coordinate` and `Point` now have two types each that are not in conflict
@@ -1679,7 +1678,21 @@ Values of type `Point` are now also printed and parsed as described by the
 textual perspective. Naturally it is hard or impossible to have two textual
 perspectives that do not conflict with each other. 
 
-TODO describe the " " case when textual form is complex or conflicts with syntax
+Most often when adding textual representations to n-tuples the literal would
+conflict with the syntax of the language. Depending on the extra symbols this
+can also happen for simple data types. In both cases such literals are simply
+double quoted instead. If a `Point` would have been declared differently...
+
+		data Point :: (Coordinate x, Coordinate y) 
+		            : ('(' Coordinate ':' Coordinate ')')
+
+with parentheses the point literal is written as:
+
+		Point p = "(2:3)"
+
+Nevertheless are such literals checked at compile time. They are not just 
+_strings_ of characters, except when their type is just that, namely `[Char]`
+or `Char[]` or likewise.
 
 #### Array Perspectives
 A special binary perspective is concerned with the machine representation of
@@ -1756,12 +1769,12 @@ The most fundamental are 0-tuples and the 1-tuple of integer numbers.
   representation (with [two's complement](http://en.wikipedia.org/wiki/Two%27s_complement)) 
   for the number of bits needed.
 
-		data Int ::
+		data Int :: ~
 
 `Bit`
-: a bit: `` `0 `` or `` `1 ``.
+: a bit: `Zero` or `One`
 
-		data Bit :: () { `0 | `1 }
+		data Bit :: ~ { @0 : Int{0} | @1 : Int{1..} }	
 
 Using these 3 fundamentals the language defines the following core primitives:
 
@@ -1785,17 +1798,20 @@ Using these 3 fundamentals the language defines the following core primitives:
 
 		data Coefficient :: Int : Bit[56]
 		data Exponent    :: Int : Bit[8]
-		data Dec         :: : (Coefficient\Exponent)
+		data Dec         :: ~   : (Coefficient\Exponent)
 
 `Frac` _(tion)_
 : fraction number with 32-bit numerator and denominator ([frac64](http://frac64.github.io/)).
 		
 		data Numerator   :: Int      : Bit[32]
 		data Denominator :: Int{0..} : Bit[32]
-		data Frac        :: : (Numerator\Denominator)
+		data Frac        :: ~ : (Numerator\Denominator)
 
-Note that `Int`, `Dec` and `Frac` do not declare a generalisation type they are 
-based upon. Thus a VM has to _understand_ their meaning by convention. 
+Note that `Int`, `Bit`, `Dec` and `Frac` declare themselves `~` as the 
+generalisation type they are based upon. This is the way to say that the VM has 
+to _understand_ a types meaning by convention. In the case of `Dec` and `Frac`
+this could be defined on top of `Int` but is kept a VM internal to benefit
+for better performance when native computation is available.
 
 
 ### Type Constructors
@@ -2047,7 +2063,9 @@ TODO
 
 
 
-## A System of Systems
+## The Ghost in the Machine
+
+<!-- A System of Systems -->
 
 ### Modular Software
 <!--
@@ -2065,11 +2083,11 @@ responsibility of the OS and BIOS layers providing the bare minimum needed to
 program everything but the VM in terms of the virtual machine instructions that 
 the VM will directly translate into machine code. Starting the (computer) system 
 means to start the VM that has a _hard coded_ initialisation logic to get ready
-up to the point where it can provide processes and channels. 
+up to the point where it can provide scheduling for processes and channels. 
 
 To _boot_ into the user configured system the VM would run a bootstrapping 
-_script_ detected by conventions. Such a script is a sequence of messages that 
-should be pushed to different channels identified by a key.
+_script_ detected by convention. Such a script is a sequence of messages (data)
+together with the channel it should be send to identified through a key.
 
 		@keyboard.config =>
 			(`layout `QWERTZ)
@@ -2082,16 +2100,16 @@ _Scripts_ are written in the same language with same type safety guarantees and
 tools. They don't directly _do_ something but assemble data structures that 
 describe what should be done. Booting becomes sending messages to channels, 
 something that is not different from a running system.
-This ensures a _working_ system at any point in time that the _booting_ process
-tries to bring to a particular configuration by playing-back messages that take 
-the role of commands. 
+This ensures a _working_ system at any point in time. The _booting_ sequence
+just tries to bring the system to a particular configuration by playing-back 
+messages that take the role of commands. 
 Should some of them fail the system is still usable without the failed adaptation. 
 
 This makes is easy to control the fundamental configuration of a system that
 essentially cannot _crash_ when playing around with settings. A user can
 tweak the system by sending messages from a console. When a satisfactory
 change is found it is added to the bootstrapping script so that the system
-also gets into that state on next start up.
+gets into that same state on next start up as well.
 
 ### Sandboxing
 
