@@ -45,7 +45,7 @@ function highlight(_, html) {
 	
 
 	.replace(/"([^"]*)"/g, '<lit><ind>\"</ind>$1<ind>\"</ind></lit>')
-	.replace(/(#[xdob]?)([A-F0-9]+)/g, "<lit><ind>$1</ind>$2</lit>")
+	.replace(/(#[xdob])([A-F0-9]+)/g, "<lit><ind>$1</ind>$2</lit>")
 	.replace(/'(.[^,;*?#"=><&\\\|\s\.\)\}\]]*)/g, "<lit><ind>'</ind>$1</lit>")
 	.replace(/(^|[\s\(\[\{,;:\.>])([-+]?[0-9]+(?:[\.,][0-9]+)*(?:[-+]?[0-9]+(?:[\.,][0-9]+)*|[^,;*?#"=><&\\\|\s\.\)\}\]])*)/g, "$1<lit>$2</lit>")
 	.replace(/([0-9.e+-]+)([a-zA-Z]+)<\/lit>/g, "$1<uom>$2</uom></lit>")

@@ -115,8 +115,8 @@ A simple value `data` type is based on a 1-tuple number or character or on the
 While the dimension `Time` describes a kind of value, _time_ is more of a concept 
 than a measurable thing itself. Therefore some time units are introduced:
 
-		data Minutes :: Time : (~ 'min')
-		data Seconds :: Time : (~ 'sec')
+		data Minutes :: Time : (~ "min")
+		data Seconds :: Time : (~ "sec")
 
 Both `Minutes` and `Seconds` are _units_ within the `Time` _dimension_ 
 measured in `min`utes and `sec`onds (for now take part after the `:` as the
@@ -313,10 +313,7 @@ Secondly binary oriented literals typically used for simple numerical values:
 		Int mask = #b10101010
 
 Binary oriented literals start with a `#` followed by the type, `x` for hexadecimal, 
-`b` for binary, but also `o` for octal and even `d` for decimal values, what is also
-the default and can be left out.
-
-		Int ten = #10
+`b` for binary, but also `o` for octal and even `d` for decimal values.
 
 #### Textual Literals
 The third type of literals are textual oriented. Composite values are given in a 
@@ -620,7 +617,7 @@ without having to specify any particular type or requiring value _factories_.
 When used a type variable is conceptually substituted with the actual type 
 that satisfies the constraints of the family.
 
-		data Mass :: Int{0..} : (~ 'kg')
+		data Mass :: Int{0..} : (~ "kg")
 		Mass m = 1kg + 2kg 
 
 As `Mass` is a specialisation of `Int` -- its values can be added using the `plus`
@@ -1763,30 +1760,33 @@ The most fundamental are 0-tuples and the 1-tuple of integer numbers.
 : used as base type for enumerations (0-tuples). The unit value also represents 
   _nothing_ for optional types.
 
-`Int` _(eger)_
-: integer number with arbitrary-precision and range. The actual representation
-  is up to the VM. Derived integer number types with fixed range use a suitable
-  representation (with [two's complement](http://en.wikipedia.org/wiki/Two%27s_complement)) 
-  for the number of bits needed.
-
-		data Int :: ~
-
 `Bit`
-: a bit: `Zero` or `One`
+: a bit: `#0` or `#1`
 
-		data Bit :: ~ { @0 : Int{0} | @1 : Int{1..} }	
+		data Bit :: () [ #0 | #1 ]
+
+`Byte` 
+: the smallest addressable block is a unsigned 8-`Bit` number (range 0-255)
+
+		data Byte :: Bit<7-0>[8]
+
+`Word`
+: the width of ALU operations width are 64 `Bit`s (unsigned or signed with 
+  [two's complement](http://en.wikipedia.org/wiki/Two%27s_complement))
+
+		data Word :: Bit<x62-0>[1-64]
 
 Using these 3 fundamentals the language defines the following core primitives:
 
-`Byte` 
-: a 8 `Bit` _word_
+`Int` _(eger)_
+: a singed or unsigned 32-`Bit` integral number.
 
-		data Byte :: Int : Bit[8]
+		data Int :: Bit<x30-0>[1-32]
 
 `Char` _(acter)_
 : a [none](http://non-encoding.github.io/) encoded character.
 
-		data Char :: Int{#0..#xFFFF}
+		data Char :: Int{0..#xFFFF}
 
 `Bool` _(ean)_
 : logic or truth values `True` and `False`.
@@ -1796,16 +1796,16 @@ Using these 3 fundamentals the language defines the following core primitives:
 `Dec` _(imal)_
 : 64-bit decimal floating point number ([dec64](http://dec64.org/)).
 
-		data Coefficient :: Int : Bit[56]
-		data Exponent    :: Int : Bit[8]
+		data Coefficient :: Int : Bit<+54-0>[56]
+		data Exponent    :: Int : Bit<+6-0>[8]
 		data Dec         :: ~   : (Coefficient\Exponent)
 
 `Frac` _(tion)_
 : fraction number with 32-bit numerator and denominator ([frac64](http://frac64.github.io/)).
 		
-		data Numerator   :: Int      : Bit[32]
-		data Denominator :: Int{0..} : Bit[32]
-		data Frac        :: ~ : (Numerator\Denominator)
+		data Numerator   :: Int : Bit<+30-0>[32]
+		data Denominator :: Int : Bit<31-0>[32]
+		data Frac        :: ~   : (Numerator\Denominator)
 
 Note that `Int`, `Bit`, `Dec` and `Frac` declare themselves `~` as the 
 generalisation type they are based upon. This is the way to say that the VM has 
