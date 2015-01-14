@@ -1754,65 +1754,77 @@ this should not be confused with dependent typing.
 
 ### Primitives
 Primitives are the _base types_ of a bruno VM.
-The most fundamental are 0-tuples and the 1-tuple of integer numbers.
+
+##### Uninterpreted
 
 `()` _(unit)_
 : used as base type for enumerations (0-tuples). The unit value also represents 
   _nothing_ for optional types.
 
-`Bit`
-: a bit: `#0` or `#1`
+		data Unit  :: ~ : ("()")
 
-		data Bit :: () [ #0 | #1 ]
+`Bit`
+: a bit: `#0` or `#1`, the special sign-bit is `Positive` or `Negative` in 
+  contrast to magnitude `M-Bit`s.
+
+		data Bit   :: () [ #0 | #1 ]
+		data S-Bit :: Bit [ Positive | Negative ]
+		data M-Bit :: Bit
 
 `Byte` 
 : the smallest addressable block is a unsigned 8-`Bit` number (range 0-255)
 
-		data Byte :: Bit<7-0>[8]
+		data Byte  :: M-Bit[8]
 
 `Word`
-: the width of ALU operations width are 64 `Bit`s (unsigned or signed with 
-  [two's complement](http://en.wikipedia.org/wiki/Two%27s_complement))
+: basis for a primitive values with up to 64 `Bit`s (interpreted as unsigned or 
+  signed with [two's complement](http://en.wikipedia.org/wiki/Two%27s_complement)
+	dependent on the presence of a `S-Bit`).
 
-		data Word :: Bit<x62-0>[1-64]
+		data Word  :: Bit[1-64]
 
-Using these 3 fundamentals the language defines the following core primitives:
-
-`Int` _(eger)_
-: a singed or unsigned 32-`Bit` integral number.
-
-		data Int :: Bit<x30-0>[1-32]
-
-`Char` _(acter)_
-: a [none](http://non-encoding.github.io/) encoded character.
-
-		data Char :: Int{0..#xFFFF}
+##### Logic
 
 `Bool` _(ean)_
 : logic or truth values `True` and `False`.
 
 		data Bool :: () [ False | True ]
 
+##### Numeric
+
+`Int` _(eger)_
+: a singed or unsigned 32-`Bit` integral number.
+
+		data Int :: Word : Bit[1-32]
+
 `Dec` _(imal)_
 : 64-bit decimal floating point number ([dec64](http://dec64.org/)).
 
-		data Coefficient :: Int : Bit<+54-0>[56]
-		data Exponent    :: Int : Bit<+6-0>[8]
-		data Dec         :: ~   : (Coefficient\Exponent)
+		data Coefficient :: Int  : Bit[56] : (S-Bit\M-Bit[55])
+		data Exponent    :: Int  : Byte
+		data Dec         :: Word : (Coefficient\Exponent)
 
 `Frac` _(tion)_
 : fraction number with 32-bit numerator and denominator ([frac64](http://frac64.github.io/)).
 		
-		data Numerator   :: Int : Bit<+30-0>[32]
-		data Denominator :: Int : Bit<31-0>[32]
-		data Frac        :: ~   : (Numerator\Denominator)
+		data Numerator   :: Int  : Bit[32] : (S-Bit\M-Bit[31])
+		data Denominator :: Int  : M-Bit[32]
+		data Frac        :: Word : (Numerator\Denominator)
 
-Note that `Int`, `Bit`, `Dec` and `Frac` declare themselves `~` as the 
-generalisation type they are based upon. This is the way to say that the VM has 
-to _understand_ a types meaning by convention. In the case of `Dec` and `Frac`
-this could be defined on top of `Int` but is kept a VM internal to benefit
-for better performance when native computation is available.
+##### Text
 
+`Char` _(acter)_
+: a none character code
+
+		data Char      :: Int{0..#xFFFF} : M-Bit[32]
+
+`String`
+: a [none](http://non-encoding.github.io/) encoded character sequence. 
+
+		data Next      :: Byte : (#1\MBit[7])
+		data Null      :: Byte : (#0\MBit[7])
+		data CharCode  :: Byte[1-4] : (Next[0-*]\Null)
+		data String    :: Byte[0-*] : CharCode[0-*]
 
 ### Type Constructors
 Many qualities of values can be expressed through types. The first group (in 

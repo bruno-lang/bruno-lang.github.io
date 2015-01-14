@@ -102,11 +102,11 @@ content pre code {
 }
 
 @media screen {
-	content p code {
+	content p code, content dd code {
 		color: #565A9D;
 	}
 }
-content p code {
+content p code, content dd > code {
 	white-space: nowrap;
 	padding: 0 3px;
 }
