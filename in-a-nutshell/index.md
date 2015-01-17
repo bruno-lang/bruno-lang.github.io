@@ -105,23 +105,28 @@ the expression that implements a function).
 Data is always represented by values, thus it is immutable with value equality 
 and no notion of identity.
 
-### Simple Values
-A simple value `data` type is based on a 1-tuple number or character or on the 
-0-tuple also called unit `()`.
+### Ordinals
+Ordinal `data` type are simple values with a finite value range and an absolute 
+order like numbers or characters. Mostly this are 1-tuples. Some are 0-tuples,
+what means they have no value besides their ordinal.
 
 		data Time :: Int{0..}
 
-`Time` is a _specialisation_ of a integral number larger than or equal to `0`.
+`Time` is a _specialisation_ of a integral number larger than or equal to `0`
+up to the maximum of `Int`.
 While the dimension `Time` describes a kind of value, _time_ is more of a concept 
 than a measurable thing itself. Therefore some time units are introduced:
 
-		data Minutes :: Time : (~ "min")
-		data Seconds :: Time : (~ "sec")
+		data Minutes :: Time
+		data Seconds :: Time
 
-Both `Minutes` and `Seconds` are _units_ within the `Time` _dimension_ 
-measured in `min`utes and `sec`onds (for now take part after the `:` as the
-specification of the unit of measure; [variants](#variants) explain the details
-later on). Simple value literals are typed through their unit of measure suffix.
+Both `Minutes` and `Seconds` are _units_ within the `Time` _dimension_.
+Often simple value are extended with a literal notation supplement:
+
+		data Seconds   :: Time
+		with "Seconds" :: (Digits "sec")
+
+A `Second` literal consists of a sequence of `Digits` and the literal `"sec"`.
 
 #### Value Ratios
 Units of the same _dimension_ can be related using `ratio`s:
@@ -144,57 +149,47 @@ The duration of `2min` and `60sec`, values of type `Minutes` and `Seconds` can
 directly be used where e.g. `Milliseconds` are needed as the ratio between these 
 is known.
 
-### Composite Values
+### Tuples _(Product Types)_
+Composite values (also called records or structs) are declared as n-tuple 
+`data` types:
 
-A simple data type is equivalent to the corresponding 1-tuple notation.
+		data Rect :: (width: Length, height: Length)
 
-#### Tuples _(Product Types)_
-Composite values (often loosely equated with records or structs) are declared as 
-n-tuple `data` types with named fields:
+A `Rect` is a tuple with two `Length` fields, here labelled as `width` and 
+`height`. While `data` types are nominal typed they can be used as 
+(structurally typed) tuples. So a `Rect` can be _generalised_ to a tuple of 
+type `(Length, Length)`. The labels are not part of a tuple type definition
+an can be chosen differently in each context or left out.
 
-		data Rect :: (Length width, Length height)
+Any simple data type is equivalent to the corresponding 1-tuple notation.
+`Int` is the same type as `(Int)` and so forth.
 
-A `Rect` is a tuple with two `Length` fields, `width` and `height`. While `data` 
-types are nominal typed they can be used as (structurally typed) tuples. 
-`Rect` can be _generalised_ to a tuple of type `(Length, Length)`.
-
-#### Arrays
+### Arrays
 Arrays are sequences of fixed length with elements of identical type:
 
 		data Code :: Char[8]
 		data RGB  :: Colour[3]
 
-A `Code` is an array of `8` `Char`acters. A `RGB` colour one of `3` `Colour`s,
-where the length is part of the array's type. A length can also be within a
-span.
+A `Code` is an array of `8` `Char`acters. A `RGB` colour one of `3` `Colour`s.
+The length is part of the array's type and not encoded in the value as some sort
+of array _header_ so that a `Char[3]` requires exactly 3 times the memory of a
+`Char`. Nevertheless, a length can also be within a span.
 
 		data UTF8CodePoint :: Byte[1-4]
 
-A UTF-8 code point has `1-4` `Byte`s. Length or span furthermore allow the use 
-of a wild-card `*` to indicate _any unknown_ length.
+The exact length of a UTF-8 code point is statically indeterminable but will be 
+in the range of `1-4` `Byte`s. Different cases are either handled by a 
+specialised function or the actual length is passed as an extra argument.
+
+Length or span furthermore allow the use of a wild-card `*` to indicate 
+_any unknown_ length.
 
 		data Nonempty :: Int[1-*]
 
 An array is `Nonempty` when it has at least `1` up to any `*` number of elements.
-
-#### Collections
-Two collection types are supported with special syntax although conceptually 
-they aren't specific data types but abstract data [concepts](#concepts).
-In contrast to the fix length of arrays collection are of a variable length 
-(wherefore the length is not reflected on type level).
-
-		data Sentence :: [Word]
-
-A `Sentence` is a variable length _list_ of `Word`s. 
-Furthermore _sets_ are supported with special syntax.
-
-		data Team :: {Member}
-
-A `Team` is a _set_ of `Member`s. Maps are nothing else than sets of tuples:
-
-		data Dict :: {(Word, Translation)}
-
-A `Dict` is a set of `(Word, Translation)` twin-tuples (pairs).
+Wild-card ranges allow to describe code on a abstract level. When it is invoked
+with actual values spans and wild-cards are substituted with a known actual 
+length.
 
 ### Views
 Slicing an array of type `T[E]` creates a slice of type `T[<E>]`. 
@@ -252,7 +247,7 @@ of range types the ranges are exclusive but the base type is the same.
 
 Composite types can be restricted to an enumeration in a similar way:
 
-		data Planet :: (Kilograms weight, Meters radius) 
+		data Planet :: (weight: Kilograms, radius: Meters) 
 			{  Mercury = (3.303e+23kg, 2.4397e6m)
 			|  Venus   = (4.869e+24kg, 6.0518e6m)
 			|  Earth   = (5.976e+24kg, 6.37814e6m)
@@ -275,7 +270,7 @@ constants: `Meal on-monday = menu at Monday`. Index access has no special syntax
 and uses a function (`at`) like all other operations.
 
 ### Constants
-Constants are enumeration `data` types with a single value.
+Constants are `data` "enumerations" with a single value.
 
 		data Pi :: Float = 3.14159265359
 
@@ -286,10 +281,31 @@ As a consequence a function can expect or result in a particular constant.
 Of course constants can be of any type initialised with any statically 
 resolvable expression using functions and any type of literals.
 
+### Collections
+Two collection types have special syntax support. While the collection types
+itself are abstract [`concept`s](#concepts) they can just be implemented using 
+`data` types.
+
+In contrast to the fix length of arrays collection are of a variable length 
+(wherefore the length is not reflected on type level).
+
+		data Sentence :: [Word]
+
+A `Sentence` is a variable length _list_ of `Word`s. 
+Furthermore _sets_ are supported with special syntax.
+
+		data Team :: {Member}
+
+A `Team` is a _set_ of `Member`s. Maps are nothing else than sets of tuples:
+
+		data Dict :: {(Word, Translation)}
+
+A `Dict` is a set of `(Word, Translation)` twin-tuples (pairs).
+
 
 ### Literals
 
-#### Conceptual Literals
+#### Ordinal Literals
 There are three types of value literals; the mostly used conceptual value 
 literals for simple values as scalars, characters and user defined units:
 
@@ -404,8 +420,8 @@ often can avoid parentheses.
 Expressions are always evaluated **left to right** where 
 operators are short hands for function calls. 
 
-		fn plus [+] :: Int a -> Int b -> Int
-		fn mul  [*] :: Int a -> Int b -> Int
+		fn plus `+` :: Int a -> Int b -> Int
+		fn mul  `*` :: Int a -> Int b -> Int
 		
 The `plus` function is bound to `+` operator, the `mul` function to `*`
 (within each module this operator _alias_ has to be unambiguous).
@@ -426,17 +442,17 @@ declaration syntax. This implies that the construct cannot be nested. Extension
 functions and the `where` clause are used to avoid nesting, as shown soon.
 
 		fn min :: Int a -> Int b -> Int =
-			a < b : a
-			      : b
+			a < b .{ a
+			      .{ b
 
 The `min`imum of two values `a` and `b` is `a` in case `a < b` otherwise `b`.
-The cases `condition : expr` are checked in order of appearance. The last case has to
-be the universal (true'ish) condition. For enumerations all values can be 
-covered alternatively. 
+The cases `<condition> .{ <expr>` are checked in order of appearance. 
+The last case has to be the universal (true'ish) condition. 
+For enumerations all values can be covered alternatively. 
 
 		fn show :: Bool v -> String =
-			a. v == False : "false"
-			b. v == True  : "true"
+			a. v == False .{ "false"
+			b. v == True  .{ "true"
 
 Each case is implemented by an expression (the formalism has literally no 
 statements). 
@@ -449,14 +465,14 @@ A function body is one expression, sometimes split into cases. As there are no
 statements local variables are declared in a function's context, the `where`
 clause:
 
-		data Point :: (Int x, Int y)
+		data Point :: (x: Int, y: Int)
 		fn distance :: Point a -> Point b -> Float
 			= (dx2 + dy2) sqrt
 		where 
-			Int dx2 = dx * dx
-			Int dy2 = dy * dy
-			Int dx  = b x - a x
-			Int dy  = b y - a y
+			dx2 = dx * dx
+			dy2 = dy * dy
+			dx  = b x - a x
+			dy  = b y - a y
 
 The function `distance` calculates the distance between 2 points `a` and `b`.
 Local variables like `dx`, `dy`, `dx2` and `dy2` can  be 
@@ -474,14 +490,14 @@ matching. Case-matching however is a straight value comparison that
 helps to avoid reoccurring comparisons in the conditions of cases.
 
 		fn name :: Point p -> String =
-			a. 0 , 0 : "ORIGIN"
-			b. 1 , 1 : "ONE"
-			c.       : p to-string
+			a. 0 , 0 .{ "ORIGIN"
+			b. 1 , 1 .{ "ONE"
+			c.       .{ p to-string
 		where
-			?. p x == _, p y == _ :
+			?. p x == _, p y == _ .{
 
 The cases `a.`, `b.` and `c.` match the wild-cards `_` in the comparison 
-pattern described by `?. <expr> :`. So case `a.` is equivalent to 
+pattern described by `?. <expr> .{`. So case `a.` is equivalent to 
 `p x == 0, p y == 0` and so forth. Wild-cards are matched in order of
  appearance. 
 
@@ -495,8 +511,8 @@ languages like [K](http://en.wikipedia.org/wiki/K_%28programming_language%29)
 The secondary way to _loop_ is to use recursive functions:
 
 		fn factorial :: Int n -> Int =
-			n == 0 : 1
-			       : n * factorial (n - 1)
+			n == 0 .{ 1
+			       .{ n * factorial (n - 1)
 
 All tail recursive functions will use tail call elimination, thus not create/use
 stack frames. Due to referential transparency and _annotated_ commutativity of 
@@ -539,7 +555,7 @@ Each not applied parameter is indicated by the underscore `_` _wild-card_.
 
 		(Int -> Int) inc = 1 + _
 
-[^plus]: given `fn plus [+] ::` `Int a -> Int b -> Int`
+[^plus]: given `` fn plus `+` :: `` `` Int a -> Int b -> Int ``
 
 Instead of passing an actual argument to `+` the function is partially applied
 resulting in a function `inc`[^plus] that takes (or _on_) the left out 
@@ -608,7 +624,7 @@ The family for type variable `T` contains all types that can be generalised to
 letter (that might be followed by a single digit), what distinguishes them from 
 concrete types that cannot have such names. 
 
-		fn plus [+] :: T a -> T b -> T = (`+ ?a ?b)
+		fn plus `+` :: T a -> T b -> T = (`+ ?a ?b)
 
 The `plus` function is in effect declared for all types that are members of
 the type family `T`. Most notable this also results in a value of type `T` 
@@ -617,14 +633,14 @@ without having to specify any particular type or requiring value _factories_.
 When used a type variable is conceptually substituted with the actual type 
 that satisfies the constraints of the family.
 
-		data Mass :: Int{0..} : (~ "kg")
+		data Mass :: Int{0..} with "Mass" :: (Digits "kg")
 		Mass m = 1kg + 2kg 
 
 As `Mass` is a specialisation of `Int` -- its values can be added using the `plus`
 function, resulting in a value of type `Mass`. If `plus` would have been 
 declared in terms of `Int`s, like
 
-		fn plus [+] :: Int a -> Int b -> Int = (`+ ?a ?b)
+		fn plus `+` :: Int a -> Int b -> Int = (`+ ?a ?b)
 
 the function would still be usable for `Mass` values (as they would be
 generalised to `Int`) but it would result in an `Int` instead of a `Mass`:
@@ -690,8 +706,8 @@ A tuple type can be described in terms of variable component types.
 Any `data` type that has two components, the first being of any type (`_`) and
 the second being generalisable to `Int` is a member of family `T1`. 
 
-		dimension Coordinate :: Int
-		data Point :: (Coordinate x, Coordinate y)
+		data Coordinate :: Int
+		data Point :: (x: Coordinate, y: Coordinate)
 
 `Point` is a member of `T1` as `y` is generalisable to `Int` (and `x` to `_`).
 
@@ -907,9 +923,9 @@ Any type (`_`) for which an implementation of the `eq` operation exists
 in usage context is a member of the type family `E`. 
 
 		fn index-of :: E[*] arr -> E sample -> Int pos -> Int? =
-			pos >= arr length    : ()
-			arr at pos eq sample : pos
-			                     : arr index-of (e, pos + 1)
+			pos >= arr length    .{ ()
+			arr at pos eq sample .{ pos
+			                     .{ arr index-of (e, pos + 1)
 
 The function `index-of` is implemented using the operation `eq` to compare the
 `sample` with the actual element `e`. Because `E` is constraint to types for
@@ -969,8 +985,8 @@ On the basis of `S1` and `E1` functions can be declared using the `Stack`
 operations.
 
 		fn init :: S1 stack -> E1 e -> S1 =
-			stack top is-nothing? : stack push e
-			                      : stack
+			stack top is-nothing? .{ stack push e
+			                      .{ stack
 
 The `init` function only pushes the element `e` to the `stack` if the stack is 
 empty, otherwise the stack is left unchanged. `S1` is known to follow the `Stack`
@@ -1079,9 +1095,9 @@ A channel is a typed queue of fix or variable length. Each channel transports
 values of a particular simple or composite data type. Implementation-wise a
 channel is a concept that can be implemented in various ways. 
 
-		op send! [>>] :: C channel -> E element -> C
-		op receive! [<<] :: C channel -> E
-		concept Channel :: { send!, receive! }
+		op send!    `>>` :: C channel -> E element -> C
+		op receive! `<<` :: C channel -> E
+		concept Channel  :: { send!, receive! }
 
 The usual way is use a (fixed length) array so that the overall system
 features reasonable [back pressure](http://en.wikipedia.org/wiki/Backpressure_routing). 
@@ -1232,10 +1248,9 @@ The state `data` of a concrete process could look like the structure `HttpServer
 It holds channels to communicate with the _outside world_.
 
 		data HttpServer :: (
-			HttpRequest[<] requests,
-			HttpResponse[>] responses,
-			(HttpRequest -> HttpResponse) app
-		)
+			requests:  HttpRequest[<],
+			responses: HttpResponse[>],
+			app:       (HttpRequest -> HttpResponse))
 
 The concrete process is given as a set of `when`-_then_ state transitions that 
 run a sequence of effects before the successor state is computed (both in terms
@@ -1352,7 +1367,7 @@ a fact that should universally hold regardless where it appears.
 There are no _headers_ or other accessory parts in source files. A file
 could literally just contain a single declaration like this:
 
-		data Hash :: Byte[]
+		data Hash :: Byte[*]
 
 Beside source code files there are library files that are concerned with the
 code organisation and interconnection as described shortly.
@@ -1435,8 +1450,11 @@ static context.
 In case of type variables actual types are passed as additional, implicit value 
 arguments. 
 Consequently types are never _inspected_ - they are either known statically or
-reconstituted by a language level dispatch selecting the case with the type(s) 
-that fit(s) the value representation.
+reconstituted by a language level dispatch selecting the case where the value 
+representation matches with the types.
+
+> A type is the sum of valid assumptions that can be made about the qualities
+> of runtime values.
 
 Values are represented to be efficient and convenient for the machine to compute 
 without any meta information attached. 
@@ -1614,13 +1632,12 @@ is converted as usual.
 
 ### Type Polyvalence
 A polyvalent type has a number of different _cooperating_ forms, purposes or 
-meanings (thus types). This is based on the observation that a type is a choice
-of perspective. It either reflects how the programmer thinks about 
-something, how something is formally written down or how a machine represents
-this thoughts. Classically a choice has to be made in favour of the perspective
-that matters most for a particular use case. 
-In order to switch perspective type conversions were required for a lack of 
-expressiveness. 
+meanings,thus types. This is based on the observation that a type is a choice
+of perspective. It reflects how the programmer thinks about something, 
+how something is formally written down or how a machine represents this thoughts. 
+Classically a choice has to be made in favour of the perspective that matters 
+most for a particular use case. In order to switch perspective type conversions 
+were required for a lack of expressiveness. 
 
 Type polyvalence is to declare a type with or from multiple perspectives each 
 being expressed in terms of other types. 
@@ -1628,44 +1645,73 @@ This continues the perception of types presented by the
 generalisation--specialisation relation and is equally grounded in and made
 possible by the static conception of types that detaches types from values.
 
-The implementation of polyvalent types in bruno distinguishes four classes of
-perspectives: a conceptual, a textual, a binary and an array perspective. 
-A declared type may (in principle) have multiple of each of these as long as 
-they do not conflict with each other. This means the static properties that can 
+A type can have several generalisation types as long as these do not conflict 
+with each other. This means the static properties that can 
 be derived from the perspectives may not disagree with each other.
 
 To give an example: A `Point` type might be defined as:
 
 		data Coordinate :: Int 
-		data Point :: (Coordinate x, Coordinate y)
+		data Point :: (x: Coordinate, y: Coordinate)
 
-#### Binary Perspectives
 In order to effect e.g. the memory layout (how the machine represents the 
-conceptual types) binary perspectives are added (note the `:` parts):
+conceptual types) perspectives are added using `&` operator that has been
+chosen as logically all stated types have to be satisfied.
 		
-		data Coordinate :: Int : Bit[32]
-		data Point :: (Coordinate x, Coordinate y) 
-		            : (Coordinate\Coordinate)
+		data Coordinate :: Int & Bit[32]
+		data Point :: Word & (x: Coordinate, y: Coordinate) 
 
-A `Coordinate` is not only an `Int` but also an array of `Bit`s. This implicitly
-limits the range to a 32-bit integer. Similarly a `Point` is also a 64-`Bit`
-wide value as both of its `Coordinate` are merged, what is indicated by the `\`. 
-So instead of a tuple (that would be represented on behalf of the VM) 
-the refined types explicitly demand a layout where a point is a single 64-bit 
-integer with `x` stored in the upper 32 bits and `y` in the lower ones. 
-Both `Coordinate` and `Point` now have two types each that are not in conflict
-with each other but take a different perspective on the underlying value. 
+`Coordinate` now is a 32-`Bit`s wide `Int`. The `Point` made a `Word`, what
+means the raw value is a _primitve_ with maximum of 64-`Bit`s. In case of 
+`Point` these are split into `x` stored in the upper 32 bits and `y` in the 
+lower ones. 
+Both `Coordinate` and `Point` now have two types each that aren't in conflict
+with each other but take a different perspectives on the underlying value. 
+This can also lead to changes in the underlying raw values and thereby the
+other types a type is in principle compatible with.
 
-#### Textual Perspectives
+TODO describe \ instead of , => \ = do not align but directly connect data in
+memory.
+
+		data BCD :: Int{0..9} & Nibble & Bit[4]
+
+`BCD` encodes numbers from zero to nine using 4 `Bit`s, what is also called a
+`Nibble`. 
+
+#### Use-Site Mixins
+Like a type can define multiple perspectives on declaration-site further 
+perspectives can be added on a use-site what could also be seen as a _mixin_
+defined on the use-site and therewith in a certain context.
+
+
+Assuming the `BCD` type had not been declared with the `Nibble` type,
+
+		data BCD :: Int{0..9} & Bit[4]
+
+but a library should be used that provides the `Nibble` type together with some
+utilities for it.
+
+		data Nibble :: Bit[4]
+
+`Nibble` can be mixed-in the `BCD` type for a particular module or library, by:
+
+		(`mixin BCD Nibble)
+
+With the implicit specialisation from `BCD` to `Nibble` any `BCD` value now can
+be used as if it had been declared as a `Nibble` from the beginning. 
+
+
+### Type Supplements
+
+#### Textual Supplement
 To allow the use of `Point` literals (as suggested earlier) a textual 
-perspective is added to the type definition (note the last `:` part). 
+perspective is added to the type definition (note the last `&` part). 
 
-		data Point :: (Coordinate x, Coordinate y) 
-		            : (Coordinate\Coordinate)
-		            : (Coordinate ':' Coordinate)
+		data Point   :: (x: Coordinate, y: Coordinate) 
+		with "Point" :: (x: Digits ':'  y: Digits)
 
-A `Point` literal consists of the sequence `x`-`Coordinate`, `':'` and
-`y`-`Coordinate`. Strikingly literals can be used in the definition
+A `Point` literal consists of the sequence `x`-`Digits`, `':'` and
+`y`-`Digits`. Strikingly literals can be used in the definition
 of types ([shapes](#shapes) explain this soon). Nevertheless, now it is possible 
 to write:
 
@@ -1680,8 +1726,8 @@ conflict with the syntax of the language. Depending on the extra symbols this
 can also happen for simple data types. In both cases such literals are simply
 double quoted instead. If a `Point` would have been declared differently...
 
-		data Point :: (Coordinate x, Coordinate y) 
-		            : ('(' Coordinate ':' Coordinate ')')
+		data Point   :: (x: Coordinate, y: Coordinate) 
+		with "Point" :: ('(' Digits ':' Digits ')')
 
 with parentheses the point literal is written as:
 
@@ -1691,53 +1737,18 @@ Nevertheless are such literals checked at compile time. They are not just
 _strings_ of characters, except when their type is just that, namely `[Char]`
 or `Char[]` or likewise.
 
-#### Array Perspectives
+#### Array Supplement
 A special binary perspective is concerned with the machine representation of
 arrays of a type. Values can be represented differently in an array using
-an array perspective (note the `: ( )[*]` part).
+an array perspective (note the `with Point[]` part).
 
-		data Point :: (Coordinate x, Coordinate y) 
-		            : (Coordinate\Coordinate)
-		            : (Coordinate ':' Coordinate)
-		            : (Coordinate[*],  Coordinate[*])[*] 
+		data Point   :: (x: Coordinate, y: Coordinate) 
+		with "Point" :: (Digits ':' Digits)
+		with Point[] :: (xs: Coordinate[*], ys: Coordinate[*])
 
 The last perspective describes a `Point[*]` as a tuple of two `Coordinate[*]` 
-fields, one for the `x` and one for the `y` values. 
+fields, one for the `x` and one for the `y` values. 		
 
-#### Conceptual Perspectives
-All perspectives that aren't binary or textual perspectives are considered a
-conceptual perspective. This is how a programmer usually thinks about a data.
-The generalisation of a type is the main conceptual perspective but sometimes
-it is useful to add further ones.
-
-		data BCD :: Int{0..9} : Nibble : Bit[4]
-
-`BCD` encodes numbers from zero to nine using 4 `Bit`s, what is also called a
-`Nibble`. 
-
-#### Use-Site Mixins
-Like a type can define multiple perspectives on declaration-site further 
-perspectives can be added on a use-site what could also be seen as a _mixin_
-defined on the use-site and therewith in a certain context.
-
-
-Assuming the `BCD` type had not been declared with the `Nibble` type,
-
-		data BCD :: Int{0..9} : Bit[4]
-
-but a library should be used that provides the `Nibble` type together with some
-utilities for it.
-
-		data Nibble :: Bit[4]
-
-`Nibble` can be mixed-in the `BCD` type for a particular module or library, by:
-
-		(`mixin BCD Nibble)
-
-With the implicit specialisation from `BCD` to `Nibble` any `BCD` value now can
-be used as if it had been declared as a `Nibble` from the beginning. 
-
-		
 
 ### Shapes
 
@@ -1761,7 +1772,7 @@ Primitives are the _base types_ of a bruno VM.
 : used as base type for enumerations (0-tuples). The unit value also represents 
   _nothing_ for optional types.
 
-		data Unit  :: ~ : ("()")
+		data Unit  :: ~ with "Unit" :: "()"
 
 `Bit`
 : a bit: `#0` or `#1`, the special sign-bit is `Positive` or `Negative` in 
@@ -1795,36 +1806,38 @@ Primitives are the _base types_ of a bruno VM.
 `Int` _(eger)_
 : a singed or unsigned 32-`Bit` integral number.
 
-		data Int :: Word : Bit[1-32]
+		data Int   :: Word & Bit[1-32]
+		with "Int" :: Lit 
 
 `Dec` _(imal)_
 : 64-bit decimal floating point number ([dec64](http://dec64.org/)).
 
-		data Coefficient :: Int  : Bit[56] : (S-Bit\M-Bit[55])
-		data Exponent    :: Int  : Byte
-		data Dec         :: Word : (Coefficient\Exponent)
+		data Coefficient :: Int  & Bit[56] & (S-Bit\M-Bit[55])
+		data Exponent    :: Int  & Byte
+		data Dec         :: Word & (Coefficient\Exponent)
 
 `Frac` _(tion)_
 : fraction number with 32-bit numerator and denominator ([frac64](http://frac64.github.io/)).
 		
-		data Numerator   :: Int  : Bit[32] : (S-Bit\M-Bit[31])
-		data Denominator :: Int  : M-Bit[32]
-		data Frac        :: Word : (Numerator\Denominator)
+		data Numerator   :: Int  & Bit[32] : (S-Bit\M-Bit[31])
+		data Denominator :: Int  & M-Bit[32]
+		data Frac        :: Word & (Numerator\Denominator)
 
 ##### Text
 
 `Char` _(acter)_
 : a none character code
 
-		data Char      :: Int{0..#xFFFF} : M-Bit[32]
+		data Char     :: Int{0..#xFFFF} & M-Bit[32]
+		with "Char"   :: Lit
 
-`String`
+`Text`
 : a [none](http://non-encoding.github.io/) encoded character sequence. 
 
-		data Next      :: Byte : (#1\MBit[7])
-		data Null      :: Byte : (#0\MBit[7])
-		data CharCode  :: Byte[1-4] : (Next[0-*]\Null)
-		data String    :: Byte[0-*] : CharCode[0-*]
+		data Null     :: Byte & (#0\MBit[7])
+		data Next     :: Byte & (#1\MBit[7])
+		data CharCode :: Byte[1-4] & (Next[0-3]\Null)
+		data Text     :: Byte[0-*] & CharCode[0-*]
 
 ### Type Constructors
 Many qualities of values can be expressed through types. The first group (in 
@@ -1931,7 +1944,7 @@ expressions. Tagged unions are used to keep type safety as we will shortly see.
 To encode any expression directly as an AST element the AST expression is _tagged_ 
 with the atom `` `ast ``. The `plus` function could be implemented as:
 
-		fn plus [+] :: Int a -> Int b -> Int 
+		fn plus `+` :: Int a -> Int b -> Int 
 			= (`ast (`+ ?a ?b))
 
 The `` `ast `` tag instructs the compiler to treat the 2nd element of the outer
@@ -1961,7 +1974,7 @@ binding between tag and type is done itself as a variant in the library:
 
 A variant _annotated_ with `` `date `` is of type `Date`, that e.g. could be:
 
-		data Date :: (Year y, Month m, Day d)
+		data Date :: (Year Month Day)
 		
 Given the declarations above the compiler is aware of the types in the expression
 form ``(`date 2014 06 01)`` and treats/checks `2014` as a `Year`, `06` as 
@@ -1977,7 +1990,7 @@ Procedures are compile-time inlined _functions_, hence do not create stack
 frames and are therefore limited to non-recursive implementations. Otherwise a
  procedure `proc` is similar to a function `fn`:
 
-		proc assoc [=>] :: K key -> V value -> (K, V) 
+		proc assoc `=>` :: K key -> V value -> (K, V) 
 			= (key, value)
 
 Any type `K` has a procedure `assoc` (or `=>`) that, given a `value` produces 

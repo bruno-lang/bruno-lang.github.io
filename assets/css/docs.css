@@ -102,7 +102,7 @@ content pre code {
 }
 
 @media screen {
-	content p code, content dd code {
+	content p code {
 		color: #565A9D;
 	}
 }
