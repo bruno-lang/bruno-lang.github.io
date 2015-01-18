@@ -159,7 +159,7 @@ A `Rect` is a tuple with two `Length` fields, here labelled as `width` and
 `height`. While `data` types are nominal typed they can be used as 
 (structurally typed) tuples. So a `Rect` can be _generalised_ to a tuple of 
 type `(Length, Length)`. The labels are not part of a tuple type definition
-an can be chosen differently in each context or left out.
+an can be chosen differently in each context or left out altogether.
 
 Any simple data type is equivalent to the corresponding 1-tuple notation.
 `Int` is the same type as `(Int)` and so forth.
@@ -442,23 +442,43 @@ declaration syntax. This implies that the construct cannot be nested. Extension
 functions and the `where` clause are used to avoid nesting, as shown soon.
 
 		fn min :: Int a -> Int b -> Int =
-			a < b .{ a
-			      .{ b
+			a | a < b
+			b
 
 The `min`imum of two values `a` and `b` is `a` in case `a < b` otherwise `b`.
-The cases `<condition> .{ <expr>` are checked in order of appearance. 
+The cases `<expr> | <condition>` are checked in order of appearance. 
 The last case has to be the universal (true'ish) condition. 
 For enumerations all values can be covered alternatively. 
 
 		fn show :: Bool v -> String =
-			a. v == False .{ "false"
-			b. v == True  .{ "true"
+			a. "false" | v == False
+			b. "true"  | v == True
 
 Each case is implemented by an expression (the formalism has literally no 
 statements). 
 Note also that each case can be labelled (here `a.` and `b.`) with a lower case 
 letter followed by a dot. This has no role other than the possibility to 
 improve readability and explicability.
+
+##### Case-Matching
+Cases can also be used to describe patterns using wild-cards similar to pattern 
+matching. Case-matching however is a straight value comparison that 
+helps to avoid reoccurring expressions in the conditions of cases.
+
+		fn name :: Point p -> String
+			       =    | p x == _ | p y == _
+			   ------------------------------
+			a. "ORIGIN" | 0        | 0
+			b. "ONE"    | 1        | 1
+			c. p show
+
+As usual a condition follows the `|`. This can be split into more than one 
+_column_ for multiple conditions. Here the first row uses wild-cards `_` that 
+are substituted in the following rows labelled `a.`, `b.` and `c.`.
+A row might also use a horizontal bar made from dashes to emphasis the table
+layout. This has no special meaning though. Note also that the `=` can be put
+on the next line so it appears as heading to the result _column_. Syntactically
+this is though the same position as it always has. 
 
 ### Local Variables _(Where-Clause)_
 A function body is one expression, sometimes split into cases. As there are no
@@ -484,23 +504,6 @@ Due to referential transparency the order of declaration is irrelevant and
 can be chosen for best readability. Also the necessity of computation (order or
 at all) of local variables is not the programmer's burden. 
 
-#### Case-Matching
-The `where`-clause can also be used to describe cases similar to pattern 
-matching. Case-matching however is a straight value comparison that 
-helps to avoid reoccurring comparisons in the conditions of cases.
-
-		fn name :: Point p -> String =
-			a. 0 , 0 .{ "ORIGIN"
-			b. 1 , 1 .{ "ONE"
-			c.       .{ p to-string
-		where
-			?. p x == _, p y == _ .{
-
-The cases `a.`, `b.` and `c.` match the wild-cards `_` in the comparison 
-pattern described by `?. <expr> .{`. So case `a.` is equivalent to 
-`p x == 0, p y == 0` and so forth. Wild-cards are matched in order of
- appearance. 
-
 ### Loops
 The primary way to _loop_ is to use build in operators that work on arrays in
 the fashion of
@@ -511,8 +514,8 @@ languages like [K](http://en.wikipedia.org/wiki/K_%28programming_language%29)
 The secondary way to _loop_ is to use recursive functions:
 
 		fn factorial :: Int n -> Int =
-			n == 0 .{ 1
-			       .{ n * factorial (n - 1)
+			1 | n == 0
+			n * factorial (n - 1)
 
 All tail recursive functions will use tail call elimination, thus not create/use
 stack frames. Due to referential transparency and _annotated_ commutativity of 
@@ -923,9 +926,9 @@ Any type (`_`) for which an implementation of the `eq` operation exists
 in usage context is a member of the type family `E`. 
 
 		fn index-of :: E[*] arr -> E sample -> Int pos -> Int? =
-			pos >= arr length    .{ ()
-			arr at pos eq sample .{ pos
-			                     .{ arr index-of (e, pos + 1)
+			()  | pos >= arr length    
+			pos | arr at pos eq sample
+			arr index-of (e, pos + 1)
 
 The function `index-of` is implemented using the operation `eq` to compare the
 `sample` with the actual element `e`. Because `E` is constraint to types for
@@ -985,8 +988,8 @@ On the basis of `S1` and `E1` functions can be declared using the `Stack`
 operations.
 
 		fn init :: S1 stack -> E1 e -> S1 =
-			stack top is-nothing? .{ stack push e
-			                      .{ stack
+			stack push e | stack top is-nothing?
+			stack
 
 The `init` function only pushes the element `e` to the `stack` if the stack is 
 empty, otherwise the stack is left unchanged. `S1` is known to follow the `Stack`
@@ -1180,16 +1183,16 @@ When a blocking receive should use a computed or constant default value in
 case the channel cannot offer a value the last alternative simply does not
 involve a channel.
 
-		fn receive-or! :: T[<] channel -> T default -> T = value
+		fn receive-or! :: T[<] chan -> T default -> T = value
 		where
 			T value
-				|= channel <<
+				|= chan <<
 				|= default
 
 The _select_ operation will try to receive a `value` in order of given
 alternatives and returns the result of the first path that offers a value.
 As the last alternative does not involve potentially blocking constructs the
-`default` value will be the result in case the `channel` did not offer a value
+`default` value will be the result in case the `chan`nel did not offer a value
 directly. 
 
 #### (A)synchronous Interconnections
@@ -1764,7 +1767,6 @@ this should not be confused with dependent typing.
 
 
 ### Primitives
-Primitives are the _base types_ of a bruno VM.
 
 ##### Uninterpreted
 
@@ -1831,6 +1833,9 @@ Primitives are the _base types_ of a bruno VM.
 		data Char     :: Int{0..#xFFFF} & M-Bit[32]
 		with "Char"   :: Lit
 
+
+### System Types
+
 `Text`
 : a [none](http://non-encoding.github.io/) encoded character sequence. 
 
@@ -1838,6 +1843,13 @@ Primitives are the _base types_ of a bruno VM.
 		data Next     :: Byte & (#1\MBit[7])
 		data CharCode :: Byte[1-4] & (Next[0-3]\Null)
 		data Text     :: Byte[0-*] & CharCode[0-*]
+
+`Process` 
+: base enumeration for all processes describing all possible system exceptions.
+
+		data Process :: [~] 
+			{ Out-Of-Heap-Space => [],  
+			| Out-Of-Disk-Space => [] }
 
 ### Type Constructors
 Many qualities of values can be expressed through types. The first group (in 
