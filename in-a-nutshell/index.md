@@ -710,7 +710,7 @@ Any `data` type that has two components, the first being of any type (`_`) and
 the second being generalisable to `Int` is a member of family `T1`. 
 
 		data Coordinate :: Int
-		data Point :: (x: Coordinate, y: Coordinate)
+		data Point      :: (x: Coordinate, y: Coordinate)
 
 `Point` is a member of `T1` as `y` is generalisable to `Int` (and `x` to `_`).
 
@@ -1227,21 +1227,22 @@ The state of a process is always local to that process.
 Each process is a state machine that decides when to receive from or send 
 messages to channels and change its state.
 
-A formal `process` is declared in terms of the possible state transitions 
-between states that are declared enumeration-like:
+A formal `Process` is declared in terms of the possible state transitions 
+between states that are declared as an enumeration:
 
-		process Server :: 
-			{ Ready = [ Ready ] 
-			| _     = [ Ready ] }
-			{ Out-Of-Heap-Space! = [] }
+		data Server :: Process { ..
+			| Ready = [ Ready ] 
+			| _     = [ Ready ]
+			| Out-Of-Heap-Space! = [] }
 
 A `Server` process has one state `Ready` that only can transit to itself.
 Any other (error) state (`_`) transits to `Ready` as well. 
 Should, however, an `Out-Of-Heap-Space!` exception occur the process transits 
-to no other state, what indicates process termination. Such error transitions
-are specified in a second mapping as they map faults or exceptions to states.
+to no other state, what indicates process termination. All possible 
+exception states are _inherited_ from `Process` enumeration the `Server` extends 
+upon.
 
-So a `process` declaration encapsulate a behavioural pattern that can be used 
+So a process declaration encapsulate a behavioural pattern that can be used 
 for many concrete automata. 
 This contract includes even the error behaviour.
 The compiler makes sure all transitions of actual implementations follow
@@ -1283,7 +1284,7 @@ The `spawn!` procedure itself is implemented by the virtual machine instruction
 		family P :: (,)
 		proc spawn! :: P a-process -> PID = (`spawn! ?process)
 
-Any value type `(,)` can be a process `P`. The relevant `process` declaration 
+Any value type `(,)` can be a process `P`. The relevant `Process` declaration 
 is identified via `when` transitions in scope that use states of process type 
 `P` in question.
 
@@ -1848,8 +1849,13 @@ this should not be confused with dependent typing.
 : base enumeration for all processes describing all possible system exceptions.
 
 		data Process :: [~] 
-			{ Out-Of-Heap-Space => [],  
-			| Out-Of-Disk-Space => [] }
+			{ Out-Of-Heap-Space! => [],  
+			| Out-Of-Disk-Space! => [] }
+
+`Ptr`
+: a _pointer_ used just within VM code.
+
+		data Ptr :: Word
 
 ### Type Constructors
 Many qualities of values can be expressed through types. The first group (in 
