@@ -15,6 +15,7 @@
 
 html {
   background-color: #c3ccd1;
+background-color: white;
 	background-image: url(../img/noisy-2.png);
 }
 body {
@@ -29,11 +30,10 @@ code, pre {
 
 page {
 	display: block;
-	background-color: white;
 }
 @media screen {
 	body {
-		color: #333;
+		color: #111;
 	}
 
 	page {
@@ -77,7 +77,7 @@ content {
 	position: relative;
 }
 content p {
-	line-height: 1.4; 
+	line-height: 1.5; 
 }
 content h4 + p, content h5 + p {
 	margin-top: 8px;
@@ -90,10 +90,8 @@ content sup a {
 	color: blue;
 } 
 content pre {
-	border-radius: 2px;
 	padding: 10px;
-	background-color: #eee8d5;
-	color: white;
+	color: black;
 	tab-size: 2;
 	-moz-tab-size: 2;
 }

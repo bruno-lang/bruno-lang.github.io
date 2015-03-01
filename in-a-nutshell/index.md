@@ -601,6 +601,12 @@ The `?` is just a hint for the compiler that the body is missing but will be
 added later one so the signature can be used to implement other functions on
 top of that before returning and implementing this function. 
 
+<!-- 
+TODO functions as alias ala : fn foo :: = bar
+-->
+
+
+
 ## Abstractions
 
 > The purpose of abstraction is *not* to be vague, but to create a new semantic level in which one can be absolutely precise.
