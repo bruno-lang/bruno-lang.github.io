@@ -467,7 +467,6 @@ helps to avoid reoccurring expressions in the conditions of cases.
 
 		fn name :: Point p -> String
 			       =    | p x == _ | p y == _
-			   ------------------------------
 			a. "ORIGIN" | 0        | 0
 			b. "ONE"    | 1        | 1
 			c. p show
@@ -789,12 +788,12 @@ length type.
 There are three more qualifications for kinds that haven't been mentioned so far.
 Their semantics don't need to be understood to abstract over them by kind.
 
-		family O :: ?(->)
+		family M :: _[@*]
 		family R :: _[<]
 		family W :: _[>]
 
-`O` is any operation (abstract function), `R` is any input- and `W` any output-
-channel type regardless of their element types.
+`M` is manual managed memory, `R` is any input- and `W` any output-channel type 
+regardless of their element types.
 
 The _any_ type wild-card `_` used within kinds concerns the type of the 
 _elements_ of a composite or function. 
@@ -808,11 +807,11 @@ kinds on their own. Each variant is build by appending the variants symbol to
 the base type. To emphasise the variant the following examples use the 
 _any_ type as basis of the variants. 
 
-		family M :: _?
+		family O :: _?
 		family E :: _!
 		family P :: _*
 
-`M` is any _maybe_ or _option_ type variant (where the value is either of the 
+`O` is any _maybe_ or _option_ type variant (where the value is either of the 
 base type or _nothing_), `E` is any fault or _error_ type (where the value is
 either of the base type or an _error_) and `P` is any _transient_ type variant
 (where the value is of the base type but can be mutated _in place_ under 
@@ -825,9 +824,11 @@ A indirection is build by prepending a indirection symbol to the base type.
 		family T :: $_
 		family L :: >_
 		family K :: @_
+		family I :: #_
 
 `T` is any _type of_ a type, `L` is any _lazy_ type (what is syntactic sugar for
-`(() -> _)`) and `K` is any _key of_ a type. The section on the type system will
+`(() -> _)`), `K` is any _key of_ a type and `I` is indexed ordinal type.
+The section on the type system will
 explain in more detail what those are. Key take-away here is that those exist 
 so it is possible to express code on this level of abstraction. 
 
@@ -1787,8 +1788,8 @@ this should not be confused with dependent typing.
 : a bit: `#0` or `#1`, the special sign-bit is `Positive` or `Negative` in 
   contrast to magnitude `M-Bit`s.
 
-		data Bit   :: () [ #0 | #1 ]
-		data S-Bit :: Bit [ Positive | Negative ]
+		data Bit   :: () { ^0 | ^1 }
+		data S-Bit :: Bit { ^+ | ^- }
 		data M-Bit :: Bit
 
 `Byte` 
@@ -1808,7 +1809,7 @@ this should not be confused with dependent typing.
 `Bool` _(ean)_
 : logic or truth values `True` and `False`.
 
-		data Bool :: () [ False | True ]
+		data Bool :: () { False | True }
 
 ##### Numeric
 
@@ -1816,39 +1817,36 @@ this should not be confused with dependent typing.
 : a singed or unsigned 32-`Bit` integral number.
 
 		data Int   :: Word & Bit[1-32]
-		with "Int" :: Lit 
 
 `Dec` _(imal)_
 : 64-bit decimal floating point number ([dec64](http://dec64.org/)).
 
-		data Coefficient :: Int  & Bit[56] & (S-Bit\M-Bit[55])
+		data Coefficient :: Int  & Bit[56] & (S-Bit M-Bit[55])
 		data Exponent    :: Int  & Byte
-		data Dec         :: Word & (Coefficient\Exponent)
+		data Dec         :: Word & (Coefficient Exponent)
 
 `Frac` _(tion)_
 : fraction number with 32-bit numerator and denominator ([frac64](http://frac64.github.io/)).
 		
-		data Numerator   :: Int  & Bit[32] : (S-Bit\M-Bit[31])
+		data Numerator   :: Int  & Bit[32] : (S-Bit M-Bit[31])
 		data Denominator :: Int  & M-Bit[32]
-		data Frac        :: Word & (Numerator\Denominator)
+		data Frac        :: Word & (Numerator Denominator)
 
 ##### Text
 
 `Char` _(acter)_
 : a none character code
 
-		data Char     :: Int{0..#xFFFF} & M-Bit[32]
-		with "Char"   :: Lit
-
+		data Char     :: Int{0..0xFFFF} & M-Bit[32]
 
 ### System Types
 
 `Text`
 : a [none](http://non-encoding.github.io/) encoded character sequence. 
 
-		data Null     :: Byte & (#0\MBit[7])
-		data Next     :: Byte & (#1\MBit[7])
-		data CharCode :: Byte[1-4] & (Next[0-3]\Null)
+		data Null     :: Byte & (^0 MBit[7])
+		data Next     :: Byte & (^1 MBit[7])
+		data CharCode :: Byte[1-4] & (Next[0-3] Null)
 		data Text     :: Byte[0-*] & CharCode[0-*]
 
 `Process` 
@@ -1861,7 +1859,7 @@ this should not be confused with dependent typing.
 `Ptr`
 : a _pointer_ used just within VM code.
 
-		data Ptr :: Word
+		data Ptr :: Word & M-Bit[64]
 
 ### Type Constructors
 Many qualities of values can be expressed through types. The first group (in 
