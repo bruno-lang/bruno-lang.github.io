@@ -1,4 +1,4 @@
 name: Bruno
 markdown: kramdown
-pygments: true
+highlighter: pygments
 

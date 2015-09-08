@@ -1,0 +1,15 @@
+@import url(http://fonts.googleapis.com/css?family=Source+Code+Pro:300,400,600,700);
+@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic,700italic);
+@import url(http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic);
+@import url(http://fonts.googleapis.com/css?family=Vidaloka:400italic,400);
+
+body { width: 580px; margin: 0 auto; font-family: Lora, serif; }
+
+h1 { font-weight: normal; font-size: 128px; margin: 3cm auto 2cm auto; padding: 0.5cm 0 0 0; letter-spacing: -0.06em; border-radius: 0.08cm 0.08cm 0 0; line-height: 1em; }
+h2 { font-size: 1.75em; font-family: Vidaloka, serif; color: black; }
+h3 { font-size: 1.5em; font-family: Vidaloka, serif; color: black; }
+
+p { text-align: justify; line-height: 1.4; }
+
+code { font-family: "Source Code Pro"; }
+p code { font-weight: 600; }
