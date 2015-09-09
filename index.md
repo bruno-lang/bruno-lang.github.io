@@ -27,7 +27,7 @@ The assumptions it is gonna rely upon.
 A program may state that a value of type `X` now should be of type `Y` as long 
 as `X` has all the qualities of `Y`. 
 This is clearly safe. 
-No assumption is made that ins't know to be true by means of `X`.
+No assumption is made that isn't know to be true by means of `X`.
 
 A program may also state a path **alternative** taken in case a value provably 
 has all qualities of a type `Z` as long as `Z` has no properties that are 
@@ -37,7 +37,8 @@ will take that path.
 
 But a program can not force a type upon a value as types are only ways to 
 understand what is actually true due to the nature of the value.
-As a consequence all program that can be expressed are also safe.
+As a consequence all programs that can be expressed are also safe with regards 
+to the assumptions the program relies upon.
 
 
 
@@ -83,8 +84,8 @@ the caused next state.
 It is the primary quality of of declarions that they allow to describe any 
 program purely based on what is known. Universal truths. 
 Correctness of a declaration never depends on changing or invisible parts.
-We can solely reason about the correctness of each declaration on a purely 
-logical level. This support high modularization and sharing.
+We can solely reason about the correctness of each declaration in isolationand 
+on a purely logical level. This support high modularization and sharing.
 All in all the declarations foster efficient and understandable programs. 
 
 The second most important quality its their concise, flexible but very natural
