@@ -5,11 +5,14 @@
 
 body { width: 580px; margin: 0 auto; font-family: Lora, serif; }
 
-h1 { font-weight: normal; font-size: 128px; margin: 3cm auto 2cm auto; padding: 0.5cm 0 0 0; letter-spacing: -0.06em; border-radius: 0.08cm 0.08cm 0 0; line-height: 1em; }
-h2 { font-size: 1.75em; font-family: Vidaloka, serif; color: black; }
-h3 { font-size: 1.5em; font-family: Vidaloka, serif; color: black; }
+h1 { font-weight: normal; font-size: 128px; margin: 3cm auto 2cm auto; padding: 0.5cm 0 0 0; letter-spacing: -0.06em; border-radius: 0.08cm 0.08cm 0 0; line-height: 1em;  text-align: center; }
+h2 { font-size: 1.75em; font-family: "Source Sans Pro", serif; color: black; }
+h3 { font-size: 1.5em; font-family: "Source Sans Pro", serif; color: black; font-weight: 600; margin-bottom: 0.1em; }
 
-p { text-align: justify; line-height: 1.4; }
+p { text-align: justify; line-height: 1.4; margin-bottom: 0; }
+p + p { margin-top: 0; text-indent: 1.4em; }
 
 code { font-family: "Source Code Pro"; }
-p code { font-weight: 600; }
+p code, dt code { font-weight: 600; }
+
+dt { margin-top: 0.4em; }

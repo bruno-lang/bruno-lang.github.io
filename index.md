@@ -10,73 +10,86 @@ class: nutshell
 ## Philosophy
 
 ### Types and Values
-A type is a set of all the values with certain properties. What is known about
-all and any of the values of that type.
+Types express eternal laws. Truths about all and any of the values of a 
+certain quality. The type is just a name for the set of all values having
+certain properties.
 Provided the properties in question a value can be a member of many types. 
 But it doesn't have to. 
-If the program explicitly says so in one case, than a value is a member,
-when not in another case, it is not.
+If the program explicitly says so, it is, if not, than it isn't.
+And this can differ from place to place.
 Thus, types are not attached to values, they are ways to understand them.
-
+As such a program always has to communicate its understanding. 
+The assumptions it is gonna rely upon.
 
 ### Type Safety
-Types express eternal laws. Truths about all and any of the values of a 
-certain quality. 
 
-A program may state that a value of type `A` now should be of type `B` as long as 
-`B` has no property that `A` has not. Then, what is known about `A` is sufficient to 
-conclude that the value can be seen as a member of type B as well. 
-This is always safe. 
 
-A program may also state that a value of type `A` might be of type `B` as long as 
-`B` has no contradicting properties compared with `A`. Contradiction means it is
-statically clear that a value of type `A` cannot possibly be of type B as well.
-So if `A` does not have all properties of `B` but also doesn't have contradicting
-properties a program may provide **an alternative** in case the value has all 
-properties of type `B`. 
-This is always safe too.
+A program may state that a value of type `X` now should be of type `Y` as long 
+as `X` has all the qualities of `Y`. 
+This is clearly safe. 
+No assumption is made that ins't know to be true by means of `X`.
+
+A program may also state a path **alternative** taken in case a value provably 
+has all qualities of a type `Z` as long as `Z` has no properties that are 
+knowingly in conflict with the source type `X`.
+This is safe too. Only values that qualify for the assumptions made by a path
+will take that path. 
 
 But a program can not force a type upon a value as types are only ways to 
 understand what is actually true due to the nature of the value.
-As a consequence all program that can be expressed are also safe!
+As a consequence all program that can be expressed are also safe.
 
 
 
-## Declarations
-Programs are sets of declarations. 
-Declarations expresses what is known. Truths. They are types of different kinds.
+## Declarations 
+Declarations, like types, expresses what is known. Truths.
+A programs is a sets of declarations of the sorts:
 
-All programs can be described through a set of the following 10 kinds of 
-declarations:
+`data`
+: describes the _shape_ and _quality_ of member values.
 
-- `data`: describes the _shape_ or _quality_ of a set of values.
+`io`
+: relates a serialized _shape_ with another `data` type.
 
-- `io`: describes the the sequential form (string form) of a set of values 
-in terms of their sequential _shape_.
+`ratio`
+: declares a _proportional relationship_ between two values.
 
-- `ratio`: declares a _proportional relationship_ between two values.
+`fn`
+: describes a particular _relation_ between input and output values. 
 
-- `fn`: describes a particular _relationship_ between input and output values. 
+`sub`
+: like `fn`, but the _relation_ must no be recursive
 
-- `sub`: like `fn` but must no be recursive
+`op`
+: captures the semantics of a input-output- _transtion_.
 
-- `op`: describes a _contract_ for an algorithm.
-What goes in and what comes out but not how it is done. 
-It implies however a certain meaning.  
+`concept`
+: captures the semantics of a set of related _transitions_.
 
-- `concept`: describes a _contract_ for a set of algorithms that are available 
-on the same set of values. 
+`family`
+: describes _properties_ of values. Any type having a family's properties is a 
+member of that family and can be substituted for it.
 
-- `family`: describes all kinds of _properties_ of values. 
-A type (what is a set of values) having a family's properties is a member of 
-that family. Therefore it can be substituted everywhere the family is used.
+`when`
+: describes a sequence of steps to take when faced with a particular situation 
+(a certain state) in order to transit to the next state.
 
-- `when`: describes a sequence of steps to take when faced
-with a particular situation (a certain state) in order to transit to the next 
-state. 
+`on`
+: describes the (immediate) reaction to a situation (triggered externally) and
+the caused next state.
 
-- `on`: asks for an exclusive thread of execution whereas `when` is
-satisfied with cooperative task scheduling. 
+
+### Declarative Programming
+It is the primary quality of of declarions that they allow to describe any 
+program purely based on what is known. Universal truths. 
+Correctness of a declaration never depends on changing or invisible parts.
+We can solely reason about the correctness of each declaration on a purely 
+logical level. This support high modularization and sharing.
+All in all the declarations foster efficient and understandable programs. 
+
+The second most important quality its their concise, flexible but very natural
+syntax that allows to express ideas close to the problem domain. Yet there is
+no burden to learn multiple languages.
 
 
 _to be continued..._
